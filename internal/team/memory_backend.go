@@ -174,8 +174,16 @@ func (gbrainMemoryBackend) Kind() string { return config.MemoryBackendGBrain }
 func (gbrainMemoryBackend) Label() string {
 	return config.MemoryBackendLabel(config.MemoryBackendGBrain)
 }
-func (gbrainMemoryBackend) Ready() bool { return gbrain.IsInstalled() && gbrainProviderKeyConfigured() }
+func (gbrainMemoryBackend) Ready() bool {
+	if gbrain.IsRemoteConfigured() {
+		return true
+	}
+	return gbrain.IsInstalled() && gbrainProviderKeyConfigured()
+}
 func (gbrainMemoryBackend) MCPServer() (*memoryMCPServer, error) {
+	if gbrain.IsRemoteConfigured() {
+		return nil, nil
+	}
 	bin := gbrain.BinaryPath()
 	if bin == "" {
 		return nil, nil
@@ -355,6 +363,12 @@ func ResolveMemoryBackendStatus() MemoryBackendStatus {
 		status.ActiveLabel = config.MemoryBackendLabel(config.MemoryBackendMarkdown)
 		status.Detail = "Markdown-backed team wiki at ~/.wuphf/wiki is configured. Every edit commits to git with per-agent authorship."
 	case config.MemoryBackendGBrain:
+		if gbrain.IsRemoteConfigured() {
+			status.ActiveKind = config.MemoryBackendGBrain
+			status.ActiveLabel = config.MemoryBackendLabel(config.MemoryBackendGBrain)
+			status.Detail = fmt.Sprintf("GBrain remote backend configured at %s.", config.ResolveGBrainURL())
+			break
+		}
 		if !gbrainProviderKeyConfigured() {
 			status.Detail = "GBrain backend selected, but no provider key is configured. OpenAI is required for embeddings and vector search; Anthropic alone only enables reduced-mode retrieval."
 			status.NextStep = "Run /init and add an OpenAI key for full GBrain search, or add an Anthropic key for reduced mode."

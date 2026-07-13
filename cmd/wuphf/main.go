@@ -244,7 +244,7 @@ func main() {
 	flag.BoolVar(&tuiMode, "tui", false, "Deprecated alias for --legacy-tui")
 	webPort := flag.Int("web-port", 7891, "Port for the web UI (default 7891)")
 	brokerPort := flag.Int("broker-port", 0, "Port for the local broker (default 7890)")
-	noNex := flag.Bool("no-nex", false, "Disable Nex completely for this run")
+	noNex := flag.Bool("no-nex", true, "Disable Nex completely for this run (default: true; pass --no-nex=false to enable Nex)")
 	memoryBackend := flag.String("memory-backend", "", "Memory backend for organizational context (nex, gbrain, none)")
 	opusCEO := flag.Bool("opus-ceo", false, "Upgrade CEO agent from Sonnet to Opus")
 	collabMode := flag.Bool("collab", false, "Start in collaborative mode (all agents see all messages)")
@@ -293,6 +293,8 @@ func main() {
 
 	if *noNex {
 		_ = os.Setenv("WUPHF_NO_NEX", "1")
+	} else {
+		_ = os.Unsetenv("WUPHF_NO_NEX")
 	}
 	if *brokerPort > 0 {
 		_ = os.Setenv("WUPHF_BROKER_PORT", fmt.Sprintf("%d", *brokerPort))

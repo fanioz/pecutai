@@ -679,6 +679,19 @@ func ResolveOpenAIAPIKey() string {
 	return strings.TrimSpace(cfg.OpenAIAPIKey)
 }
 
+// ResolveGBrainURL resolves the remote gbrain MCP endpoint URL.
+// When set (alongside ResolveGBrainToken), wuphf connects to gbrain
+// over HTTP MCP instead of shelling out to a local gbrain binary.
+func ResolveGBrainURL() string {
+	return strings.TrimSpace(os.Getenv("GBRAIN_URL"))
+}
+
+// ResolveGBrainToken resolves the bearer token for the remote gbrain
+// MCP endpoint. Create one on the host with: gbrain auth create "wuphf".
+func ResolveGBrainToken() string {
+	return strings.TrimSpace(os.Getenv("GBRAIN_TOKEN"))
+}
+
 // ResolveMinimaxAPIKey resolves the Minimax API key.
 // Resolution: WUPHF_MINIMAX_API_KEY env > MINIMAX_API_KEY env > config file.
 func ResolveMinimaxAPIKey() string {
