@@ -122,9 +122,90 @@ Permissions: `plan` means every tool call needs human approval in the Requests p
 
 ## 4. Swap the action layer
 
-Default action providers are Composio (real-world actions: Gmail, CRM, etc.) and Telegram (bridge).
+Default action providers are Composio (real-world actions: Gmail, CRM, etc.) and One CLI (local bridge).
 
-To add your own provider, look at `internal/teammcp/actions.go` for the interface. Register via `/config set action_provider <yours>`.
+To implement your own action provider, you need to:
+1. Implement the `action.Provider` interface
+2. Register it during startup using `teammcp.SetActionProvider()`
+
+### Quick Start Example
+
+Create a file `internal/action/myprovider.go`:
+
+```go
+package action
+
+import "context"
+
+type MyProvider struct {
+    name string
+}
+
+func (p *MyProvider) Name() string { return p.name }
+func (p *MyProvider) Configured() bool { return true }
+func (p *MyProvider) Supports(cap Capability) bool { return true }
+
+// Implement all required methods from action.Provider interface:
+// - Guide()
+// - ListConnections()
+// - SearchActions()
+// - ActionKnowledge()
+// - ExecuteAction()
+// - CreateWorkflow()
+// - ExecuteWorkflow()
+// - ListWorkflowRuns()
+// - ListRelays()
+// - RelayEventTypes()
+// - CreateRelay()
+// - ActivateRelay()
+// - ListRelayEvents()
+// - GetRelayEvent()
+
+// See internal/action/custom_example.go for a complete working example.
+```
+
+Then register it in your startup code (e.g., in `cmd/wuphf/main.go`):
+
+```go
+import (
+    "github.com/your-org/wuphf/internal/action"
+    "github.com/your-org/wuphf/internal/teammcp"
+)
+
+func main() {
+    // Register your custom provider
+    provider := &action.MyProvider{name: "my-provider"}
+    teammcp.SetActionProvider(provider)
+
+    // Rest of your startup code...
+}
+```
+
+### Alternative: Environment Variable
+
+If you only need to select between existing providers, set the environment variable:
+
+```bash
+export WUPHF_ACTION_PROVIDER=composio  # or "one"
+# Or use the config file:
+# wuphf /config set action_provider composio
+```
+
+### Interface Reference
+
+See `internal/action/types.go` for the complete `Provider` interface definition. See `internal/action/custom_example.go` for a minimal working example you can adapt.
+
+### Provider Capabilities
+
+Action providers support these capabilities:
+- **guide**: Provider usage guide
+- **connections**: List connected accounts
+- **action_search**: Search for actions
+- **action_knowledge**: Get action schema
+- **action_execute**: Run actions
+- **workflow_create**: Create workflows
+- **workflow_execute**: Run workflows
+- **relay_***: Event triggers and webhooks
 
 ## 5. Cut a release of your fork
 

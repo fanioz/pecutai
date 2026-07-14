@@ -479,6 +479,33 @@ var (
 	titleCaser             = cases.Title(language.English)
 )
 
+// SetActionProvider sets a custom external action provider that overrides
+// the default registry-based provider selection. This is the extensibility
+// hook for forks that need to implement their own action provider integration.
+//
+// Call this during startup (before any MCP tools are invoked) to register
+// a custom provider. The provider must implement the full action.Provider
+// interface and will be used for all action capabilities (guide, connections,
+// search, knowledge, execute, workflows, and relays).
+//
+// Example:
+//
+//	provider := mycustom.NewProvider()
+//	teammcp.SetActionProvider(provider)
+//
+// To revert to the default registry-based selection, pass nil:
+//
+//	teammcp.SetActionProvider(nil)
+func SetActionProvider(provider action.Provider) {
+	externalActionProvider = provider
+}
+
+// GetActionProvider returns the currently configured external action provider,
+// or nil if using the default registry-based selection.
+func GetActionProvider() action.Provider {
+	return externalActionProvider
+}
+
 type TeamActionGuideArgs struct {
 	Topic string `json:"topic,omitempty" jsonschema:"One of: overview, actions, flows, relay, all. Defaults to all."`
 }
