@@ -181,7 +181,7 @@ As of this week, new installs default to the markdown wiki instead of the Nex kn
 
 ## What it means
 
-- Existing Nex/GBrain users unaffected (backend switch is config-pinned)
+- Existing Nex users unaffected (backend switch is config-pinned)
 - Four new MCP tools (\`team_wiki_read/search/list/write\`) replace \`team_memory_*\` when \`WUPHF_MEMORY_BACKEND=markdown\`
 
 See [[decisions/2026-q2-pricing]] for the related commercial thinking."

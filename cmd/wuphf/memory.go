@@ -1,7 +1,7 @@
 package main
 
 // memory.go hosts the `wuphf memory` subcommand family. Today it owns
-// one verb: `migrate`, which ports legacy Nex / GBrain memory into the
+// one verb: `migrate`, which ports legacy Nex memory into the
 // markdown wiki at ~/.wuphf/wiki/team/.
 //
 // Why a separate file
@@ -47,18 +47,17 @@ func printMemoryHelp() {
 	fmt.Fprintln(os.Stderr, "wuphf memory — manage the team wiki and legacy memory backends")
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Verbs:")
-	fmt.Fprintln(os.Stderr, "  migrate    Port Nex or GBrain content into ~/.wuphf/wiki/team/")
+	fmt.Fprintln(os.Stderr, "  migrate    Port Nex content into ~/.wuphf/wiki/team/")
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Usage:")
 	fmt.Fprintln(os.Stderr, "  wuphf memory migrate --from nex [--dry-run] [--limit N]")
-	fmt.Fprintln(os.Stderr, "  wuphf memory migrate --from gbrain [--dry-run] [--limit N]")
 }
 
 // runMemoryMigrate parses flags and orchestrates the migration. On any
 // fatal error it writes to stderr and exits non-zero.
 func runMemoryMigrate(args []string) {
 	fs := flag.NewFlagSet("memory migrate", flag.ContinueOnError)
-	from := fs.String("from", "", "Source backend: nex or gbrain")
+	from := fs.String("from", "", "Source backend: nex")
 	dryRun := fs.Bool("dry-run", false, "Print the plan without committing")
 	limit := fs.Int("limit", 0, "Cap the number of records imported (0 = unlimited)")
 	apiKeyFlag := fs.String("api-key", "", "API key for Nex authentication (overrides WUPHF_API_KEY)")
@@ -66,7 +65,7 @@ func runMemoryMigrate(args []string) {
 		fmt.Fprintln(os.Stderr, "wuphf memory migrate — import legacy memory into the team wiki")
 		fmt.Fprintln(os.Stderr, "")
 		fmt.Fprintln(os.Stderr, "Usage:")
-		fmt.Fprintln(os.Stderr, "  wuphf memory migrate --from {nex,gbrain} [--dry-run] [--limit N]")
+		fmt.Fprintln(os.Stderr, "  wuphf memory migrate --from {nex} [--dry-run] [--limit N]")
 		fmt.Fprintln(os.Stderr, "")
 		fs.PrintDefaults()
 	}
@@ -129,13 +128,8 @@ func buildAdapter(source, apiKeyOverride string) (migration.Adapter, error) {
 		}
 		client := api.NewClient(key)
 		return migration.NewNexAdapter(client), nil
-	case "gbrain":
-		if !migration.GBrainReady() {
-			return nil, fmt.Errorf("gbrain binary not found on PATH; install GBrain before migrating")
-		}
-		return migration.NewGBrainAdapter(), nil
 	default:
-		return nil, fmt.Errorf("unsupported --from value %q (expected nex or gbrain)", source)
+		return nil, fmt.Errorf("unsupported --from value %q (expected nex)", source)
 	}
 }
 

@@ -437,11 +437,6 @@ func newChannelModelWithApp(threadsCollapsed bool, initialApp channelui.OfficeAp
 	} else if memoryStatus.SelectedKind == config.MemoryBackendNex && memoryStatus.ActiveKind == config.MemoryBackendNone && strings.TrimSpace(config.ResolveAPIKey("")) == "" {
 		m.notice = "No WUPHF API key configured. Starting setup..."
 		m.initFlow, _ = m.initFlow.Start()
-	} else if memoryStatus.SelectedKind == config.MemoryBackendGBrain && strings.TrimSpace(config.ResolveOpenAIAPIKey()) == "" && strings.TrimSpace(config.ResolveAnthropicAPIKey()) == "" {
-		m.notice = "No OpenAI or Anthropic API key configured for GBrain. Starting setup..."
-		m.initFlow, _ = m.initFlow.Start()
-	} else if memoryStatus.SelectedKind == config.MemoryBackendGBrain && memoryStatus.ActiveKind == config.MemoryBackendNone && strings.TrimSpace(memoryStatus.Detail) != "" {
-		m.notice = memoryStatus.Detail
 	}
 	m.syncSidebarCursorToActive()
 	return m

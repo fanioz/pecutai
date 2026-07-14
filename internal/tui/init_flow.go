@@ -33,8 +33,6 @@ const (
 	InitProviderChoice   InitPhase = "provider_choice" // kept for backward compat, skipped in flow
 	InitOneAPIKey        InitPhase = "one_api_key"     // kept for backward compat, skipped in flow
 	InitMemoryChoice     InitPhase = "memory_choice"
-	InitGBrainOpenAIKey  InitPhase = "gbrain_openai_key"
-	InitGBrainAnthropKey InitPhase = "gbrain_anthropic_key"
 	InitNexRegister      InitPhase = "nex_register"
 	InitBlueprintChoice  InitPhase = "blueprint_choice"
 	InitPackChoice       InitPhase = "pack_choice" // legacy alias
@@ -189,15 +187,6 @@ func (f InitFlowModel) Update(msg tea.Msg) (InitFlowModel, tea.Cmd) {
 // if no additional setup is needed.
 func (f InitFlowModel) advanceAfterMemoryChoice() (InitFlowModel, tea.Cmd) {
 	switch f.memory {
-	case config.MemoryBackendGBrain:
-		// GBrain requires an OpenAI key for embeddings.
-		if config.ResolveOpenAIAPIKey() == "" {
-			f.phase = InitGBrainOpenAIKey
-			return f, f.emitPhase(InitGBrainOpenAIKey)
-		}
-		// Key already configured, skip to blueprint.
-		f.phase = InitBlueprintChoice
-		return f, f.emitPhase(InitBlueprintChoice)
 	case config.MemoryBackendNex:
 		// Nex requires a Nex identity. If no API key is configured, prompt
 		// the user to register via email.
@@ -215,7 +204,7 @@ func (f InitFlowModel) advanceAfterMemoryChoice() (InitFlowModel, tea.Cmd) {
 
 func (f InitFlowModel) requiresTextInput() bool {
 	switch f.phase {
-	case InitAPIKey, InitGBrainOpenAIKey, InitGBrainAnthropKey, InitNexRegister,
+	case InitAPIKey, InitNexRegister,
 		InitCompanyURL, InitCompanyFiles, InitOwnerName, InitOwnerRole:
 		return true
 	}
@@ -223,7 +212,7 @@ func (f InitFlowModel) requiresTextInput() bool {
 }
 
 // updateTextInput handles keystrokes during any text-entry phase
-// (API key, GBrain OpenAI/Anthropic keys, Nex email registration).
+// (API key, Nex email registration).
 func (f InitFlowModel) updateTextInput(msg tea.KeyMsg) (InitFlowModel, tea.Cmd) {
 	switch msg.String() {
 	case "enter":
@@ -265,37 +254,6 @@ func (f InitFlowModel) submitTextInput(value string) (InitFlowModel, tea.Cmd) {
 		}
 		f.phase = InitProviderChoice
 		return f, f.emitPhase(InitProviderChoice)
-
-	case InitGBrainOpenAIKey:
-		if value == "" {
-			f.keyError = "OpenAI API key is required for GBrain."
-			return f, nil
-		}
-		// Persist immediately so gbrain can use it.
-		cfg, _ := config.Load()
-		cfg.OpenAIAPIKey = value
-		_ = config.Save(cfg)
-		f.keyError = ""
-		f.keyInput = nil
-		// Optional: ask for Anthropic key too.
-		if config.ResolveAnthropicAPIKey() == "" {
-			f.phase = InitGBrainAnthropKey
-			return f, f.emitPhase(InitGBrainAnthropKey)
-		}
-		f.phase = InitBlueprintChoice
-		return f, f.emitPhase(InitBlueprintChoice)
-
-	case InitGBrainAnthropKey:
-		// Anthropic key is optional; empty means skip.
-		if value != "" {
-			cfg, _ := config.Load()
-			cfg.AnthropicAPIKey = value
-			_ = config.Save(cfg)
-		}
-		f.keyError = ""
-		f.keyInput = nil
-		f.phase = InitBlueprintChoice
-		return f, f.emitPhase(InitBlueprintChoice)
 
 	case InitNexRegister:
 		if value == "" {
@@ -440,11 +398,6 @@ func MemoryOptions() []PickerOption {
 			Description: "Hosted org memory: entity briefs, shared notes, and search backed by your Nex identity.",
 		},
 		{
-			Label:       "GBrain",
-			Value:       config.MemoryBackendGBrain,
-			Description: "Local-first knowledge graph CLI. Good when you want everything on your machine.",
-		},
-		{
 			Label:       "No shared memory",
 			Value:       config.MemoryBackendNone,
 			Description: "Skip the memory layer. Agents only know what's in the current conversation.",
@@ -524,10 +477,6 @@ func (f InitFlowModel) renderAPIKeyInput() string {
 
 	var label string
 	switch f.phase {
-	case InitGBrainOpenAIKey:
-		label = "OpenAI Key: "
-	case InitGBrainAnthropKey:
-		label = "Anthropic Key (Enter to skip): "
 	case InitNexRegister:
 		label = "Email: "
 	case InitCompanyURL:
@@ -709,7 +658,7 @@ func blueprintReadinessDetail(blueprint string) string {
 
 func memoryReadinessStatus(backend string) string {
 	switch config.NormalizeMemoryBackend(backend) {
-	case config.MemoryBackendNex, config.MemoryBackendGBrain:
+	case config.MemoryBackendNex:
 		return "ready"
 	case config.MemoryBackendNone:
 		return "next"
@@ -722,8 +671,6 @@ func memoryReadinessDetail(backend string) string {
 	switch config.NormalizeMemoryBackend(backend) {
 	case config.MemoryBackendNex:
 		return "Hosted org memory via Nex."
-	case config.MemoryBackendGBrain:
-		return "Local knowledge graph via GBrain CLI."
 	case config.MemoryBackendNone:
 		return "No shared memory. Agents only know what's in the current conversation."
 	default:
@@ -782,11 +729,7 @@ func (f InitFlowModel) phaseText() (heading, instructions string) {
 	case InitProviderChoice:
 		return "Choose LLM Provider", "Select your preferred AI provider. Integrations are handled automatically through Nex using One."
 	case InitMemoryChoice:
-		return "Choose Memory Backend", "Where should the office remember what it learns? Nex is hosted org memory, GBrain is a local knowledge graph, or skip for no shared memory."
-	case InitGBrainOpenAIKey:
-		return "Enter OpenAI API Key", "GBrain uses OpenAI for embeddings. Paste your OpenAI API key (starts with sk-)."
-	case InitGBrainAnthropKey:
-		return "Enter Anthropic API Key (optional)", "GBrain can optionally use Anthropic for reasoning. Press Enter to skip, or paste your key."
+		return "Choose Memory Backend", "Where should the office remember what it learns? Nex is hosted org memory, or skip for no shared memory."
 	case InitNexRegister:
 		return "Register with Nex", "Enter your email to create or connect your Nex identity. This enables shared memory, entity briefs, and integrations."
 	case InitBlueprintChoice, InitPackChoice:

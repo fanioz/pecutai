@@ -72,38 +72,6 @@ func TestContextLookupMarkdownReturnsTypedNotebookAndWikiCitations(t *testing.T)
 	}
 }
 
-func TestContextLookupGBrainMapsTypedCitationFields(t *testing.T) {
-	oldStatus := contextResolveMemoryBackendStatus
-	oldQuery := contextQuerySharedMemory
-	t.Cleanup(func() {
-		contextResolveMemoryBackendStatus = oldStatus
-		contextQuerySharedMemory = oldQuery
-	})
-	contextResolveMemoryBackendStatus = func() team.MemoryBackendStatus {
-		return team.MemoryBackendStatus{SelectedKind: config.MemoryBackendGBrain, SelectedLabel: "GBrain", ActiveKind: config.MemoryBackendGBrain, ActiveLabel: "GBrain"}
-	}
-	score := 0.87
-	stale := true
-	contextQuerySharedMemory = func(context.Context, string, int) ([]team.ScopedMemoryHit, error) {
-		return []team.ScopedMemoryHit{{
-			Scope: "shared", Backend: config.MemoryBackendGBrain, Identifier: "people/nazz", Title: "Nazz", Snippet: "typed chunk",
-			Slug: "people/nazz", PageID: 42, ChunkID: 7, ChunkIndex: 3, Source: "compiled_truth", Score: &score, Stale: &stale,
-		}}, nil
-	}
-
-	_, data, err := handleContextLookup(context.Background(), nil, ContextLookupArgs{Query: "nazz", IncludeShared: true})
-	if err != nil {
-		t.Fatalf("handler: %v", err)
-	}
-	citation := data.(ContextLookupResult).Citations[0]
-	if citation.Slug != "people/nazz" || citation.PageID != 42 || citation.ChunkID != 7 || citation.ChunkIndex != 3 || citation.Source != "compiled_truth" {
-		t.Fatalf("missing gbrain typed fields: %+v", citation)
-	}
-	if citation.Score == nil || *citation.Score != score || citation.Stale == nil || !*citation.Stale {
-		t.Fatalf("missing gbrain score/stale: %+v", citation)
-	}
-}
-
 func TestRecordContextWorkflowEventMapsCitationsAndUpdatedFlag(t *testing.T) {
 	var workflowBody map[string]any
 	var auth *testingAuth
@@ -126,7 +94,7 @@ func TestRecordContextWorkflowEventMapsCitationsAndUpdatedFlag(t *testing.T) {
 		Event:  "lookup",
 		Query:  "passport",
 		Citations: []ContextCitation{{
-			Corpus: "shared", Backend: config.MemoryBackendGBrain, Identifier: "process/passport", Slug: "process/passport",
+			Corpus: "shared", Backend: config.MemoryBackendNex, Identifier: "process/passport", Slug: "process/passport",
 			PageID: 42, ChunkID: 7, Line: 11, Source: "compiled_truth", Title: "Passport", Snippet: "typed chunk", Score: &score,
 		}},
 	})
@@ -289,7 +257,7 @@ func TestContextCaptureAndPromoteUnsupportedOnExternalBackend(t *testing.T) {
 	oldStatus := contextResolveMemoryBackendStatus
 	t.Cleanup(func() { contextResolveMemoryBackendStatus = oldStatus })
 	contextResolveMemoryBackendStatus = func() team.MemoryBackendStatus {
-		return team.MemoryBackendStatus{SelectedKind: config.MemoryBackendGBrain, ActiveKind: config.MemoryBackendGBrain}
+		return team.MemoryBackendStatus{SelectedKind: config.MemoryBackendNex, ActiveKind: config.MemoryBackendNex}
 	}
 
 	_, captureData, err := handleContextCapture(context.Background(), nil, ContextCaptureArgs{Content: "do not pretend this wrote a notebook"})

@@ -305,8 +305,6 @@ func (s WorkspaceUIState) SidebarHintLine() string {
 		return "While away: " + s.AwaySummary
 	case s.Memory.SelectedKind == config.MemoryBackendNex && s.Memory.ActiveKind == config.MemoryBackendNone:
 		return "/init finishes Nex setup · /doctor explains what is missing"
-	case s.Memory.SelectedKind == config.MemoryBackendGBrain && s.Memory.ActiveKind == config.MemoryBackendNone:
-		return FirstWorkspaceString(s.Memory.NextStep, "/doctor explains what is missing")
 	case strings.TrimSpace(s.NextStep) != "":
 		return s.NextStep
 	case strings.TrimSpace(s.Focus) != "":

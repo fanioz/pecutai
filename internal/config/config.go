@@ -109,7 +109,6 @@ type ImageEndpoint struct {
 const (
 	MemoryBackendNone     = "none"
 	MemoryBackendNex      = "nex"
-	MemoryBackendGBrain   = "gbrain"
 	MemoryBackendMarkdown = "markdown"
 )
 
@@ -235,8 +234,6 @@ func NormalizeMemoryBackend(value string) string {
 		return MemoryBackendNone
 	case MemoryBackendNex:
 		return MemoryBackendNex
-	case MemoryBackendGBrain:
-		return MemoryBackendGBrain
 	case MemoryBackendMarkdown:
 		return MemoryBackendMarkdown
 	default:
@@ -255,7 +252,12 @@ func NormalizeMemoryBackend(value string) string {
 //     semantics where --no-nex was a hard off-switch).
 //
 // `--no-nex` always disables the Nex backend itself, but does not prevent an
-// alternate backend like GBrain or Markdown from being selected.
+// alternate backend like Markdown from being selected.
+//
+// Legacy support: a saved `memory_backend: "gbrain"` is no longer supported.
+// When the config-file value is exactly "gbrain" (case-insensitive), the
+// resolver falls back to markdown and prints one stderr warning line so the
+// user knows their config drifted.
 func ResolveMemoryBackend(flagValue string) string {
 	backend := NormalizeMemoryBackend(flagValue)
 	if backend == "" {
@@ -263,6 +265,9 @@ func ResolveMemoryBackend(flagValue string) string {
 	}
 	if backend == "" {
 		cfg, _ := Load()
+		if strings.EqualFold(strings.TrimSpace(cfg.MemoryBackend), "gbrain") {
+			fmt.Fprintln(os.Stderr, `note: memory backend "gbrain" is no longer supported; using "markdown"`)
+		}
 		backend = NormalizeMemoryBackend(cfg.MemoryBackend)
 	}
 	if backend == "" {
@@ -279,8 +284,6 @@ func MemoryBackendLabel(backend string) string {
 	switch NormalizeMemoryBackend(backend) {
 	case MemoryBackendNex:
 		return "Nex"
-	case MemoryBackendGBrain:
-		return "GBrain"
 	case MemoryBackendMarkdown:
 		return "Markdown wiki"
 	default:
@@ -468,6 +471,19 @@ func ResolveOpencodeModel() string {
 		return v
 	}
 	return ""
+}
+
+// ResolveClaudeModel returns the effective Claude Code model for the current
+// run. Resolution: WUPHF_CLAUDE_MODEL env > CLAUDE_MODEL env > empty (falls
+// back to the hardcoded default in headless_claude.go).
+//
+// This lets operators point wuphf at an LLM proxy (e.g. chain:main,
+// anthropic/claude-sonnet-4-6) without code changes.
+func ResolveClaudeModel() string {
+	if v := strings.TrimSpace(os.Getenv("WUPHF_CLAUDE_MODEL")); v != "" {
+		return v
+	}
+	return strings.TrimSpace(os.Getenv("CLAUDE_MODEL"))
 }
 
 // ResolveAPIKey resolves the API key via: flag > WUPHF_API_KEY env > NEX_API_KEY env > config file.
@@ -677,19 +693,6 @@ func ResolveOpenAIAPIKey() string {
 	}
 	cfg, _ := Load()
 	return strings.TrimSpace(cfg.OpenAIAPIKey)
-}
-
-// ResolveGBrainURL resolves the remote gbrain MCP endpoint URL.
-// When set (alongside ResolveGBrainToken), wuphf connects to gbrain
-// over HTTP MCP instead of shelling out to a local gbrain binary.
-func ResolveGBrainURL() string {
-	return strings.TrimSpace(os.Getenv("GBRAIN_URL"))
-}
-
-// ResolveGBrainToken resolves the bearer token for the remote gbrain
-// MCP endpoint. Create one on the host with: gbrain auth create "wuphf".
-func ResolveGBrainToken() string {
-	return strings.TrimSpace(os.Getenv("GBRAIN_TOKEN"))
 }
 
 // ResolveMinimaxAPIKey resolves the Minimax API key.

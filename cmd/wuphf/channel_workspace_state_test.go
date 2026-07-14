@@ -29,7 +29,7 @@ func TestBuildOfficeIntroLinesUsesWorkspaceState(t *testing.T) {
 	if !strings.Contains(plain, "Local-only runtime") {
 		t.Fatalf("expected local-only readiness card, got %q", plain)
 	}
-	if !strings.Contains(plain, "Restart without --no-nex or select --memory-backend gbrain when you want external context.") {
+	if !strings.Contains(plain, "Restart without --no-nex or select --memory-backend nex when you want external context.") {
 		t.Fatalf("expected switcher guidance, got %q", plain)
 	}
 }

@@ -15,7 +15,7 @@ import (
 
 // TestNotebookToolsRegisteredOnlyInMarkdownBackend locks in the gate: the 5
 // notebook_* tools appear iff WUPHF_MEMORY_BACKEND=markdown. Other backends
-// (nex, gbrain, none) must not expose them — matches wiki parity.
+// (nex, none) must not expose them — matches wiki parity.
 func TestNotebookToolsRegisteredOnlyInMarkdownBackend(t *testing.T) {
 	notebookTools := []string{
 		"notebook_write",
@@ -35,7 +35,6 @@ func TestNotebookToolsRegisteredOnlyInMarkdownBackend(t *testing.T) {
 	}{
 		{"markdown registers notebook tools", "markdown", true},
 		{"nex excludes notebook tools", "nex", false},
-		{"gbrain excludes notebook tools", "gbrain", false},
 		{"none excludes notebook tools", "none", false},
 	}
 	for _, tc := range cases {

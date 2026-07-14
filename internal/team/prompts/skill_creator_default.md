@@ -2,7 +2,7 @@ You are deciding whether a wiki article should become a reusable agent-callable 
 
 Default to `{"is_skill": false}`. Skills are infrastructure for the team. Bad skills create noise that future agents will trip over. Be conservative.
 
-# The bar (gbrain "skillify" gates — ALL three must hold)
+# The bar ("skillify" gates — ALL three must hold)
 
 1. **Repetition.** A future agent will invoke this 2+ times. One-off work, single incidents, person profiles, status updates, and FAQs are NOT skills.
 2. **Logic depth.** The procedure has substance — roughly 20+ lines of distinct steps, decisions, or conditions. Trivial helpers stay as prose.

@@ -91,7 +91,7 @@ if I say yes. If I am not logged in, just open https://wuphf.team.
 
 | Flag | What it does |
 |------|-------------|
-| `--memory-backend <name>` | Override the built-in markdown wiki (`nex`, `gbrain`, `none`) — legacy installs only |
+| `--memory-backend <name>` | Override the built-in markdown wiki (`nex`, `none`) — legacy installs only |
 | `--no-nex` | Skip the Nex backend (no context graph, no Nex-managed integrations) |
 | `--legacy-tui` | Use the legacy tmux TUI instead of the web UI |
 | `--no-open` | Don't auto-open the browser |
@@ -140,17 +140,16 @@ The wiki is not just a markdown folder. It is a living knowledge graph: typed fa
 
 **Onboarding seeds the wiki for you.** The wizard optionally scans your website and any files you point it at, then writes a starter set of company-context articles (about, owner, products) before the first agent turn fires. Your team starts already knowing who you are and what you ship.
 
-**Legacy backends.** Existing installs on Nex or GBrain keep working — backend selection is sticky in `config.json` and there is no forced migration. The CLI flag stays available for power users and for moving off legacy backends:
+**Legacy backends.** Existing installs on Nex keep working — backend selection is sticky in `config.json` and there is no forced migration. The CLI flag stays available for power users and for moving off the legacy backend:
 
 ```bash
 wuphf --memory-backend nex      # hosted Nex graph + WUPHF-managed integrations
-wuphf --memory-backend gbrain   # local Postgres-backed graph
 wuphf --memory-backend none     # no shared wiki; notebooks still work
 ```
 
 The web wizard no longer surfaces this as a choice. Markdown is the default and the only path for fresh installs.
 
-**Internal naming (for code spelunkers):** the notebook is `private` memory, the wiki is `shared` memory. On the built-in markdown backend the MCP tools are `notebook_write | notebook_read | notebook_list | notebook_search | notebook_promote | team_wiki_read | team_wiki_search | team_wiki_list | team_wiki_write | wuphf_wiki_lookup | run_lint | resolve_contradiction`. On `nex`/`gbrain` the MCP tools are the legacy `team_memory_query | team_memory_write | team_memory_promote`. The two tool sets never coexist on one server instance — backend selection flips the surface.
+**Internal naming (for code spelunkers):** the notebook is `private` memory, the wiki is `shared` memory. On the built-in markdown backend the MCP tools are `notebook_write | notebook_read | notebook_list | notebook_search | notebook_promote | team_wiki_read | team_wiki_search | team_wiki_list | team_wiki_write | wuphf_wiki_lookup | run_lint | resolve_contradiction`. On `nex` the MCP tools are the legacy `team_memory_query | team_memory_write | team_memory_promote`. The two tool sets never coexist on one server instance — backend selection flips the surface.
 
 ## Other Commands
 

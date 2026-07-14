@@ -86,15 +86,6 @@ func (l *Launcher) buildMCPServerMap() (map[string]any, error) {
 			env["NEX_API_KEY"] = apiKey
 			office["env"] = env
 		}
-	case config.MemoryBackendGBrain:
-		env, _ := office["env"].(map[string]string)
-		if env == nil {
-			env = map[string]string{}
-		}
-		for key, value := range gbrainMCPEnv() {
-			env[key] = value
-		}
-		office["env"] = env
 	}
 
 	if memoryServer, err := resolvedMemoryMCPServer(); err != nil {

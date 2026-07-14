@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -36,7 +37,7 @@ func TestRoundtrip(t *testing.T) {
 	withTempConfig(t, func(_ string) {
 		in := Config{
 			APIKey:             "test-key",
-			MemoryBackend:      MemoryBackendGBrain,
+			MemoryBackend:      MemoryBackendMarkdown,
 			Email:              "user@example.com",
 			WorkspaceID:        "ws-123",
 			WorkspaceSlug:      "my-ws",
@@ -177,12 +178,54 @@ func TestResolveMemoryBackendDefaultsToMarkdownWhenNoNex(t *testing.T) {
 	})
 }
 
-func TestResolveMemoryBackendAllowsGBrainUnderNoNex(t *testing.T) {
+func TestResolveMemoryBackendRejectsGBrainFlag(t *testing.T) {
+	// AC3: --memory-backend gbrain (simulated via the flag/env path) no
+	// longer normalizes to a supported backend. NormalizeMemoryBackend
+	// returns "" for gbrain, so the resolver falls through to the default
+	// rather than selecting gbrain.
 	withTempConfig(t, func(_ string) {
-		t.Setenv("WUPHF_NO_NEX", "1")
-		t.Setenv("WUPHF_MEMORY_BACKEND", MemoryBackendGBrain)
-		if got := ResolveMemoryBackend(""); got != MemoryBackendGBrain {
-			t.Fatalf("expected explicit gbrain to survive no-nex, got %q", got)
+		t.Setenv("WUPHF_NO_NEX", "")
+		t.Setenv("WUPHF_MEMORY_BACKEND", "")
+		if got := NormalizeMemoryBackend("gbrain"); got != "" {
+			t.Fatalf("expected gbrain to normalize to empty (rejected), got %q", got)
+		}
+		// The flag/env path never sees gbrain as a selected backend; it
+		// resolves to the markdown default rather than gbrain.
+		if got := ResolveMemoryBackend("gbrain"); got != MemoryBackendMarkdown {
+			t.Fatalf("expected gbrain flag to fall back to markdown, got %q", got)
+		}
+	})
+}
+
+func TestResolveMemoryBackendGBrainConfigFallsBackToMarkdownWithWarning(t *testing.T) {
+	// AC4 + Option B: a saved memory_backend: "gbrain" does not crash. It
+	// resolves to markdown and emits one stderr warning line per launch.
+	withTempConfig(t, func(_ string) {
+		t.Setenv("WUPHF_NO_NEX", "")
+		t.Setenv("WUPHF_MEMORY_BACKEND", "")
+		// Seed the config file with the legacy gbrain value.
+		if err := Save(Config{MemoryBackend: "gbrain"}); err != nil {
+			t.Fatalf("Save failed: %v", err)
+		}
+		// Capture stderr to assert the warning fires exactly once.
+		origStderr := os.Stderr
+		r, w, err := os.Pipe()
+		if err != nil {
+			t.Fatalf("pipe: %v", err)
+		}
+		os.Stderr = w
+		defer func() { os.Stderr = origStderr }()
+
+		got := ResolveMemoryBackend("")
+		_ = w.Close()
+		out, _ := io.ReadAll(r)
+
+		if got != MemoryBackendMarkdown {
+			t.Fatalf("expected legacy gbrain config to resolve to markdown, got %q", got)
+		}
+		warning := `note: memory backend "gbrain" is no longer supported; using "markdown"`
+		if !strings.Contains(string(out), warning) {
+			t.Fatalf("expected stderr warning %q, got %q", warning, string(out))
 		}
 	})
 }

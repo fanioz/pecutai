@@ -1,16 +1,16 @@
 // Package migration ports team knowledge out of legacy memory backends
-// (Nex, GBrain) and into the WUPHF markdown wiki at ~/.wuphf/wiki/team/.
+// (Nex) and into the WUPHF markdown wiki at ~/.wuphf/wiki/team/.
 //
 // Why this exists
 // ===============
 //
-// Existing Nex or GBrain installs store their team knowledge in those legacy
-// backends. Moving to WUPHF's markdown wiki without a migration path means
-// walking away from that prior investment. This package closes the gap:
-// `wuphf memory migrate --from {nex,gbrain}` walks the source, converts each
-// record to a standard wiki article, and commits it via the existing wiki
-// worker so the index regenerates and SSE events fire the same way they
-// would for any other write.
+// Existing Nex installs store their team knowledge in that legacy backend.
+// Moving to WUPHF's markdown wiki without a migration path means walking
+// away from that prior investment. This package closes the gap:
+// `wuphf memory migrate --from nex` walks the source, converts each record
+// to a standard wiki article, and commits it via the existing wiki worker
+// so the index regenerates and SSE events fire the same way they would for
+// any other write.
 //
 // Design notes
 // ============
@@ -85,8 +85,8 @@ type MigrationRecord struct {
 	// Content is the body bytes written to disk. Front-matter optional —
 	// the writer renders its own standard header regardless.
 	Content string
-	// Source identifies the originating backend ("nex" or "gbrain"). Used
-	// to disambiguate filenames on dedup collisions.
+	// Source identifies the originating backend ("nex"). Used to
+	// disambiguate filenames on dedup collisions.
 	Source string
 	// Timestamp is when the record was last updated upstream. Zero values
 	// are tolerated (the writer stamps time.Now() into the rendered article).

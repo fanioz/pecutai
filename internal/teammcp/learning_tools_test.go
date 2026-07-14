@@ -13,7 +13,6 @@ func TestLearningToolsRegisteredOnlyInMarkdownBackend(t *testing.T) {
 	}{
 		{"markdown", true},
 		{"nex", false},
-		{"gbrain", false},
 		{"none", false},
 	}
 	for _, tc := range cases {

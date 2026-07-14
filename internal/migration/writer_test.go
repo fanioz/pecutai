@@ -187,7 +187,7 @@ func TestMigratorRenamesOnCollision(t *testing.T) {
 
 	w.seedExisting(t, "team/people/nazz.md", "# Nazz\n\nSomething else entirely.\n")
 
-	rec := MigrationRecord{Kind: KindPeople, Slug: "nazz", Title: "Nazz", Content: "founder", Source: "gbrain"}
+	rec := MigrationRecord{Kind: KindPeople, Slug: "nazz", Title: "Nazz", Content: "founder", Source: "nex"}
 	summary, err := m.Run(context.Background(), &fixedAdapter{records: []MigrationRecord{rec}}, RunOptions{})
 	if err != nil {
 		t.Fatalf("run: %v", err)
@@ -202,7 +202,7 @@ func TestMigratorRenamesOnCollision(t *testing.T) {
 		t.Fatalf("want 1 enqueue, got %d", len(w.calls))
 	}
 	got := w.calls[0].Path
-	if !strings.HasPrefix(got, "team/people/nazz-from-gbrain-") || !strings.HasSuffix(got, ".md") {
+	if !strings.HasPrefix(got, "team/people/nazz-from-nex-") || !strings.HasSuffix(got, ".md") {
 		t.Errorf("collision path=%q, want suffixed rename", got)
 	}
 }
@@ -251,7 +251,7 @@ func TestMigratorIntegrationWithWikiWorker(t *testing.T) {
 
 	adapter := &fixedAdapter{records: []MigrationRecord{
 		{Kind: KindPeople, Slug: "nazz", Title: "Nazz", Content: "Founder.", Source: "nex"},
-		{Kind: KindCompanies, Slug: "hubspot", Title: "HubSpot", Content: "Prior life.", Source: "gbrain"},
+		{Kind: KindCompanies, Slug: "hubspot", Title: "HubSpot", Content: "Prior life.", Source: "nex"},
 	}}
 	summary, err := m.Run(ctx, adapter, RunOptions{})
 	if err != nil {

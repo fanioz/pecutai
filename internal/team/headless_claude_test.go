@@ -38,6 +38,8 @@ func minimalLauncher(opusCEO bool) *Launcher {
 // TestHeadlessClaudeModel_SonnetByDefault verifies that every agent, including
 // the lead, uses the Sonnet model when opusCEO is false.
 func TestHeadlessClaudeModel_SonnetByDefault(t *testing.T) {
+	t.Setenv("WUPHF_CLAUDE_MODEL", "")
+	t.Setenv("CLAUDE_MODEL", "")
 	l := minimalLauncher(false)
 	for _, slug := range []string{"ceo", "eng", "pm"} {
 		t.Run(slug, func(t *testing.T) {
@@ -51,6 +53,8 @@ func TestHeadlessClaudeModel_SonnetByDefault(t *testing.T) {
 // TestHeadlessClaudeModel_OpusForLeadOnly verifies that only the lead (CEO)
 // gets upgraded to Opus when opusCEO is true; non-lead agents stay on Sonnet.
 func TestHeadlessClaudeModel_OpusForLeadOnly(t *testing.T) {
+	t.Setenv("WUPHF_CLAUDE_MODEL", "")
+	t.Setenv("CLAUDE_MODEL", "")
 	l := minimalLauncher(true)
 	tests := []struct {
 		slug string
@@ -73,6 +77,8 @@ func TestHeadlessClaudeModel_OpusForLeadOnly(t *testing.T) {
 // pack defines a non-"ceo" lead slug. No broker is constructed, so
 // officeMembersSnapshot() falls through to the pack definition.
 func TestHeadlessClaudeModel_CustomLeadSlug(t *testing.T) {
+	t.Setenv("WUPHF_CLAUDE_MODEL", "")
+	t.Setenv("CLAUDE_MODEL", "")
 	l := &Launcher{
 		pack: &agent.PackDefinition{
 			LeadSlug: "captain",
@@ -122,6 +128,8 @@ func TestHeadlessClaudeModel_CustomLeadSlug(t *testing.T) {
 //     default. The picker writes empty when the user selects "Use runtime
 //     default" and the default must take effect.
 func TestHeadlessClaudeModel_PerAgentBindingOverride(t *testing.T) {
+	t.Setenv("WUPHF_CLAUDE_MODEL", "")
+	t.Setenv("CLAUDE_MODEL", "")
 	makeBoundLauncher := func(t *testing.T, slug string, binding provider.ProviderBinding) *Launcher {
 		t.Helper()
 		b := newTestBroker(t)
@@ -171,6 +179,32 @@ func TestHeadlessClaudeModel_PerAgentBindingOverride(t *testing.T) {
 					tc.slug, tc.binding, got, tc.want)
 			}
 		})
+	}
+}
+
+// TestHeadlessClaudeModel_EnvOverride verifies that WUPHF_CLAUDE_MODEL (or
+// CLAUDE_MODEL) overrides the hardcoded default. This lets operators point
+// wuphf at an LLM proxy without code changes.
+func TestHeadlessClaudeModel_EnvOverride(t *testing.T) {
+	t.Setenv("WUPHF_CLAUDE_MODEL", "chain:main")
+	l := minimalLauncher(true)
+	for _, slug := range []string{"ceo", "eng", "pm"} {
+		t.Run(slug, func(t *testing.T) {
+			if got := l.headlessClaudeModel(context.Background(), slug); got != "chain:main" {
+				t.Fatalf("slug=%q: want chain:main (env override), got %q", slug, got)
+			}
+		})
+	}
+}
+
+// TestHeadlessClaudeModel_EnvOverrideClaudeModelVar verifies the CLAUDE_MODEL
+// fallback env var works when WUPHF_CLAUDE_MODEL is unset.
+func TestHeadlessClaudeModel_EnvOverrideClaudeModelVar(t *testing.T) {
+	t.Setenv("WUPHF_CLAUDE_MODEL", "")
+	t.Setenv("CLAUDE_MODEL", "anthropic/claude-sonnet-4-6")
+	l := minimalLauncher(false)
+	if got := l.headlessClaudeModel(context.Background(), "eng"); got != "anthropic/claude-sonnet-4-6" {
+		t.Fatalf("want anthropic/claude-sonnet-4-6 (CLAUDE_MODEL override), got %q", got)
 	}
 }
 
@@ -310,32 +344,6 @@ func TestBuildMCPServerMap_NexCredentialsFlowThroughOffice(t *testing.T) {
 	}
 	if env["WUPHF_API_KEY"] != "test-key-12345" || env["NEX_API_KEY"] != "test-key-12345" {
 		t.Fatalf("expected Nex credentials on office server, got %#v", env)
-	}
-}
-
-func TestBuildMCPServerMap_GBrainCredentialsFlowThroughOffice(t *testing.T) {
-	t.Setenv("WUPHF_MEMORY_BACKEND", "gbrain")
-	t.Setenv("WUPHF_OPENAI_API_KEY", "openai-test-key")
-
-	l := minimalLauncher(false)
-	servers, err := l.buildMCPServerMap()
-	if err != nil {
-		t.Fatalf("buildMCPServerMap: %v", err)
-	}
-	entry, ok := servers["wuphf-office"]
-	if !ok {
-		t.Fatalf("'wuphf-office' server must be present when GBrain is selected, got servers: %v", mapKeys(servers))
-	}
-	server, ok := entry.(map[string]any)
-	if !ok {
-		t.Fatalf("expected wuphf-office entry to be an object, got %T", entry)
-	}
-	env, ok := server["env"].(map[string]string)
-	if !ok {
-		t.Fatalf("expected office env map, got %#v", server["env"])
-	}
-	if env["OPENAI_API_KEY"] != "openai-test-key" {
-		t.Fatalf("expected OPENAI_API_KEY to flow through office env, got %#v", env)
 	}
 }
 

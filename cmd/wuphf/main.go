@@ -82,7 +82,6 @@ func printSubcommandHelp(sub string) {
 		fmt.Fprintln(os.Stderr, "")
 		fmt.Fprintln(os.Stderr, "Usage:")
 		fmt.Fprintln(os.Stderr, "  wuphf memory migrate --from nex           Import Nex memory into ~/.wuphf/wiki/team/")
-		fmt.Fprintln(os.Stderr, "  wuphf memory migrate --from gbrain        Import GBrain pages into the wiki")
 		fmt.Fprintln(os.Stderr, "  wuphf memory migrate --from <backend> --dry-run  Preview without committing")
 		fmt.Fprintln(os.Stderr, "  wuphf memory migrate --from <backend> --limit N  Cap the number imported")
 	case "log":
@@ -245,7 +244,7 @@ func main() {
 	webPort := flag.Int("web-port", 7891, "Port for the web UI (default 7891)")
 	brokerPort := flag.Int("broker-port", 0, "Port for the local broker (default 7890)")
 	noNex := flag.Bool("no-nex", true, "Disable Nex completely for this run (default: true; pass --no-nex=false to enable Nex)")
-	memoryBackend := flag.String("memory-backend", "", "Memory backend for organizational context (nex, gbrain, none)")
+	memoryBackend := flag.String("memory-backend", "", "Memory backend for organizational context (nex, none)")
 	opusCEO := flag.Bool("opus-ceo", false, "Upgrade CEO agent from Sonnet to Opus")
 	collabMode := flag.Bool("collab", false, "Start in collaborative mode (all agents see all messages)")
 	noOpen := flag.Bool("no-open", false, "Don't open browser automatically on launch")
@@ -268,7 +267,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "  %s import --from legacy  Import from a running external orchestrator (auto-detect)\n", appName)
 		fmt.Fprintf(os.Stderr, "  %s log          Show what your agents actually did (task receipts)\n", appName)
 		fmt.Fprintf(os.Stderr, "  %s share        Invite one team member over a private network\n", appName)
-		fmt.Fprintf(os.Stderr, "  %s memory migrate --from {nex,gbrain}  Port legacy memory into the team wiki\n", appName)
+		fmt.Fprintf(os.Stderr, "  %s memory migrate --from {nex}  Port legacy memory into the team wiki\n", appName)
 		fmt.Fprintf(os.Stderr, "  %s workspace ...  Manage multiple isolated WUPHF workspaces\n", appName)
 		fmt.Fprintf(os.Stderr, "  %s skills publish <slug-or-path> --to <hub>    Publish a team skill to a public hub\n", appName)
 		fmt.Fprintf(os.Stderr, "  %s skills install <name> --from <hub>  Pull a public skill into the team wiki\n", appName)
@@ -311,7 +310,7 @@ func main() {
 	if backend := strings.TrimSpace(*memoryBackend); backend != "" {
 		normalized := config.NormalizeMemoryBackend(backend)
 		if normalized == "" {
-			fmt.Fprintf(os.Stderr, "error: unsupported memory backend %q (expected nex, gbrain, or none)\n", backend)
+			fmt.Fprintf(os.Stderr, "error: unsupported memory backend %q (expected nex or none)\n", backend)
 			os.Exit(1)
 		}
 		_ = os.Setenv("WUPHF_MEMORY_BACKEND", normalized)

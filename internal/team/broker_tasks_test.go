@@ -3668,7 +3668,7 @@ func TestBrokerTaskMemoryWorkflowAcceptsContextToolEventShape(t *testing.T) {
 		"citations": []map[string]any{
 			{
 				"corpus":   "shared",
-				"backend":  "gbrain",
+				"backend":  "nex",
 				"source":   "compiled_truth",
 				"slug":     "process/passport-renewal",
 				"page_id":  42,
@@ -3702,6 +3702,6 @@ func TestBrokerTaskMemoryWorkflowAcceptsContextToolEventShape(t *testing.T) {
 	}
 	citation := wf.Citations[0]
 	if citation.PageID != "42" || citation.ChunkID != "7" || citation.SourceID != "process/passport-renewal" {
-		t.Fatalf("expected normalized gbrain citation ids, got %+v", citation)
+		t.Fatalf("expected normalized nex citation ids, got %+v", citation)
 	}
 }

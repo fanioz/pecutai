@@ -37,9 +37,6 @@ var allowedFiles = map[string]string{
 	// Opencode — real HOME needed for base config read (auth.json) + HOME env passthrough.
 	"internal/team/headless_opencode.go": "opencode HOME env passthrough + base config path read from real user HOME",
 
-	// gbrain — user-global MCP subprocess, real HOME for subprocess auth.
-	"internal/team/memory_backend.go": "gbrainMCPEnv + gbrainMCPEnvVars — gbrain is user-global",
-
 	// Composio sign-in — the composio CLI writes its login session to the
 	// real user HOME (~/.composio/user_data.json); the broker only READS it
 	// to detect login state. Same user-global-auth class as codex/opencode.
@@ -94,7 +91,7 @@ func repoRoot(t *testing.T) string {
 }
 
 // TestPhase0HomeDirAudit greps cmd/ and internal/ for os.UserHomeDir() and
-// os.Getenv("HOME") calls (excluding test files, provider/, gbrain/,
+// os.Getenv("HOME") calls (excluding test files, provider/,
 // action/one) and asserts every hit is in the allowedFiles map.
 //
 // grep-tag: PHASE0_HOMEDIR_AUDIT
@@ -143,7 +140,6 @@ func TestPhase0HomeDirAudit(t *testing.T) {
 		// Match either the package directory (e.g. internal/action/one/foo.go)
 		// or a single sibling file (e.g. internal/action/one.go).
 		if strings.Contains(hitFile, "/provider/") ||
-			strings.Contains(hitFile, "/gbrain/") ||
 			strings.Contains(hitFile, "/action/one/") ||
 			strings.HasSuffix(hitFile, "/action/one.go") {
 			continue

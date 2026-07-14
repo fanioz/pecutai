@@ -43,7 +43,7 @@ Supported platforms: macOS, Linux, and Windows 10+ on x64 or arm64. The native b
 
 | Flag | What it does |
 |------|-------------|
-| `--memory-backend <name>` | Pick the organizational memory backend (`markdown`, `nex`, `gbrain`, `none`) |
+| `--memory-backend <name>` | Pick the organizational memory backend (`markdown`, `nex`, `none`) |
 | `--no-nex` | Skip the Nex backend (no context graph, no Nex-managed integrations) |
 | `--tui` | Use the tmux TUI instead of the web UI |
 | `--no-open` | Don't auto-open the browser |
@@ -56,19 +56,17 @@ Supported platforms: macOS, Linux, and Windows 10+ on x64 or arm64. The native b
 
 ## Memory: Notebooks and the Wiki
 
-Every agent gets its own **notebook**. The team shares a **wiki**. New installs get the wiki as a local git repo of markdown articles. Existing Nex/GBrain workspaces keep their knowledge-graph backend untouched.
+Every agent gets its own **notebook**. The team shares a **wiki**. New installs get the wiki as a local git repo of markdown articles. Existing Nex workspaces keep their knowledge-graph backend untouched.
 
 **Backends for the wiki:**
 
 - `markdown` (the "team wiki" tile in onboarding) is the default for new installs since v0.0.6. It stores typed facts, entity briefs, cited lookup answers, and lintable wiki articles in a local git repo at `~/.wuphf/wiki/`. No API key required.
 - `nex` was the previous default. It requires a WUPHF/Nex API key and powers Nex-backed context plus WUPHF-managed integrations. Existing users stay on `nex` via persisted config.
-- `gbrain` mounts `gbrain serve` as the wiki backend.
 - `none` disables the shared wiki entirely. Notebooks still work locally.
 
 ```bash
 wuphf --memory-backend markdown
 wuphf --memory-backend nex
-wuphf --memory-backend gbrain
 wuphf --memory-backend none
 ```
 
@@ -125,7 +123,7 @@ Two action providers ship by default — pick whichever fits your style.
 | Live visibility | Stdout streaming |
 | Mid-task steering | DM any agent, no restart |
 | Runtimes | Mix Claude Code, Codex, Hermes Agent, and OpenClaw in one channel |
-| Memory | Per-agent notebook + shared workspace wiki (knowledge graphs on GBrain or Nex) |
+| Memory | Per-agent notebook + shared workspace wiki (knowledge graph on Nex, or git-native markdown by default) |
 | Price | Free and open source (MIT, self-hosted, your API keys) |
 
 ## Benchmark

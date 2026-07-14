@@ -5,7 +5,7 @@ package teammcp
 //
 // The three tools added in Slice 1 (wuphf_wiki_lookup, run_lint,
 // resolve_contradiction) MUST be registered only when
-// WUPHF_MEMORY_BACKEND=markdown. Any other backend (nex, gbrain, none) must
+// WUPHF_MEMORY_BACKEND=markdown. Any other backend (nex, none) must
 // not expose them — they depend on the markdown substrate to exist.
 
 import (
@@ -32,15 +32,6 @@ func TestConfigureServerTools_Slice1Tools_MarkdownOnly(t *testing.T) {
 		{
 			name:    "nex_hides_slice1_tools",
 			backend: "nex",
-			mustNotHave: []string{
-				"wuphf_wiki_lookup",
-				"run_lint",
-				"resolve_contradiction",
-			},
-		},
-		{
-			name:    "gbrain_hides_slice1_tools",
-			backend: "gbrain",
 			mustNotHave: []string{
 				"wuphf_wiki_lookup",
 				"run_lint",

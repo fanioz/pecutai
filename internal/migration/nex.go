@@ -30,6 +30,10 @@ import (
 	"github.com/nex-crm/wuphf/internal/api"
 )
 
+// NexNow is the fallback timestamp when a record has none of its own.
+// Exposed so callers and tests use the same clock source.
+func NexNow() time.Time { return time.Now().UTC() }
+
 // DefaultNexTypes is the seed list of Nex object types the adapter walks
 // when no override is provided. Ordered to put high-signal record kinds
 // first so --limit stops on the most useful content.

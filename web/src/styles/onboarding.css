@@ -1706,7 +1706,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Wizard parity — Nex signup, conditional GBrain keys, readiness
+   Wizard parity — Nex signup, conditional backend keys, readiness
    ═══════════════════════════════════════════════════════════════ */
 
 /* ─── Inline "don't have a Nex account?" trigger on Identity step ─── */
@@ -1743,7 +1743,7 @@
   margin: 0;
 }
 
-/* ─── Conditional GBrain keys (inside Setup step's memory panel) ─── */
+/* ─── Conditional backend keys (inside Setup step's memory panel) ─── */
 .wiz-backend-keys {
   margin-top: 16px;
   padding-top: 16px;

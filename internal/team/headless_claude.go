@@ -321,11 +321,14 @@ func (l *Launcher) headlessClaudeModel(ctx context.Context, slug string) string 
 			}
 		}
 	}
-	// Anthropic family default (verified 2026-05-29). The lead falls back
-	// to the top opus tier when --opus-ceo is on; everyone else gets the
-	// best-balanced sonnet. claude-opus-4-6 (the previous default here)
-	// is still available but no longer the recommended pick — see
-	// https://platform.claude.com/docs/en/docs/about-claude/models.
+	// Env override: WUPHF_CLAUDE_MODEL / CLAUDE_MODEL. Lets operators point
+	// wuphf at an LLM proxy (e.g. chain:main, anthropic/claude-sonnet-4-6)
+	// without code changes. Applies to all agents regardless of tier.
+	if m := config.ResolveClaudeModel(); m != "" {
+		return m
+	}
+	// Anthropic family default. Raw model names for direct Anthropic API
+	// access (no proxy).
 	if l.opusCEO && slug == l.targeter().LeadSlug() {
 		return "claude-opus-4-8"
 	}

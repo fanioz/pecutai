@@ -1222,7 +1222,7 @@ export type GatewayKind = "openclaw" | "openclaw-http" | "hermes-agent";
 // prefer LLMRuntimeKind / GatewayKind and only widen to LLMProvider at the
 // raw-wire boundary.
 export type LLMProvider = LLMRuntimeKind | GatewayKind;
-export type MemoryBackend = "markdown" | "nex" | "gbrain" | "none";
+export type MemoryBackend = "markdown" | "nex" | "none";
 export type ActionProvider = "auto" | "one" | "composio" | "";
 
 export interface ProviderEndpoint {

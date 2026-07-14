@@ -145,7 +145,7 @@ func TestRequestHasBrokerAuth_AcceptsBearerAndQueryToken(t *testing.T) {
 func TestBrokerAuthRejectsUnauthenticated(t *testing.T) {
 	b := newTestBroker(t)
 	b.runtimeProvider = "codex"
-	t.Setenv("WUPHF_MEMORY_BACKEND", config.MemoryBackendGBrain)
+	t.Setenv("WUPHF_MEMORY_BACKEND", config.MemoryBackendNex)
 	t.Setenv("WUPHF_OPENAI_API_KEY", "sk-test-openai")
 	if err := b.StartOnPort(0); err != nil {
 		t.Fatalf("failed to start broker: %v", err)
@@ -189,14 +189,14 @@ func TestBrokerAuthRejectsUnauthenticated(t *testing.T) {
 	if health.Provider != "codex" {
 		t.Fatalf("expected health to report provider codex, got %q", health.Provider)
 	}
-	if health.MemoryBackend != config.MemoryBackendGBrain {
-		t.Fatalf("expected health to report selected memory backend gbrain, got %q", health.MemoryBackend)
+	if health.MemoryBackend != config.MemoryBackendNex {
+		t.Fatalf("expected health to report selected memory backend nex, got %q", health.MemoryBackend)
 	}
 	if health.MemoryBackendActive != config.MemoryBackendNone {
-		t.Fatalf("expected inactive gbrain backend without CLI installed, got %q", health.MemoryBackendActive)
+		t.Fatalf("expected inactive nex backend without CLI installed, got %q", health.MemoryBackendActive)
 	}
 	if health.NexConnected {
-		t.Fatal("expected nex_connected=false when gbrain is selected")
+		t.Fatal("expected nex_connected=false when nex is selected")
 	}
 	wantBuild := buildinfo.Current()
 	if health.Build.Version != wantBuild.Version {
