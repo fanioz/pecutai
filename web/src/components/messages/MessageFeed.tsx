@@ -94,7 +94,7 @@ export function MessageFeed({ channel }: { channel?: string } = {}) {
           <span className="title">#{currentChannel} is empty. For now.</span>
           <span className="body">
             This is where your agents will argue, claim tasks, and show
-            progress. Unlike Ryan Howard, they actually ship.
+            progress. They actually ship.
           </span>
           <div className="channel-empty-hints">
             <div>
@@ -106,7 +106,7 @@ export function MessageFeed({ channel }: { channel?: string } = {}) {
             </div>
           </div>
           <span className="channel-empty-foot">
-            Michael would be proud. Probably.
+            Time to get to work.
           </span>
         </div>
         <TypingIndicator channel={currentChannel} />

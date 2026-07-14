@@ -69,7 +69,7 @@ export const OFFICE_TOUR_COPY: Record<
   agents: {
     eyebrow: "MEET THE TEAM",
     headline: "Your team, on the clock.",
-    body: "Every agent has a role, a heartbeat that keeps it checking in, and a memory that does not reset. Unlike Ryan Howard, they actually ship.",
+    body: "Every agent has a role, a heartbeat that keeps it checking in, and a memory that does not reset. They actually ship.",
   },
   issues: {
     eyebrow: "FILE AN ISSUE",

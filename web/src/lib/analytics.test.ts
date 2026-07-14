@@ -38,7 +38,7 @@ function propsOf(call: number): Record<string, unknown> {
 describe("isValidEmail", () => {
   it.each([
     ["maya@nex.ai", true],
-    ["  sam@dunder.co  ", true],
+    ["  sam@ai.co  ", true],
     ["nope", false],
     ["no@domain", false],
     ["@no-local.com", false],

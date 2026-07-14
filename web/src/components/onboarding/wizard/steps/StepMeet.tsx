@@ -49,7 +49,7 @@ const COPY = ONBOARDING_WIZARD_COPY.meet;
  * still type over it. These are illustrative starter names, not headline copy,
  * so they live with the step rather than in the shared copy module.
  */
-const OFFICE_NAME_EXAMPLES = ["Acme RevOps", "Northwind Sales", "Dunder HQ"];
+const OFFICE_NAME_EXAMPLES = ["Acme RevOps", "Northwind Sales", "Global AI"];
 
 export function StepMeet({
   active,
