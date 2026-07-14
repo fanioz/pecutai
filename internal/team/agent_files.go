@@ -398,7 +398,7 @@ func renderAgentIdentity(member officeMember) string {
 	fmt.Fprintf(&b, "- Role: %s\n", firstNonEmpty(member.Role, member.Slug))
 	expertise := member.Expertise
 	if len(expertise) == 0 {
-		expertise = inferOfficeExpertise(member.Slug, member.Role)
+		expertise = inferTeamExpertise(member.Slug, member.Role)
 	}
 	if len(expertise) > 0 {
 		fmt.Fprintf(&b, "- Expertise: %s\n", strings.Join(expertise, ", "))

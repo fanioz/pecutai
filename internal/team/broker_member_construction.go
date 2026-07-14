@@ -12,7 +12,7 @@ import (
 //     lives once)
 //   - applyOfficeMemberDefaults: fills Name / Role / Expertise /
 //     Personality when the input shape is partial
-//   - inferOfficeExpertise / inferOfficePersonality: text-based defaults
+//   - inferTeamExpertise / inferTeamPersonality: text-based defaults
 //     keyed off slug + role substrings (frontend, backend, ai/ml,
 //     marketing, sales, product, design)
 //
@@ -49,14 +49,14 @@ func applyOfficeMemberDefaults(member *officeMember) {
 		member.Role = member.Name
 	}
 	if len(member.Expertise) == 0 {
-		member.Expertise = inferOfficeExpertise(member.Slug, member.Role)
+		member.Expertise = inferTeamExpertise(member.Slug, member.Role)
 	}
 	if member.Personality == "" {
 		member.Personality = inferOfficePersonality(member.Slug, member.Role)
 	}
 }
 
-func inferOfficeExpertise(slug, role string) []string {
+func inferTeamExpertise(slug, role string) []string {
 	text := strings.ToLower(strings.TrimSpace(slug + " " + role))
 	switch {
 	case strings.Contains(text, "front"), strings.Contains(text, "ui"), strings.Contains(text, "design eng"):
@@ -78,7 +78,7 @@ func inferOfficeExpertise(slug, role string) []string {
 	}
 }
 
-func inferOfficePersonality(slug, role string) string {
+func inferTeamPersonality(slug, role string) string {
 	text := strings.ToLower(strings.TrimSpace(slug + " " + role))
 	switch {
 	case strings.Contains(text, "front"):

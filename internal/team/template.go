@@ -37,7 +37,7 @@ func (l *Launcher) GenerateMemberTemplateFromPrompt(request string) (generatedMe
 	}
 	systemPrompt := l.buildPrompt(l.targeter().LeadSlug()) + `
 
-You are designing a NEW office teammate template for WUPHF.
+You are designing a NEW team member template for WUPHF.
 Return exactly one JSON object and nothing else.
 Do not wrap it in markdown fences.
 Do not explain your reasoning.
@@ -56,7 +56,7 @@ Required schema:
 Constraints:
 - Never use slug "ceo".
 - Keep the teammate narrow and domain-specific.
-- Pick a role that complements the existing office rather than overlapping heavily.
+- Pick a role that complements the existing team rather than overlapping heavily.
 - If the prompt is vague, still make a crisp decision.
 - "provider" is the LLM runtime the agent should run on. Pick one of:
   claude-code, codex, opencode (cloud) or mlx-lm, ollama, exo (local).
@@ -69,7 +69,7 @@ Constraints:
 - The human will confirm provider and model in the next step. Your job is
   to suggest a sensible default, not to lock the choice.
 `
-	userPrompt := "Design a new office teammate from this request:\n\n" + request
+	userPrompt := "Design a new team member from this request:\n\n" + request
 	raw, err := provider.RunConfiguredOneShot(systemPrompt, userPrompt, l.cwd)
 	if err != nil {
 		return generatedMemberTemplate{}, err
@@ -97,10 +97,10 @@ func parseGeneratedMemberTemplate(raw string) (generatedMemberTemplate, error) {
 		tmpl.Role = tmpl.Name
 	}
 	if len(tmpl.Expertise) == 0 {
-		tmpl.Expertise = inferOfficeExpertise(tmpl.Slug, tmpl.Role)
+		tmpl.Expertise = inferTeamExpertise(tmpl.Slug, tmpl.Role)
 	}
 	if tmpl.Personality == "" {
-		tmpl.Personality = inferOfficePersonality(tmpl.Slug, tmpl.Role)
+		tmpl.Personality = inferTeamPersonality(tmpl.Slug, tmpl.Role)
 	}
 	// Sanitize provider/model: drop suggestions that name a gateway kind so
 	// the wizard never has to handle them. Per-agent gateway bindings are
@@ -117,7 +117,7 @@ func parseGeneratedMemberTemplate(raw string) (generatedMemberTemplate, error) {
 }
 
 // GenerateAgentFileFromContext authors a richer version of one prose
-// instruction file (SOUL / OPERATIONS, or the office USER.md) for human review.
+// instruction file (SOUL / OPERATIONS, or the team USER.md) for human review.
 // It NEVER commits — the caller hands the result to the editor so the human
 // approves it with a save. On any LLM failure it returns an error (the file
 // already exists, so there is nothing to half-initialize); the UI surfaces it.

@@ -45,36 +45,28 @@ rm internal/action/nex_client.go
 
 Then in `cmd/wuphf/main.go`: delete the `--no-nex` flag and the import blocks that reference `nex`. The `ResolveNoNex()` calls in `cmd/wuphf/channel.go` and `internal/config/config.go` can be deleted or replaced with a constant `true`.
 
-## 2. Strip the Office branding
+## 2. Customize the branding
 
-WUPHF uses *The Office* (US) references throughout the UI and copy. If you're shipping this to enterprise customers, a non-English market, or just don't share the taste, here's where it lives:
+WUPHF includes references to its origins throughout the UI and copy. If you're shipping this to enterprise customers, a non-English market, or just want your own brand identity, here's where it lives:
 
 | File | What to change |
 |---|---|
-| `README.md` | Ryan Howard quote, Michael Scott quotes, "The Name" section |
-| `web/index.html` | Any "WUPHF" branding in the office UI |
+| `README.md` | Project name references, quotes, history section |
+| `web/index.html` | Any project-specific branding in the UI |
 | `cmd/wuphf/channel.go` | Welcome messages, slash command copy |
-| `cmd/wuphf/channel_render.go` | Office-themed status lines |
-| `internal/team/template.go` | Agent prompt templates that reference Office tone |
+| `cmd/wuphf/channel_render.go` | Status line strings |
+| `internal/team/template.go` | Agent prompt templates with project-specific terminology |
 | `internal/teammcp/actions.go` | Action descriptions |
 
 A fast pass scoped to source files only:
 
 ```bash
-grep -rn "Ryan\|Michael\|Dunder\|Scranton\|WUPHF\.com" \
+grep -rn "WUPHF" \
   --include='*.go' --include='*.html' \
   ./cmd ./internal ./web ./mcp
 ```
 
-That will surface ~50 hits across 5 files:
-
-| File | Hits | What to change |
-|---|---|---|
-| `web/index.html` | 25 | Intro splash copy, channel header strings |
-| `cmd/wuphf/channel.go` | 18 | Slash-command help text (one joke per command) |
-| `cmd/wuphf/channel_render.go` | 3 | Status line strings |
-| `cmd/wuphf/main.go` | 2 | Startup notice strings |
-| `cmd/wuphf/channel_workspace_state.go` | 1 | Workspace state notice |
+That will surface project references across the codebase. Update these files to match your brand identity while maintaining the same functionality.
 
 Removing these strings doesn't affect command behavior — they're display copy only.
 
