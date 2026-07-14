@@ -172,40 +172,40 @@ var channelSlashCommands = []tui.SlashCommand{
 	{Name: "doctor", Description: "Check readiness and runtime health (system diagnostics)", Category: "setup"},
 	{Name: "integrate", Description: "Connect an integration (link external services)", Category: "setup"},
 	{Name: "connect", Description: "Bring Telegram, OpenClaw, or other integrations into the workspace", Category: "setup"},
-	{Name: "1o1", Description: "Direct 1:1 with an agent — Toby not invited", Category: "session"},
+	{Name: "1o1", Description: "Direct 1:1 with an agent — private focused session", Category: "session"},
 	{Name: "messages", Description: "Show the main feed — central message stream", Category: "navigate"},
 	{Name: "inbox", Description: "Show the selected agent inbox lane in 1:1 mode", Category: "navigate"},
 	{Name: "outbox", Description: "Show the selected agent outbox lane in 1:1 mode", Category: "navigate"},
-	{Name: "recover", Description: "Session recovery — Creed would call this 'continuity'", Category: "navigate"},
+	{Name: "recover", Description: "Session recovery — restore previous 'continuity'", Category: "navigate"},
 	{Name: "resume", Description: "Alias for /recover", Category: "navigate"},
 	{Name: "rewind", Description: "Catch up from here — not a full Threat Level Midnight", Category: "navigate"},
 	{Name: "search", Description: "Search channels, tasks, requests (find anything fast)", Category: "navigate"},
 	{Name: "insert", Description: "Insert a channel, task, request, or message reference", Category: "navigate"},
-	{Name: "switcher", Description: "Switch office/direct — faster than Dwight's fire drill", Category: "navigate"},
-	{Name: "tasks", Description: "Show active work — Dwight tracks these on paper too", Category: "navigate"},
+	{Name: "switcher", Description: "Switch workspace/direct — quick navigation", Category: "navigate"},
+	{Name: "tasks", Description: "Show active work — track current assignments", Category: "navigate"},
 	{Name: "switch", Description: "Switch to another channel", Category: "navigate"},
 	{Name: "channels", Description: "Browse and manage channels", Category: "navigate"},
 	{Name: "channel", Description: "Create or remove a channel", Category: "channels"},
-	{Name: "agents", Description: "Manage your team (no downsizing announcements)", Category: "people"},
+	{Name: "agents", Description: "Manage your team (add, remove, or modify team members)", Category: "people"},
 	{Name: "agent", Description: "Add, remove, enable, or disable a teammate", Category: "people"},
-	{Name: "agent prompt", Description: "New teammate from a prompt — Ryan calls this 'disruption'", Category: "people"},
+	{Name: "agent prompt", Description: "New teammate from a prompt — AI-assisted team creation", Category: "people"},
 	{Name: "task", Description: "Claim, release, or complete a task — ownership matters here", Category: "work"},
-	{Name: "policies", Description: "Signals, watchdogs, decisions — no beet farm required", Category: "navigate"},
-	{Name: "calendar", Description: "Office schedule — more reliable than Michael's personal calendar", Category: "navigate"},
+	{Name: "policies", Description: "Signals, watchdogs, decisions — automation rules", Category: "navigate"},
+	{Name: "calendar", Description: "Schedule — view team calendar and events", Category: "navigate"},
 	{Name: "queue", Description: "Alias for /calendar", Category: "navigate"},
-	{Name: "artifacts", Description: "Task logs, approvals, and workflow artifacts — the paper trail Dwight demands", Category: "navigate"},
-	{Name: "skills", Description: "Show available skills — everyone has a specialty, even Kevin", Category: "navigate"},
-	{Name: "skill", Description: "Create, invoke, or manage a skill — the office gets smarter over time", Category: "work"},
-	{Name: "reply", Description: "Reply in thread — threads keep context, unlike forwarded email chains", Category: "conversation"},
-	{Name: "threads", Description: "Browse threads — the antidote to 'per my last email'", Category: "conversation"},
-	{Name: "expand", Description: "Expand a collapsed thread — Michael never collapses anything", Category: "conversation"},
-	{Name: "collapse", Description: "Collapse a thread — keep the office tidy, Dwight approves", Category: "conversation"},
-	{Name: "cancel", Description: "Exit current mode — that's what she said (probably)", Category: "conversation"},
-	{Name: "collab", Description: "Open-floor mode — everyone hears everything, Michael Scott style", Category: "session"},
-	{Name: "focus", Description: "Delegation mode — CEO routes, specialists execute (that's how it was always meant to work)", Category: "session"},
+	{Name: "artifacts", Description: "Task logs, approvals, and workflow artifacts — documentation", Category: "navigate"},
+	{Name: "skills", Description: "Show available skills — specialized capabilities", Category: "navigate"},
+	{Name: "skill", Description: "Create, invoke, or manage a skill — the system gets smarter over time", Category: "work"},
+	{Name: "reply", Description: "Reply in thread — threads keep context, keep conversations organized", Category: "conversation"},
+	{Name: "threads", Description: "Browse threads — follow conversation history", Category: "conversation"},
+	{Name: "expand", Description: "Expand a collapsed thread — show full conversation", Category: "conversation"},
+	{Name: "collapse", Description: "Collapse a thread — keep discussions tidy and organized", Category: "conversation"},
+	{Name: "cancel", Description: "Exit current mode — stop and confirm", Category: "conversation"},
+	{Name: "collab", Description: "Open-floor mode — everyone hears everything, fully transparent mode", Category: "session"},
+	{Name: "focus", Description: "Delegation mode — CEO routes, specialists execute efficiently", Category: "session"},
 	{Name: "reset", Description: "Reset channel and agents", Category: "session"},
 	{Name: "reset-dm", Description: "Clear direct messages with an agent", Category: "session"},
-	{Name: "quit", Description: "Exit WUPHF — Michael would make a speech first", Category: "session"},
+	{Name: "quit", Description: "Exit WUPHF — session ends", Category: "session"},
 }
 
 // oneOnOneBlacklist lists command names blocked in 1:1 mode.
@@ -425,12 +425,12 @@ func newChannelModelWithApp(threadsCollapsed bool, initialApp channelui.OfficeAp
 		m.sidebarCollapsed = true
 		m.threadsDefaultExpand = true
 		m.autocomplete = tui.NewAutocomplete(buildOneOnOneSlashCommands())
-		m.notice = "Conference room reserved. Direct session reset. Agent pane reloaded in place. No Toby."
+		m.notice = "Direct session reset. Agent pane reloaded in place."
 	}
 	memoryStatus := team.ResolveMemoryBackendStatus()
 	if memoryStatus.SelectedKind == config.MemoryBackendNone {
 		if config.ResolveNoNex() {
-			m.notice = "Running in office-only mode. Nex tools are disabled for this session."
+			m.notice = "Running in vendor-only mode. Nex tools are disabled for this session."
 		} else {
 			m.notice = "Running without an external memory backend for this session."
 		}
@@ -746,17 +746,17 @@ func (m channelModel) buildChannelPickerOptions() []tui.PickerOption {
 
 func (m channelModel) buildSwitchChannelPickerOptions() []tui.PickerOption {
 	options := []tui.PickerOption{
-		{Label: "Main office feed", Value: "app:messages", Description: "Return to the shared message stream"},
+		{Label: "Main feed", Value: "app:messages", Description: "Return to the shared message stream"},
 		{Label: "Tasks", Value: "app:tasks", Description: "Review active work for this channel"},
 		{Label: "Requests", Value: "app:requests", Description: "Open pending approvals and interviews"},
 		{Label: "Policies", Value: "app:policies", Description: "Show signals, decisions, and watchdogs"},
-		{Label: "Calendar", Value: "app:calendar", Description: "View the office schedule and teammate calendars"},
+		{Label: "Calendar", Value: "app:calendar", Description: "View the team schedule and teammate calendars"},
 	}
 	if m.isOneOnOne() {
 		options = append(options, tui.PickerOption{
-			Label:       "Return to main office",
+			Label:       "Return to main workspace",
 			Value:       "session:office",
-			Description: "Leave direct mode and restore the shared office session",
+			Description: "Leave direct mode and restore the shared workspace session",
 		})
 	} else {
 		for _, member := range m.officeMembers {
@@ -844,7 +844,7 @@ func (m channelModel) buildAgentPickerOptions() []tui.PickerOption {
 		}
 	}
 	options = append(options, tui.PickerOption{
-		Label:       "Create new office member…",
+		Label:       "Create new team member…",
 		Value:       "create:new",
 		Description: "Use /agent create <slug> <Display Name> to add a brand-new teammate",
 	})
@@ -856,9 +856,9 @@ func (m channelModel) buildOneOnOneModePickerOptions() []tui.PickerOption {
 	if m.isOneOnOne() {
 		enableDescription = "Pick a different single agent for this direct session"
 	}
-	disableDescription := "Restart WUPHF with the full office team"
+	disableDescription := "Restart WUPHF with the full team"
 	if !m.isOneOnOne() {
-		disableDescription = "Already using the full office team"
+		disableDescription = "Already using the full team"
 	}
 	return []tui.PickerOption{
 		{
@@ -898,7 +898,7 @@ func (m channelModel) buildCalendarAgentPickerOptions() []tui.PickerOption {
 	options := []tui.PickerOption{{
 		Label:       "All teammates",
 		Value:       "all",
-		Description: "Show every participant across the office calendar",
+		Description: "Show every participant across the team calendar",
 	}}
 	for _, member := range m.members {
 		name := member.Name
