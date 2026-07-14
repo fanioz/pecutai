@@ -61,7 +61,7 @@ func printSubcommandHelp(sub string) {
 		fmt.Fprintln(os.Stderr, "wuphf shred — burn the whole workspace down")
 		fmt.Fprintln(os.Stderr, "")
 		fmt.Fprintln(os.Stderr, "Stops the running session, clears broker state, and deletes the team")
-		fmt.Fprintln(os.Stderr, "roster, company identity, office task receipts, saved workflows, logs,")
+		fmt.Fprintln(os.Stderr, "roster, company identity, workspace task receipts, saved workflows, logs,")
 		fmt.Fprintln(os.Stderr, "sessions, provider state, calendar, and local wiki memory.")
 		fmt.Fprintln(os.Stderr, "Next launch reopens onboarding.")
 		fmt.Fprintln(os.Stderr, "")
@@ -87,7 +87,7 @@ func printSubcommandHelp(sub string) {
 	case "log":
 		fmt.Fprintln(os.Stderr, "wuphf log — show agent task receipts")
 		fmt.Fprintln(os.Stderr, "")
-		fmt.Fprintln(os.Stderr, "Lists recent tasks from ~/.wuphf/office/tasks/ so you can see what")
+		fmt.Fprintln(os.Stderr, "Lists recent tasks from ~/.wuphf/workspace/tasks/ so you can see what")
 		fmt.Fprintln(os.Stderr, "each agent actually did — tool by tool, with timestamps.")
 		fmt.Fprintln(os.Stderr, "")
 		fmt.Fprintln(os.Stderr, "Usage:")
@@ -95,7 +95,7 @@ func printSubcommandHelp(sub string) {
 		fmt.Fprintln(os.Stderr, "  wuphf log <taskID>            Show one task in detail")
 		fmt.Fprintln(os.Stderr, "  wuphf log --agent eng         Filter to one agent")
 	case "share":
-		fmt.Fprintln(os.Stderr, "wuphf share — invite one team member to this office")
+		fmt.Fprintln(os.Stderr, "wuphf share — invite one team member to this workspace")
 		fmt.Fprintln(os.Stderr, "")
 		fmt.Fprintln(os.Stderr, "Starts a private-network web listener and prints a one-use invite URL.")
 		fmt.Fprintln(os.Stderr, "Prerequisite: both machines are on the same Tailscale or WireGuard network.")
@@ -257,7 +257,7 @@ func main() {
 	helpAll := flag.Bool("help-all", false, "Show all flags including internal ones")
 
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "WUPHF v%s — the terminal office Ryan Howard always wanted.\n\n", buildinfo.Current().Version)
+		fmt.Fprintf(os.Stderr, "WUPHF v%s — the terminal workspace Ryan Howard always wanted.\n\n", buildinfo.Current().Version)
 		fmt.Fprintf(os.Stderr, "Usage:\n")
 		fmt.Fprintf(os.Stderr, "  %s              Launch multi-agent team (web UI on :%d)\n", appName, *webPort)
 		fmt.Fprintf(os.Stderr, "  %s --legacy-tui  Launch with legacy tmux TUI instead\n", appName)
@@ -417,7 +417,7 @@ func main() {
 			return
 		case "shred":
 			if !confirmDestructive(args[1:], "shred", shredSummary) {
-				fmt.Println("Cancelled. The office lives to serve another day.")
+				fmt.Println("Cancelled. The workspace lives to serve another day.")
 				return
 			}
 			if err := stopRunningSession(selectedBlueprint); err != nil {
@@ -668,7 +668,7 @@ func runTeam(args []string, packSlug string, unsafe bool, oneOnOne bool, opusCEO
 		return
 	}
 
-	fmt.Println("Team launched. Welcome to The WUPHF Office. Attaching...")
+	fmt.Println("Team launched. Welcome to WUPHF. Attaching...")
 	fmt.Println()
 	fmt.Println("  Ctrl+B arrow     switch between panes")
 	fmt.Println("  Ctrl+B { or }    swap panes left/right")
@@ -680,7 +680,7 @@ func runTeam(args []string, packSlug string, unsafe bool, oneOnOne bool, opusCEO
 	if err := l.Attach(); err != nil {
 		// Attach failed (not a terminal, or tmux error).
 		// Keep the process alive to maintain the broker.
-		fmt.Fprintf(os.Stderr, "Could not attach to tmux (not a terminal?). The office is running without you — like when Michael went to New York.\n")
+		fmt.Fprintf(os.Stderr, "Could not attach to tmux (not a terminal?). The workspace is running without you — like when Michael went to New York.\n")
 		fmt.Fprintf(os.Stderr, "Team is running in background. Attach manually:\n")
 		fmt.Fprintf(os.Stderr, "  tmux -L wuphf attach -t wuphf-team\n")
 		fmt.Fprintf(os.Stderr, "Broker running on %s\n", l.BrokerBaseURL())
@@ -741,7 +741,7 @@ func runWeb(args []string, packSlug string, unsafe bool, webPort int, opusCEO bo
 		tunnelController.SetBroker(b)
 		b.SetWebTunnelController(tunnelController.start, tunnelController.status, tunnelController.stop)
 	})
-	fmt.Printf("Launching %s web view... the browser is the office now.\n", l.PackName())
+	fmt.Printf("Launching %s web view... the browser is the workspace now.\n", l.PackName())
 	if err := l.LaunchWeb(webPort); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
@@ -861,7 +861,7 @@ func consumePipedStdin(r io.Reader, dispatch func(line string)) (handled bool, e
 // promises match.
 const shredSummary = `This will:
   • Stop the running WUPHF session
-  • Delete your team, company identity, office task receipts, workflows
+  • Delete your team, company identity, workspace task receipts, workflows
   • Delete logs, sessions, provider state, calendar, and local wiki memory
   • Wipe broker runtime state
   • Reopen onboarding on next launch
