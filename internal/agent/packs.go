@@ -112,6 +112,17 @@ var legacyPacks = []PackDefinition{
 			},
 		},
 	},
+	{
+		Slug:        "pecut-team",
+		Name:        "Pecut AI Team",
+		Description: "Custom team for the pecutAI fork - demonstrates pack customization",
+		LeadSlug:    "lead",
+		Agents: []AgentConfig{
+			{Slug: "lead", Name: "Team Lead", Expertise: []string{"coordination", "planning", "architecture", "code-review"}, Personality: "Experienced technical lead who coordinates team efforts and ensures quality. Focuses on clear communication and systematic problem-solving. Builds consensus through technical merit and example."},
+			{Slug: "engineer", Name: "Software Engineer", Expertise: []string{"implementation", "debugging", "testing", "refactoring"}, Personality: "Pragmatic engineer focused on shipping clean, maintainable code. Balances speed with quality and believes in testing as documentation. Asks good questions and iterates quickly."},
+			{Slug: "reviewer", Name: "Code Reviewer", Expertise: []string{"code-review", "quality-assurance", "best-practices", "security"}, Personality: "Thorough reviewer who catches bugs and suggests improvements. Constructive feedback with clear reasoning. Cares deeply about code quality and team standards."},
+		},
+	},
 }
 
 // ListLegacyPacks returns a copy of the compatibility pack registry.
