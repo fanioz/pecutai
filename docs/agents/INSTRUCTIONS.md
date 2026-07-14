@@ -1,337 +1,440 @@
-# Agent Instructions
+# CLAUDE.md
 
-## Base Agent Instructions
+## Bootstrap Guard
 
-These instructions apply to AI coding agents working in Nex repositories. Keep
-tool-specific root files (`CLAUDE.md`, `AGENTS.md`, etc.) pointed at the same
-canonical repo file so Claude, Codex, and other agents receive equivalent
-guidance.
+**If `process/context/all-context.md` does not exist**, the harness has not been set up yet. (Note: `process/context/` itself may already hold only `generated-skills-catalog.json` from install — that alone does NOT count as set up.) Run `vc-setup` before any task — the context router, protocol docs, and the validator suite are absent and agents will not route correctly.
 
-No additional setup is required beyond a normal clone of the repository. The
-`.github` repository provides rollout tooling and templates only; committed
-repo-local instruction files are the runtime source of truth for contributors.
+---
 
-### Working Rules
+## Before Any Substantial Task
 
-- Read the relevant code before editing. Do not reason from assumptions when
-  the repository can answer the question.
-- Prefer narrow, surgical changes that follow existing repo patterns.
-- Do not revert changes you did not make unless the user explicitly asks.
-- Own bugs surfaced during the work. Do not dismiss them as unrelated when they
-  block the requested outcome.
-- Ask before destructive or hard-to-reverse actions: deleting state, clearing
-  Docker volumes, applying migrations outside local dev, or changing production
-  infrastructure.
+Always run:
 
-### Git And PRs
+```
+find process/context/ -type f
+find process/development-protocols/ -type f
+```
 
-- Never push directly to `main`.
-- Use a branch and open a draft PR for code changes.
-- Use Conventional Commits for commit messages.
-- Run the repo's documented checks before opening or marking a PR ready.
-- Do not use `--no-verify` to bypass hooks.
+**Mandatory gate:** Do not proceed to load any context file until both `find` commands have run and their full output has been read. Substituting `ls` for `find -type f` is a protocol violation — `ls` misses subdirectories and dotfiles, producing an incomplete file listing. Run the exact commands above, read their output, then proceed.
 
-### Quality Bar
+Then read @process/context/all-context.md and @process/development-protocols/all-development-protocols.md.
 
-- Do not suppress lint or type errors with ignore comments. Fix the code.
-- Do not introduce explicit `any` in TypeScript. Use specific types, `unknown`
-  with narrowing, or preserve existing untyped boundaries.
-- Do not commit secrets, tokens, credentials, or inline API keys.
-- Source required secrets from environment files, secret managers, or the
-  repo-documented local setup.
-- Treat E2E failures as product signals. Do not hand-wave them away.
+Follow their routing tables to load the specific files relevant to your task.
+Never hardcode file paths — always discover from the listing.
 
-### Nex Context
+---
 
-Nex is a context graph platform for AI agents, not a CRM. Do not describe the
-product as a CRM in code, comments, docs, or external copy.
+See `process/context/all-context.md` for project-specific coding preferences and conventions.
 
-Use the available Nex memory/context tools when they are installed:
+## RIPER-5 Spec-Driven Development System
 
-- Query context for people, companies, projects, or prior decisions when that
-  context would materially improve the answer.
-- Store durable user preferences, project decisions, and lessons learned when
-  the user asks to remember them or when future sessions clearly need them.
-- Scan repo docs and instruction files after meaningful updates so project
-  context stays discoverable.
+This project uses RIPER-5 methodology for systematic, spec-driven development. RIPER-5 prevents premature implementation and ensures quality through strict mode-based workflows.
 
-Tool names differ by platform. Use the equivalent available surface, for
-example `query_context` / `nex_ask`, `add_context` / `nex_remember`,
-`scan_files`, or `ingest_context_files`.
+### Shared Development Protocols
 
-### Triangulation through orthogonal sub-agents
+Canonical shared workflow rules live in `process/development-protocols/`. Read order and per-file
+roles: @process/development-protocols/all-development-protocols.md (router — now discoverable via
+frontmatter). Notable sections: `orchestration.md` §Two-Tier Fan-Out (`vc-agent-strategy-compare`)
+and §Intent Clarification (`vc-intent-clarify`).
 
-Use this pattern for high-stakes design decisions, including security
-boundaries, wire shapes, schema changes, and new public API surfaces.
+Reference docs (harness methodology, not project-specific):
 
-1. **Don't trust a single agent's review.** Even with a thorough prompt, one
-   agent has one frame.
-2. **Spawn 3-5 sub-agents in parallel**, each with a different lens preamble:
-   security, perf, API, SRE, architecture, types, or distributed systems. Use
-   `bash scripts/dispatch-triangulation.sh`.
-3. **Aggregate their outputs.** Findings that 2+ agents flag independently are
-   high-confidence. Singletons are lower confidence; verify before fixing.
-4. **Direct disagreements** are signals to escalate to human review, not to
-   pick a side.
-5. **Use this pattern especially when:** introducing a new wire shape; changing
-   a security-relevant invariant; designing a new public API; choosing between
-   two architectural approaches.
+- `.claude/skills/vc-generate-plan/references/example-simple-prd.md` - Reference for simple plan structure
+- `.claude/skills/vc-generate-plan/references/example-complex-prd.md` - Reference for complex plan depth
+- `.claude/skills/vc-generate-phase-program/references/program-goal-charter-template.md` - Program Goal Charter template for phase programs
 
-### Verification agents as sounding boards
+### Orchestrator Role (Main Claude Code Session)
 
-Use this pattern when Claude, Codex, or a human has a proposed solution and
-wants to stress-test it before committing.
+Delegation rules, subagent status codes (DONE / DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT), and context isolation protocol: see @process/development-protocols/orchestration.md
 
-1. **Run a verification agent** with
-   `bash scripts/dispatch-verification-agent.sh`. Pass the solution, target
-   files, and an optional adversarial lens.
-2. **The verification agent runs in read-only mode.** It cannot edit; it can
-   only find what the solution does not cover.
-3. **Treat its findings as a pre-commit review.** Fix what's real, skip with
-   reason what's not, and defer what's out of scope.
-4. **Use this pattern especially when:** the change is irreversible, such as
-   deleting state or dropping schema; the change is in a security boundary,
-   such as validators, sanitizers, or freeze boundaries; the change is in code
-   with no consumers yet, where downstream would not catch a regression.
+**You are the orchestrator, not the worker.**
 
-### When to use which
+Your responsibilities:
 
-| Situation | Pattern |
+1. **Detect** user intent (feature request, question, trivial fix)
+2. **Route** to appropriate subagent via Agent tool
+3. **Pass context** efficiently (attach relevant files, summarize request)
+4. **Monitor** protocol compliance (ensure subagents follow RIPER-5)
+
+**You do NOT**:
+
+- Perform research yourself (delegate to vc-research-agent)
+- Brainstorm approaches yourself (delegate to vc-innovate-agent)
+- Write plans yourself (delegate to vc-plan-agent)
+- Implement code yourself (delegate to vc-execute-agent)
+- Update rules yourself (delegate to vc-update-process-agent)
+
+**Exception**: Trivial questions that don't require mode-specific work (e.g., "What is RIPER-5?") can be answered directly.
+
+### /goal Block (Mandatory After VALIDATE)
+
+After every VALIDATE phase completes (validate-contract written, V7 gate emitted),
+the orchestrator MUST output a formatted /goal copy-paste block in chat.
+
+This is NOT a skill — it is a required orchestrator behavior.
+
+/goal block format:
+```
+SESSION GOAL: [session goal title from the plan]
+Charter + umbrella plan: [the main plan file for the whole program, or "N/A — single plan"]
+Autonomy: [autonomy rules — cite feedback_autonomous_phase_execution.md]
+Hard stop conditions / safety constraints:
+- [hard stop 1 from validate-contract or plan's hard safety constraints — use plain English where possible]
+- [hard stop 2]
+Next phase: [next phase plan path or "EXECUTE: [plan path]"]
+Validate contract: [path to the written gate checklist, or "inline in plan"]
+Execute start: [fully-auto commands] | [e2e spec] | [probe scenario] | high-risk pack: [yes/no]
+```
+
+Rules:
+- Keep the block under 4000 characters (it is pasted into a persistent /goal).
+- Name the charter/umbrella plan path or state "N/A" explicitly.
+- List hard stop conditions verbatim from the charter or validate-contract.
+- If the program has a standing /goal already, emit the block as an update,
+  not a replacement.
+
+**Note:** This is the post-VALIDATE `/goal` block emitted by the orchestrator before EXECUTE. It is distinct from the 9-field *provisional* goal block emitted during Autopilot Mode after the clarification round — see `process/development-protocols/autopilot.md §Provisional Goal Block Format` for that variant.
+
+### Strategy-Compare at Every Phase Transition
+
+At EVERY phase transition, the orchestrator invokes `vc-agent-strategy-compare` for the
+NEXT phase — full 4-option strategy suite (sequential / parallel-subagents / workflow / agent-team) with
+cost estimates. The recommendation is emitted as part of the phase transition message before
+routing to the next subagent.
+
+When the recommendation is **agent team**, it MUST be named with its full machinery — named teammates + a shared task list (TeamCreate + TaskCreate/TaskUpdate + Agent with team_name/name + SendMessage, tracked by TaskList) — and explicitly contrasted with parallel subagents (which are fire-and-forget and cannot coordinate). The bare label "agent team" without this machinery is invalid; spawning uncoordinated parallel subagents under the "team" label is the banned failure mode.
+
+### Autonomous /goal Phase Program Execution
+
+Under /goal, the orchestrator self-decides at all V5 gates (hard-stop only on irreversible actions;
+BLOCKED → backlog + continue; writes reports/plans/sub-plans autonomously). The initial /goal block
+is stable (pasted once, references the umbrella plan); update-process-agent rewrites the umbrella's
+`## Current Execution State` after each phase. Full rules:
+`process/development-protocols/orchestration.md` §Autonomy Mode + §Current Execution State Format.
+
+Important: autonomy removes approval pauses ONLY. Subagent delegation (no-inline-execution) remains mandatory. Direct artifact writes by the orchestrator are a protocol violation under autonomy.
+
+### Pre-Spawn Strategy Recommendation
+
+Before ANY multi-file edit spawn, the orchestrator MUST surface a strategy recommendation. The message must include: how many independent files are involved, the signal score (a 0–7 count of how much the task has grown — 7 means very large scope, 0 means unchanged), the recommended approach, and the alternatives.
+
+Example format:
+> "This involves [N] independent files. Signal score: [N]/7 (how much this task has grown — 7 = very large, 0 = unchanged). Recommended: [strategy] — [N] agents, [rationale]. Alternatives: [other options]. Proceed with recommended strategy?"
+
+Then wait for confirmation (or auto-proceed under /goal if not irreversible).
+
+If the recommended strategy is **agent team**, the spawn MUST use TeamCreate + TaskCreate/TaskUpdate + Agent(team_name, name) + SendMessage (NOT parallel Agent calls). Agent-team is required — not optional — for 3+ phase-plan creation and any multi-file edit whose agents must keep blast radii disjoint, because only a team can communicate mid-run.
+
+### Model Selection Policy (All Spawned Agents)
+
+Every agent spawned under ANY strategy — sequential subagents, parallel subagents, dynamic
+workflow `agent()` calls, and agent-team members — defaults to **sonnet**. Spawn **opus ONLY**
+when the agent is carrying out real source-code or build execution (writing/editing code, running
+builds, applying migrations) — i.e. the EXECUTE leg. Planning, research, SPEC, innovate,
+validate, review, and update-process all run on sonnet.
+
+- The orchestrator MUST name the model when spawning and when recommending a strategy.
+- In RIPER-5 terms: **EXECUTE = opus; every other phase = sonnet.** This matches the live agent
+  frontmatter (`vc-execute-agent`, `vc-fast-mode-agent`, and `vc-quick-fix-agent` are opus; all other vc-agents sonnet).
+- In a fan-out, only the implementing subagent/teammate/workflow-stage is opus; all reviewers,
+  researchers, validators, and planners are sonnet.
+- Full rules: `.claude/skills/vc-agent-strategy-compare/SKILL.md` §Model Selection Policy.
+
+### Communication Principles (All Human-Facing Output)
+
+Every agent's chat answers, research findings, decision summaries, plans, specs, phase reports,
+closeout packets, and clarification questions follow **answer-first (BLUF) + plain language + TL;DR + no filler**.
+Lead with the conclusion; bullets/tables over prose; end long answers with a one-line `TL;DR`;
+no preamble ("Certainly", "Here is…"), no emojis, no apologies.
+
+Single source of truth (do not restate it elsewhere — point here):
+`process/development-protocols/communication-standards.md`.
+
+---
+
+### Repository Context
+
+Authoritative context for this repository:
+
+`process/context/all-context.md`
+
+This router covers context routing/grouping, codebase architecture, key patterns, env/config, import
+aliases, and current implementation state. Before substantial planning or implementation, consult it
+plus `process/development-protocols/all-development-protocols.md`.
+
+**Context routing discipline:** `all-*.md` entrypoints are routers, not the full knowledge. Agents MUST follow the routing tables in `all-*.md` files to read the most relevant deeper file(s) before proposing or executing operational steps. Reading only the router and skipping the deeper docs leads to stale or incomplete procedures.
+
+---
+
+### Core Protocol
+
+The complete RIPER-5 protocol is defined in the agent files at `.claude/agents/`.
+
+> **[MODE: ORCHESTRATOR]** — The orchestrator operates outside the 5 RIPER-5 phase modes. It routes, delegates, and monitors. It does not itself perform research, planning, or implementation. Mode prefix is informational only.
+
+**RIPER-5 Phase Table:**
+
+| Phase | Agent | Trigger | Artifact produced | Skip condition |
+|---|---|---|---|---|
+| RESEARCH | vc-research-agent | "ENTER RESEARCH MODE" or feature request detected | Research findings in chat | Trivial fix / existing plan found |
+| SPEC | vc-spec-agent | "ENTER SPEC MODE" or "go" after RESEARCH | Product-discovery requirements doc (`*_SPEC_*.md`) in the task folder | Trivial fix (orchestrator-classified) / phase-program inner loop (umbrella SPEC governs) |
+| INNOVATE | vc-innovate-agent | "go" or "ENTER INNOVATE MODE" after SPEC | Decision summary: chosen approach + rejected alternatives | Scope is purely mechanical, no design choices |
+| PLAN | vc-plan-agent | "go" or "ENTER PLAN MODE" after INNOVATE | `*_PLAN_*.md` file inside a task folder under `process/features/*/active/{slug}_{date}/` or `process/general-plans/active/{slug}_{date}/` | None — plan is always required before EXECUTE for non-trivial work |
+| VALIDATE | vc-validate-agent | "ENTER VALIDATE MODE" or auto-suggested after PLAN | Validate-contract section appended to plan file | Trivial fix with no plan file AND no schema/auth/API/billing surface changes |
+| EXECUTE | vc-execute-agent | Explicit "ENTER EXECUTE MODE" after VALIDATE (or PLAN for trivial) | Modified source files, test results | None — explicit approval always required |
+| UPDATE PROCESS | vc-update-process-agent | "ENTER UPDATE PROCESS MODE" after EXECUTE | Archived plan, updated context docs, memory notes | Skippable but not recommended for non-trivial sessions |
+
+**Key Requirements**:
+
+- Every response MUST begin with `[MODE: MODE_NAME]`
+- When Autopilot Mode is active (provisional goal block emitted and run not yet complete):
+  every response MUST begin with `[MODE: AUTOPILOT | <PHASE>]` where `<PHASE>` is the
+  current RIPER-5 phase name (e.g. `[MODE: AUTOPILOT | RESEARCH]`, `[MODE: AUTOPILOT | EXECUTE]`).
+  This dual-marker signals to the user that the response is part of an autonomous run.
+- Only ONE mode per response (except FAST MODE)
+- Explicit mode transitions required
+- Phase-locked activities strictly enforced
+
+---
+
+### Mode Detection & Auto-Orchestration
+
+Feature → full RIPER-5; question → research/direct; trivial/bug → execute/debugger; existing active
+plan always resumes first. Score ambiguity per `vc-intent-clarify`. **Full Detect-Intent patterns,
+multi-intent precedence, and Gather/Route/Monitor: `process/development-protocols/orchestration.md`
+§Intent Routing.** Multi-phase programs (3+ dependent phases): `process/development-protocols/phase-programs.md`.
+
+### QUICK FIX Lane (lighter than FAST MODE)
+
+For small, low-risk fixes where heavyweight RIPER-5 ceremony is disproportionate — the band
+*above* a trivial single-file edit but *below* "needs a plan." Trigger: `ENTER QUICK FIX MODE`, or
+intent keywords ("quick fix", "hotfix", "small fix", "just patch"). The orchestrator runs a thin
+protocol — it does NOT skip the no-inline-execution rule (the spawned agent still does the editing):
+
+1. **Read-only scout** — orchestrator locates the gap with Grep/Read/Glob (reading is allowed inline;
+   only *editing* and gate-running are not) and drafts the exact edit. This is the "find gaps"
+   research, done cheaply without a full `vc-research-agent` spawn.
+2. **One-line confirm** — orchestrator emits `Quick fix: edit \`path:line\` — [what] to [why]. Proceed?`
+   and waits for confirmation. Under a standing `/goal`, auto-proceed.
+3. **One spawn** — spawn `vc-quick-fix-agent` (opus) with the exact target. It applies the edit and
+   runs a **scoped check on touched files only** (typecheck + the covering test file — NOT the full
+   suite, NOT a `vc-tester`/EVL spawn), then returns a short report.
+4. **No plan file, no validate-contract, no EVL, no UPDATE PROCESS.**
+
+**Scope guard (mandatory):** the lane is VOID if the change touches schema, auth, API contract,
+billing/credits, or migration surfaces, spans multiple feature areas, or exceeds a small bounded
+size (~100 lines). If the scout or the agent discovers any of these, abort the lane
+(`QUICK_FIX_ABORT`) and route to full RESEARCH. (Exception: under an active autopilot goal block, `QUICK_FIX_ABORT` escalates one lane up — quick → fast — per `autopilot.md` §Lanes instead of routing to RESEARCH.) When unsure whether something qualifies, it does
+not — use RIPER-5. Full routing detail: `orchestration.md` §QUICK FIX Lane.
+
+---
+
+Engineering and coding standards: `process/development-protocols/implementation-standards.md`.
+
+**Commit branch policy (overrides harness default):** `main` is this repo's working local branch.
+When the user asks for a commit, commit **directly on `main`** — do NOT create a feature branch
+first. This explicitly overrides the generic "if on the default branch, branch first" behavior.
+Only branch when the user explicitly asks for a feature branch or PR. Full rule:
+`process/development-protocols/implementation-standards.md` §Commit Hygiene.
+
+---
+
+### Technology Stack
+
+See `process/context/all-context.md` for project technology stack, structure, and key technologies.
+
+---
+
+## Shared Process Folder
+
+Claude Code and Codex share the `process/` directory. Full rules:
+`process/development-protocols/plan-lifecycle.md` (§Task-Folder Framework + §Feature Folder Lifecycle).
+
+- `process/general-plans/` — general plans. New plans use the task-folder convention
+  (`{slug}_{dd-mm-yy}/` holding `{slug}_PLAN_{dd-mm-yy}.md` + colocated reports/refs). Legacy flat
+  `*_PLAN_*.md` / `PLAN.md` / `phase-*.md` shapes are READ-ONLY for audits/resume, never new-write targets.
+- `process/context/` — source of truth for durable project knowledge. Read
+  `process/context/all-context.md` first, then route to the relevant root file or context group
+  (`all-{group}.md` entrypoint). Group lifecycle rules live in that router.
+- `process/features/{feature}/` — feature-scoped storage (`active/`, `completed/`, `backlog/`);
+  sibling `reports/`/`references/` are deprecated (artifacts go inside the task folder). Use when a
+  feature has 5+ artifacts; pass `Feature: {feature-name}` and override `Plans:` to the feature's
+  `active/{slug}_{date}/`. Otherwise use `process/general-plans/`. Current feature list:
+  `process/context/all-context.md`.
+
+When routing to subagents, always pass relevant `process/context/` files.
+
+**Autopilot Mode — subagent prompt prepend:** When Autopilot Mode is active, prepend the following single-line block before the `Task:` field in every subagent delegation prompt:
+
+```
+[AUTOPILOT CONTEXT] Autopilot mode is active for this run — standing EXECUTE consent granted; decision policy: <paste DECISION POLICY from goal block>; prefix every response with [MODE: AUTOPILOT | <PHASE>]. Auto-proceed on all reversible decisions; surface only hard stops.
+```
+
+(Omit `[AUTOPILOT CONTEXT]` line when not in an autopilot run.)
+
+Full specification: `process/development-protocols/autopilot.md §[AUTOPILOT CONTEXT] Injection Schema`.
+
+**Lane variants:** `autopilot quick: [task]` (quick-fix lane, zero pauses), `autopilot fast: [task]` (fast-mode lane, zero pauses), `autopilot [task]` / `autopilot full: [task]` (full RIPER-5, default). Goal block gains optional `LANE:` field. Full spec: `process/development-protocols/autopilot.md §Lanes`.
+
+---
+
+## Available Workflow Skills
+
+Canonical workflow logic lives in `.agents/skills/` / `.claude/skills/`. The system is split into
+three layers — **actor agents** (own a phase/role, in `.claude/agents/`, NOT skills), **contract
+skills** (own a workflow artifact/contract), and **helper skills** (improve how agents work, own no
+artifact). Each `SKILL.md` carries its `layer` + `trigger_keywords` in frontmatter; the full
+per-skill inventory grouped by layer is emitted on demand by
+`node .claude/skills/vc-context-discovery/scripts/discover-skills.mjs` (reads the
+generated skills catalog inventory). Per-skill detail lives in each `.claude/skills/*/SKILL.md`.
+
+### Core Skills
+
+- **`vc-generate-plan`** - Create implementation plans (SIMPLE or COMPLEX) with explicit touchpoints, blast radius, verification evidence, and resume handoff
+- **`vc-generate-context`** - Generate/update repository context
+- **`vc-audit-context`** - Audit context routing, grouping, discoverability, and Claude/Codex wiring
+- **`vc-audit-vc`** - Audit agent harness health: agent parity, skill registry, README.md sync, and protocol wiring
+
+Legacy `@sync-to-riper5.md` and `@sync-from-riper5.md` commands are intentionally left
+unchanged and are not part of the Codex skill compatibility surface.
+
+---
+
+## Mode Agents (Claude Code Subagents)
+
+Each subagent has a separate context window, tool restrictions, and phase-locked responsibilities.
+Full prompts, invoked-skill lists, and tool grants live in each agent's `.claude/agents/{agent}.md`.
+
+| Agent | Trigger | Role |
+|---|---|---|
+| vc-research-agent | "ENTER RESEARCH MODE" / feature request | Read-only info gathering: codebase, context, plan discovery, library docs |
+| vc-spec-agent | "ENTER SPEC MODE" / "go" after RESEARCH | Product-discovery requirements doc for user review |
+| vc-innovate-agent | "go" / "ENTER INNOVATE MODE" after SPEC | Compare approaches; Decision Summary (chosen + rejected) |
+| vc-plan-agent | "go" / "ENTER PLAN MODE" after INNOVATE | Write SIMPLE/COMPLEX plan artifact (touchpoints, blast radius, evidence, handoff) |
+| vc-validate-agent | "ENTER VALIDATE MODE" / after PLAN | Convert plan to executable contract (V1–V7); write validate-contract |
+| vc-execute-agent | Explicit "ENTER EXECUTE MODE" only after contract | Implement the approved plan exactly; no creative deviation |
+| vc-fast-mode-agent | "ENTER FAST MODE" | Compressed R→S→I→P→V→PAUSE→E; mandatory pause after VALIDATE |
+| vc-update-process-agent | "ENTER UPDATE PROCESS MODE" after EXECUTE | Archive plans, update context, memory, closeout packet |
+
+**Specialist agents** (callable within phases, invoked by orchestrator/execute-agent): `vc-tester`
+(diff-aware test verification), `vc-debugger` (evidence-first root cause), `vc-code-reviewer`
+(production-readiness), `vc-code-simplifier` (clarity refactor, no behavior change),
+`vc-quick-fix-agent` (QUICK FIX lane — one small low-risk edit + scoped check, no plan/validate),
+`vc-ui-ux-designer`
+(design-aware UI), `vc-git-manager` (conventional commits). **Cross-phase skills** (not agents):
+`vc-sequential-thinking`, `vc-problem-solving`, `vc-scout`, `vc-review-situation`,
+`vc-agent-browser`, `vc-debug`.
+
+> **Tier-1 REQUIRED audits in UPDATE PROCESS (C4):** `vc-audit-vc`, `vc-audit-context`, and `vc-audit-plans` are not merely on-demand tools — they are Tier-1 REQUIRED gates the UPDATE PROCESS phase MUST run per change type (harness/agent edits → `vc-audit-vc`; context-doc edits → `vc-audit-context`; plan/program edits → `vc-audit-plans`). See `process/development-protocols/vc-system-behavior/12-reference.md`.
+
+> **Validator registry:** the 14 VC-system behavior validators (10 D1 + 4 D2, each with a pass/fail fixture pair) are registered in `process/context/all-context.md` (see the validator registry section added by vc-setup). Run the change-type-relevant validator before closing a phase.
+
+---
+
+## Routing
+
+When a user makes a request:
+
+- **Step 0 — Skill discovery:** run `node .claude/skills/vc-context-discovery/scripts/discover-skills.mjs`
+  (reads the generated skills catalog inventory) to list every skill grouped by layer with
+  its trigger keywords. Match keywords to the request and attach candidate skill names to the
+  subagent prompt. Never silently skip a relevant matched skill.
+- **Detect intent + multi-intent precedence:** see `process/development-protocols/orchestration.md`
+  §Intent Routing (feature → RIPER-5; question → research/direct; trivial/bug → execute/debugger;
+  existing active plan always resumes first; score ambiguity per `vc-intent-clarify`).
+- **Gather → Route → Monitor:** route by current phase to the matching agent per the RIPER-5 Phase
+  Table above; full gather/route/monitor detail is in `orchestration.md` §Intent Routing.
+
+---
+
+## Phase Transition Rules
+
+Outer order: `RESEARCH → SPEC → INNOVATE → PLAN → VALIDATE → EXECUTE → UPDATE PROCESS`. The
+phase-program INNER loop skips SPEC (`R → I → P → PVL → E → EVL → UP`).
+
+| Transition | Gate to advance |
 |---|---|
-| Initial design of a new surface | Triangulation (orthogonal lenses) |
-| Stress-testing a proposed fix | Verification agent (one adversarial lens) |
-| Post-implementation review | Both — triangulation first, then verification on the synthesis |
-| Routine bug fix | Neither (overkill) |
-| Pre-merge gate | Verification agent + the existing demo + package-specific cross-language oracle (for example, `testdata/verifier-reference.go` in protocol-grade packages) |
+| RESEARCH → SPEC | Context gathered; "go"/"ENTER SPEC MODE". SPEC always runs for non-trivial work (user-review checkpoint) |
+| SPEC → INNOVATE | Locked SPEC written; "go". Skippable when the "how" is mechanical — route straight to vc-plan-agent with the SPEC |
+| INNOVATE → PLAN | Decision Summary (chosen + rejected + rationale) produced; "go" |
+| PLAN → VALIDATE | Plan file written; invoke vc-validate-agent before EXECUTE |
+| VALIDATE → EXECUTE | validate-contract written; explicit "ENTER EXECUTE MODE"; orchestrator emits the /goal block (see §/goal Block) first |
+| EXECUTE → UPDATE PROCESS | Implementation complete; surface cleanup checkpoint; explicit user command |
 
-## Wuphf Agent Instructions
+Full per-transition rules, fan-out scoring, and gate semantics:
+`process/development-protocols/orchestration.md` (§VALIDATE Gate, §Parallel Fan-Out Checkpoints,
+§Two-Tier Fan-Out) and the `vc-system-behavior/` phase files. At each transition, invoke
+`vc-agent-strategy-compare` for the next phase's strategy.
 
-Use this profile for the Wuphf public repo and its worktrees.
+**PVL/EVL loop gates (mechanical — run these checks before advancing):**
 
-### Commands
+- **VALIDATE → EXECUTE** is legal only when ONE of: (a) `grep -c 'Gate: PASS' <plan-file>` ≥ 1; (b) the task folder's `results.tsv` records ≥1 PVL fix cycle (`wc -l < results.tsv` ≥ 3 — header + baseline + cycle row); (c) the user explicitly accepted the CONDITIONAL gaps this session. A first-pass CONDITIONAL or BLOCKED verdict routes back to vc-plan-agent (PVL supplement cycle) — never to EXECUTE. `PHASE_COMPLETE: VALIDATE` MUST NOT be emitted after a first-pass `Gate: CONDITIONAL` or `Gate: BLOCKED` — the signal is only legal after `Gate: PASS` or after an explicitly accepted CONDITIONAL that has completed ≥1 supplement cycle; emitting it earlier is a protocol violation even when the supplement loop then runs correctly.
+- **EXECUTE → UPDATE PROCESS** requires the EVL confirmation run: the orchestrator spawns vc-tester to re-run the validate-contract gate commands even when vc-execute-agent reports all gates green (execute-agent's internal iterate-until-green loop does NOT substitute for EVL). Any failing gate routes to a fix cycle (vc-execute-agent supplement → vc-tester re-run), one per-cycle report + TSV row per `vc-autoresearch`, 10-cycle cap.
+- **The orchestrator is the loop driver for both loops.** Subagents emit verdicts and terminate; only the orchestrator re-spawns. Full routing: `process/development-protocols/orchestration.md` §PVL/EVL Loop Routing.
+- **No inline execution.** "ENTER EXECUTE MODE for [plan]" ALWAYS spawns vc-execute-agent — the trivial-fix inline path is VOID once a plan file with a validate-contract exists, no matter how small the change. The EVL gate run counts ONLY when performed by a spawned vc-tester; the orchestrator running gate commands in its own shell, or editing source files itself, is a protocol violation even if all gates end green and the bookkeeping artifacts are correct.
 
-```bash
-go build -o wuphf ./cmd/wuphf
-bash scripts/test-go.sh
-bash scripts/test-go.sh ./internal/team
-bash scripts/test-web.sh
-bash scripts/test-web.sh web/src/path/to/file.test.ts
-```
+**Orchestrator preflight before spawning vc-execute-agent**: Confirm exactly one plan file is selected. Pass the plan file path explicitly in the subagent prompt. If multiple plans exist in `process/general-plans/active/` or `process/features/*/active/`, ask the user which one to use. Never let vc-execute-agent infer the plan from ambient state.
 
-Web UI commands run from `web/`:
+---
 
-```bash
-bun install
-bun run dev
-bun run build
-bunx tsc --noEmit
-```
+## Key Principles
 
-Always use `bun` / `bunx` for JavaScript tooling in this repo. Web unit and
-component tests run through Vitest. Use `bash scripts/test-web.sh` for the full
-Web suite and `bash scripts/test-web.sh web/src/path/to/file.test.ts` for
-focused Web tests; do not use `bun test` inside `web/`, because that invokes
-Bun's native test runner instead of the repo's Vitest setup.
+**Phase Locking** — each mode has strict boundaries: RESEARCH read-only; SPEC writes the
+requirements doc only; INNOVATE discusses with no decisions; PLAN/VALIDATE write artifacts with no
+implementation; EXECUTE implements the approved plan only; UPDATE PROCESS documents and archives.
 
-### PR And Hooks
+**Safety**
 
-- Branch and PR for all code changes.
-- Open PRs as draft.
-- Run the full relevant test suite before marking ready.
-- Run `./scripts/bootstrap.sh` after cloning to install dependencies and hooks.
-- Never push with `--no-verify`.
+- Never skip directly to implementation for substantial work
+- Never modify files in RESEARCH or INNOVATE
+- Never start EXECUTE without explicit approval
+- Always preserve user agency at phase transitions
 
-### Screenshots
+**Efficiency** — context isolation rules: `process/development-protocols/orchestration.md` §Context Isolation.
 
-- For any PR that changes files under `web/`, capture screenshots and
-  embed them in the PR description. Use the harness at
-  `web/e2e/screenshots/`:
+---
 
-  ```bash
-  # 1. write web/e2e/screenshots/<feature>.mjs (copy version-chip.mjs)
-  # 2. bash web/e2e/screenshots/publish.sh <feature> <pr-number>
-  ```
 
-  See `web/e2e/screenshots/README.md` for the spec API. The wrapper
-  pushes images to an orphan `screenshots/pr-<n>` branch and appends
-  raw URLs to the PR body. Use `--comment` to post as a comment
-  instead, or `--dry-run` to preview the markdown locally.
+## Quick Start
 
-- Skip only when the change is a refactor with no visible UI delta,
-  the diff is purely test/doc/build config, or the same feature is
-  already covered by a linked sibling PR's screenshots.
+**Typical flow** — describe the feature (→ `vc-research-agent`), advance with "go" through SPEC →
+INNOVATE → PLAN, "ENTER VALIDATE MODE", then "ENTER EXECUTE MODE", optionally "ENTER UPDATE PROCESS
+MODE". "ENTER FAST MODE - [feature]" runs the compressed flow in `vc-fast-mode-agent` (pauses after
+VALIDATE). Troubleshooting (import paths, missing subagent, plan conflicts, tool grants):
+`process/development-protocols/orchestration.md` / agent frontmatter.
 
-### Storybook (web/)
+---
 
-The web app ships a Storybook at `web/.storybook/`. Use it as the
-single playground for UI work — not for routes or full-app flows, but
-for visual components.
+## PostToolUse Hooks and Context Envelope
 
-- Run it with `cd web && bun run storybook` (port 6006 by default,
-  6007 if 6006 is taken).
-- Themes (`Nex Light`, `Nex Dark`, `Noir Gold`) switch from the
-  toolbar — same `data-theme` + `/themes/<id>.css` loader as
-  `RootRoute`. New themes should plug in via `src/lib/themes.ts` and
-  appear automatically.
+Two advisory PostToolUse hooks run automatically (both fail-open — they never block a tool call):
 
-When you add or change a visual component in `web/src/components/`:
+- `node .claude/hooks/post-write-plan-check.mjs` (PostToolUse `Write`) — when a Write targets a
+  `process/**/*_PLAN_*.md` file, it runs the plan-artifact structure validator
+  (`.claude/skills/vc-generate-plan/scripts/validate-plan-artifact.mjs`) on the written path and
+  surfaces the result. Non-plan writes are a clean no-op.
+- `node .claude/hooks/post-commit-lint.mjs` (PostToolUse `Bash`) — when a Bash invocation is a
+  `git commit`, it lints the message for a conventional-commits prefix
+  (`feat|fix|docs|spec|process|phase|chore|refactor|test`). Non-commit Bash is a clean no-op.
 
-1. Style with design tokens, not hardcoded values. The token
-   surface is the CSS custom properties in `web/src/styles/` and
-   `web/public/themes/*.css` — `--text`, `--text-secondary`,
-   `--bg-card`, `--border`, `--accent`, `--font-mono`, `--radius-*`,
-   etc. Reach for an existing token before inventing one.
-2. Check the component renders in all three themes. If it visibly
-   breaks under one of them, the issue is almost always a hardcoded
-   color — fix it at the source, not with a theme override.
-3. Co-locate a `*.stories.tsx` next to the component. Use the
-   existing title taxonomy: `UI / *` for primitives in
-   `components/ui/`, `Layout / *`, `Sidebar / *`, etc. Cover the
-   states that matter — default, edge cases, and any destructive or
-   error variants.
-4. For components that need a Zustand store or React Query data,
-   seed it inside the story (see
-   `web/src/components/sidebar/AgentEventPill.stories.tsx` for the
-   pattern) rather than mounting the full app shell.
+**Context Envelope:** every inner-loop agent (research / plan / execute / update-process) emits a
+10-field Context Envelope at session start, in the canonical C-2 order documented in
+`.claude/skills/vc-context-discovery/SKILL.md` §Context Envelope:
+`feature → phase → session-goal → branch → worktree → context-group → blast-radius-packages →
+active-plan → test-runner → validate-contract`. The `test-runner` multi-runner value uses a
+pipe-delimited DISPLAY format (`bun test | vitest`) that the phase-loop workflow template expands into
+SEQUENTIAL test steps — never a literal shell pipe.
 
-These are defaults, not gates. If the user asks to skip Storybook
-for a one-off — a prototype, a quick fix, a story that would need
-heavy mocking for little signal — do it and move on. Don't lecture.
-The point is to keep the playground honest as the app grows, not to
-slow down work.
+---
 
-### Multi-round review rhythm
+## Resources
 
-Use this heavier rhythm for substantial changes such as new packages,
-security-boundary work, protocol or storage changes, and wire-shape additions.
-Routine PRs can use a lighter version, but should still keep the disposition
-discipline.
+- Agent Definitions: `.claude/agents/*.md`
+- Workflow Skills: `.claude/skills/*/SKILL.md`
+- Plans: `process/general-plans/active/{slug}_{date}/` (active general — task folders), `process/general-plans/{completed,backlog}/` (general archives), `process/features/*/active/{slug}_{date}/` (feature-scoped — task folders), legacy `process/general-plans/{reports,references}/` (deprecated sibling dirs, read-only)
+- Features: `process/features/`
+- Context: `process/context/all-context.md` router plus relevant `process/context/` files/groups
 
-1. First pass: implement the change with local tests.
-2. Second pass: run multi-agent review with explicit lenses: performance, SRE,
-   crypto/security, types, distributed-systems behavior, API contract, and
-   architecture. Use the `Agent` tool with general-purpose subagents or
-   `codex exec` with parallel agents in worktrees. For long-lived package work,
-   include sustainability/maintainability as an explicit lens.
-3. Third pass: address CodeRabbit findings. CodeRabbit re-reviews on every
-   push window, so check
-   `gh api repos/<owner>/<repo>/pulls/<N>/comments --paginate` after each push.
-4. Fourth pass: run a staff-engineer review via the `Agent` tool with the
-   `staff-code-reviewer` subagent.
-5. Per-pass discipline: every PR comment gets exactly one disposition:
-   `FIXED` with commit ref, `SKIPPED` with a concrete reason such as already
-   addressed in commit X / known-limitation / out of scope, or `DEFERRED` to a
-   follow-up issue with a link.
+---
 
-This rhythm is appropriate for protocol-grade work; do not impose it
-uncritically on small bug fixes or documentation-only changes.
-
-For PR-shaped reviews specifically (major dependency bumps, IPC surface
-changes, anything under `apps/desktop/AGENTS.md`'s hard rules), see
-[docs/agents/orthogonal-pr-review.md](/docs/agents/orthogonal-pr-review.md).
-It spells out the lens menu, codex-vs-Claude routing, and the round-2
-adversarial rhythm.
-
-### Sub-agent dispatch contract
-
-When a human or AI delegates work to a sub-agent through `codex exec`, Claude's
-`Agent` tool, or another runner, the dispatch prompt MUST include:
-
-1. A pointer to the package's `AGENTS.md`: "Read packages/X/AGENTS.md first; it
-   captures conventions you must follow."
-2. The relevant hard rules pasted verbatim, not just referenced. Sub-agents do
-   not always read linked docs.
-3. Explicit decision options when there is design ambiguity: "Pick (a) unless
-   (b) is necessary because Y. Document your choice in the commit body."
-4. Verification commands the agent must run before commit, using the exact shell
-   invocation.
-5. A per-finding disposition format: every finding addressed must end with
-   `FIXED`, `SKIPPED` plus reason, or `DEFERRED` plus issue ref.
-6. Failure-mode guidance: "If you can't safely fix X, leave a TODO with
-   rationale rather than commit a half-fix."
-7. A scope boundary listing files the agent SHOULD touch and files it SHOULD NOT
-   touch, especially when multiple agents run in parallel.
-
-Copy-paste this dispatch template and fill in the bracketed sections before
-sending it to a sub-agent:
-
-```text
-You are working in a git worktree on branch [branch-name].
-
-Read [packages/X/AGENTS.md] first; it captures package conventions you must
-follow. Also read the root AGENTS.md for repo-wide rules.
-
-Hard rules for this dispatch, pasted verbatim:
-[Paste the relevant hard rules from the package AGENTS.md and root AGENTS.md
-here. Do not replace this with "see AGENTS.md".]
-
-Task:
-[Describe the exact findings or changes assigned to this agent.]
-
-Scope boundary:
-- SHOULD touch: [files/directories]
-- SHOULD NOT touch: [files/directories owned by other batches]
-
-Design ambiguity:
-- Prefer [option A] unless [option B] is necessary because [reason].
-- If you choose [option B], document why in the commit body.
-
-Failure mode:
-If you cannot safely fix [risk area], leave a TODO with rationale and report the
-finding as SKIPPED or DEFERRED rather than committing a half-fix.
-
-Verification before commit:
-- [exact command 1]
-- [exact command 2]
-- [exact command 3]
-
-Commit:
-- Use a Conventional Commit message.
-- Explain the why in the body when the choice is non-obvious.
-
-End your summary with this disposition table:
-| # | Finding | Status | Notes |
-|---|---------|--------|-------|
-| 1 | <short> | FIXED | commit <sha> |
-| 2 | <short> | SKIPPED | <reason> |
-| 3 | <short> | DEFERRED | <issue link> |
-```
-
-### Worktree-based parallelism
-
-For multi-batch fixes:
-
-1. Identify the file-overlap matrix before dispatching. Record which batches
-   touch which files.
-2. Create one worktree per batch:
-   `git worktree add /path/to/worktree -b batch-name <base-ref>`.
-3. Each Codex agent commits to its own branch in its own worktree.
-4. Cherry-pick batches in dependency order: least overlap first, most overlap
-   last.
-5. Resolve conflicts at integration. Do not ask agents to redo work solely
-   because integration conflicts surfaced.
-6. Clean up integrated worktrees and branches after integration:
-   `git worktree remove /path/to/worktree && git branch -D batch-name`.
-
-### Demo + cross-language oracle for protocol-grade packages
-
-Every package that defines a wire shape ships:
-
-- A `scripts/demo.ts` or equivalent that exercises the public API end-to-end
-  with adversarial inputs.
-- A cross-language reference verifier such as
-  `testdata/verifier-reference.go` for any wire-contract bytes.
-- CI wiring and lefthook pre-push wiring for both artifacts, scoped with glob
-  filters so unrelated changes do not pay the full cost.
-- README updates in the same commit as any wire-shape change, so code and
-  documented shape cannot drift.
-
-This follows `feedback_atomic_demo_slices.md`: every PR ships a demo plus an
-iteration hook; reviewer practice is to run the demo, not eyeball the diff.
-
-### Lint And Security
-
-- Go: `gofmt`, `go vet ./...`, and `golangci-lint run ./...`.
-- Web: `bunx biome check --write`.
-- Secrets: `bunx secretlint`.
-- Do not suppress lint warnings with ignore comments.
+**This file is automatically loaded at the start of every Claude Code session.**
