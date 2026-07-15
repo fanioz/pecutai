@@ -168,14 +168,14 @@ func (l *Launcher) GenerateAgentFileFromContext(ctx context.Context, relPath, hi
 			fmt.Fprintf(&info, "Persona: %s\n", p)
 		}
 		if isLead {
-			info.WriteString("This agent is the office lead: it coordinates and delegates rather than doing all the work itself.\n")
+			info.WriteString("This agent is the team lead: it coordinates and delegates rather than doing all the work itself.\n")
 		}
 		example = renderAgentFileContent(member, name, isLead)
 	}
 
 	systemPrompt := l.buildPrompt(leadSlug) + fmt.Sprintf(`
 
-You are authoring the %s.md instruction file for a WUPHF office agent. This
+You are authoring the %s.md instruction file for a WUPHF agent. This
 file is loaded verbatim into the agent's system prompt, so write it as direct
 second-person instructions to that agent ("You ...").
 
@@ -231,7 +231,7 @@ func (l *Launcher) GenerateChannelTemplateFromPromptCtx(ctx context.Context, req
 	}
 	systemPrompt := l.buildPrompt(l.targeter().LeadSlug()) + `
 
-You are designing a NEW office channel for WUPHF.
+You are designing a NEW team channel for WUPHF.
 Return exactly one JSON object and nothing else.
 Do not wrap it in markdown fences.
 Do not explain your reasoning.
@@ -248,10 +248,10 @@ Constraints:
 - Never use slug "general".
 - Keep the channel focused on a specific topic or workstream.
 - Always include "ceo" in members.
-- Pick members that match the channel topic from the existing office roster.
+- Pick members that match the channel topic from the existing team roster.
 - If the prompt is vague, still make a crisp decision.
 `
-	userPrompt := "Design a new office channel from this request:\n\n" + request
+	userPrompt := "Design a new team channel from this request:\n\n" + request
 	raw, err := provider.RunConfiguredOneShotCtx(ctx, systemPrompt, userPrompt, l.cwd)
 	if err != nil {
 		return generatedChannelTemplate{}, err
