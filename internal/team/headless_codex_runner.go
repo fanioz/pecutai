@@ -419,9 +419,6 @@ func (l *Launcher) buildHeadlessCodexEnv(slug string, workspaceDir string, chann
 	env = setEnvValue(env, "WUPHF_BROKER_TOKEN", l.broker.Token())
 	env = setEnvValue(env, "WUPHF_BROKER_BASE_URL", l.BrokerBaseURL())
 	env = setEnvValue(env, "WUPHF_HEADLESS_PROVIDER", "codex")
-	if config.ResolveNoNex() {
-		env = setEnvValue(env, "WUPHF_NO_NEX", "1")
-	}
 	if l.isOneOnOne() {
 		env = setEnvValue(env, "WUPHF_ONE_ON_ONE", "1")
 		env = setEnvValue(env, "WUPHF_ONE_ON_ONE_AGENT", l.oneOnOneAgent())
@@ -630,9 +627,6 @@ func (l *Launcher) buildCodexOfficeConfigOverrides(slug string) ([]string, error
 		"WUPHF_BROKER_TOKEN",
 		"WUPHF_BROKER_BASE_URL",
 	}
-	if config.ResolveNoNex() {
-		wuphfEnvVars = append(wuphfEnvVars, "WUPHF_NO_NEX")
-	}
 	if l.isOneOnOne() {
 		wuphfEnvVars = append(wuphfEnvVars,
 			"WUPHF_ONE_ON_ONE",
@@ -655,15 +649,13 @@ func (l *Launcher) buildCodexOfficeConfigOverrides(slug string) ([]string, error
 		fmt.Sprintf(`mcp_servers.wuphf-office.env_vars=%s`, tomlStringArray(wuphfEnvVars)),
 	}
 
-	if !config.ResolveNoNex() {
-		if nexMCP, err := headlessCodexLookPath("nex-mcp"); err == nil {
-			overrides = append(overrides, fmt.Sprintf(`mcp_servers.nex.command=%s`, tomlQuote(nexMCP)))
-			if apiKey := strings.TrimSpace(config.ResolveAPIKey("")); apiKey != "" {
-				overrides = append(overrides, fmt.Sprintf(`mcp_servers.nex.env_vars=%s`, tomlStringArray([]string{
-					"WUPHF_API_KEY",
-					"NEX_API_KEY",
-				})))
-			}
+	if nexMCP, err := headlessCodexLookPath("nex-mcp"); err == nil {
+		overrides = append(overrides, fmt.Sprintf(`mcp_servers.nex.command=%s`, tomlQuote(nexMCP)))
+		if apiKey := strings.TrimSpace(config.ResolveAPIKey("")); apiKey != "" {
+			overrides = append(overrides, fmt.Sprintf(`mcp_servers.nex.env_vars=%s`, tomlStringArray([]string{
+				"WUPHF_API_KEY",
+				"NEX_API_KEY",
+			})))
 		}
 	}
 

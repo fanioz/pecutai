@@ -164,27 +164,12 @@ func TestResolveMemoryBackendDefaultsToMarkdown(t *testing.T) {
 	})
 }
 
-func TestResolveMemoryBackendDefaultsToMarkdownWhenNoNex(t *testing.T) {
-	// --no-nex says "don't reach for Nex." Markdown doesn't reach for Nex,
-	// so it's a valid and strictly better default than silent 'none' —
-	// previous behaviour left the user with no shared memory at all when
-	// they simply asked to skip Nex.
-	withTempConfig(t, func(_ string) {
-		t.Setenv("WUPHF_NO_NEX", "1")
-		t.Setenv("WUPHF_MEMORY_BACKEND", "")
-		if got := ResolveMemoryBackend(""); got != MemoryBackendMarkdown {
-			t.Fatalf("expected --no-nex default to resolve to markdown, got %q", got)
-		}
-	})
-}
-
 func TestResolveMemoryBackendRejectsGBrainFlag(t *testing.T) {
 	// AC3: --memory-backend gbrain (simulated via the flag/env path) no
 	// longer normalizes to a supported backend. NormalizeMemoryBackend
 	// returns "" for gbrain, so the resolver falls through to the default
 	// rather than selecting gbrain.
 	withTempConfig(t, func(_ string) {
-		t.Setenv("WUPHF_NO_NEX", "")
 		t.Setenv("WUPHF_MEMORY_BACKEND", "")
 		if got := NormalizeMemoryBackend("gbrain"); got != "" {
 			t.Fatalf("expected gbrain to normalize to empty (rejected), got %q", got)
@@ -201,7 +186,6 @@ func TestResolveMemoryBackendGBrainConfigFallsBackToMarkdownWithWarning(t *testi
 	// AC4 + Option B: a saved memory_backend: "gbrain" does not crash. It
 	// resolves to markdown and emits one stderr warning line per launch.
 	withTempConfig(t, func(_ string) {
-		t.Setenv("WUPHF_NO_NEX", "")
 		t.Setenv("WUPHF_MEMORY_BACKEND", "")
 		// Seed the config file with the legacy gbrain value.
 		if err := Save(Config{MemoryBackend: "gbrain"}); err != nil {
@@ -226,27 +210,6 @@ func TestResolveMemoryBackendGBrainConfigFallsBackToMarkdownWithWarning(t *testi
 		warning := `note: memory backend "gbrain" is no longer supported; using "markdown"`
 		if !strings.Contains(string(out), warning) {
 			t.Fatalf("expected stderr warning %q, got %q", warning, string(out))
-		}
-	})
-}
-
-func TestResolveMemoryBackendForcesNexToNoneUnderNoNex(t *testing.T) {
-	withTempConfig(t, func(_ string) {
-		t.Setenv("WUPHF_NO_NEX", "1")
-		t.Setenv("WUPHF_MEMORY_BACKEND", MemoryBackendNex)
-		if got := ResolveMemoryBackend(""); got != MemoryBackendNone {
-			t.Fatalf("expected nex to resolve to none under no-nex, got %q", got)
-		}
-	})
-}
-
-func TestResolveOneSecretDisabledWhenNoNex(t *testing.T) {
-	withTempConfig(t, func(_ string) {
-		t.Setenv("WUPHF_NO_NEX", "1")
-		t.Setenv("WUPHF_ONE_SECRET", "env-secret")
-		_ = Save(Config{OneAPIKey: "file-secret"})
-		if got := ResolveOneSecret(); got != "" {
-			t.Fatalf("expected no One secret when Nex is disabled, got %q", got)
 		}
 	})
 }

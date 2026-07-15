@@ -4,8 +4,7 @@
 //
 //	https://github.com/nex-crm/nex-as-a-skill
 //
-// The user is considered "Nex-connected" when nex-cli is on PATH and the
-// --no-nex flag (WUPHF_NO_NEX) is not set. Every shell-out uses a context
+// The user is considered "Nex-connected" when nex-cli is on PATH. Every shell-out uses a context
 // with a real timeout; failures are returned to callers so they can log and
 // fall back gracefully — missing binary is NOT a crash.
 package nex
@@ -21,7 +20,6 @@ import (
 	"time"
 
 	"github.com/nex-crm/wuphf/internal/buildinfo"
-	"github.com/nex-crm/wuphf/internal/config"
 )
 
 // DefaultTimeout is the deadline applied to every nex-cli shell-out when the
@@ -30,9 +28,6 @@ const DefaultTimeout = 8 * time.Second
 
 // ErrNotInstalled is returned when nex-cli is not on PATH.
 var ErrNotInstalled = errors.New("nex-cli not installed")
-
-// ErrDisabled is returned when --no-nex (WUPHF_NO_NEX) is set for this run.
-var ErrDisabled = errors.New("nex disabled via --no-nex")
 
 // binaryCandidates lists the executable names we accept as "nex-cli",
 // in priority order. `nex-cli` is the canonical name; `nex` is the alias
@@ -58,21 +53,10 @@ func IsInstalled() bool {
 	return BinaryPath() != ""
 }
 
-// Disabled reports whether the user has turned Nex off for this session
-// via the --no-nex flag / WUPHF_NO_NEX env var. --no-nex takes precedence
-// over auto-detection: even if nex-cli is installed, Disabled() wins.
-func Disabled() bool {
-	return config.ResolveNoNex()
-}
-
 // Connected reports whether WUPHF should treat the user as Nex-connected
-// for this session. True iff nex-cli is on PATH AND the user hasn't set
-// --no-nex. This is the replacement for the legacy `nex_connected` HTTP
-// ping check.
+// for this session: true iff nex-cli is on PATH. This is the replacement
+// for the legacy `nex_connected` HTTP ping check.
 func Connected() bool {
-	if Disabled() {
-		return false
-	}
 	return IsInstalled()
 }
 
@@ -108,9 +92,6 @@ const shimNotInstalledMarker = "nex-cli binary not found"
 // without its backing binary is reported as ErrNotInstalled, so callers can
 // errors.Is-check a single "not installed" condition.
 func Run(ctx context.Context, args ...string) (string, error) {
-	if Disabled() {
-		return "", ErrDisabled
-	}
 	bin := BinaryPath()
 	if bin == "" {
 		return "", ErrNotInstalled

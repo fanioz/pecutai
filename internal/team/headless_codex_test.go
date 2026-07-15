@@ -90,8 +90,6 @@ func TestBuildCodexOfficeConfigOverridesIncludesOfficeMCPEnv(t *testing.T) {
 		headlessCodexLookPath = oldLookPath
 	}()
 
-	t.Setenv("WUPHF_NO_NEX", "1")
-
 	broker := newTestBroker(t)
 	if err := broker.SetSessionMode(SessionModeOneOnOne, "pm"); err != nil {
 		t.Fatalf("SetSessionMode: %v", err)
@@ -114,14 +112,14 @@ func TestBuildCodexOfficeConfigOverridesIncludesOfficeMCPEnv(t *testing.T) {
 	if !strings.Contains(joined, `mcp_servers.wuphf-office.args=["mcp-team"]`) {
 		t.Fatalf("expected WUPHF MCP args override, got %q", joined)
 	}
-	if !strings.Contains(joined, `mcp_servers.wuphf-office.env_vars=["WUPHF_AGENT_SLUG", "WUPHF_BROKER_TOKEN", "WUPHF_BROKER_BASE_URL", "WUPHF_NO_NEX", "WUPHF_ONE_ON_ONE", "WUPHF_ONE_ON_ONE_AGENT"]`) {
+	if !strings.Contains(joined, `mcp_servers.wuphf-office.env_vars=["WUPHF_AGENT_SLUG", "WUPHF_BROKER_TOKEN", "WUPHF_BROKER_BASE_URL", "WUPHF_ONE_ON_ONE", "WUPHF_ONE_ON_ONE_AGENT"]`) {
 		t.Fatalf("expected office env var forwarding, got %q", joined)
 	}
 	if strings.Contains(joined, broker.Token()) {
 		t.Fatalf("expected broker token value to stay out of args, got %q", joined)
 	}
 	if strings.Contains(joined, `mcp_servers.nex.command=`) {
-		t.Fatalf("expected Nex MCP to stay disabled with WUPHF_NO_NEX, got %q", joined)
+		t.Fatalf("expected Nex MCP to stay absent without nex-mcp on PATH, got %q", joined)
 	}
 }
 

@@ -157,9 +157,6 @@ func (l *Launcher) buildHeadlessOpencodeMCPEntry(wuphfBinary string, slug string
 	if l != nil && l.broker != nil {
 		envMap["WUPHF_BROKER_TOKEN"] = l.broker.Token()
 	}
-	if config.ResolveNoNex() {
-		envMap["WUPHF_NO_NEX"] = "1"
-	}
 	if l != nil && l.isOneOnOne() {
 		envMap["WUPHF_ONE_ON_ONE"] = "1"
 		if v := strings.TrimSpace(l.oneOnOneAgent()); v != "" {

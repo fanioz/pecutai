@@ -9,10 +9,7 @@ import (
 
 func TestBuildOfficeIntroLinesUsesWorkspaceState(t *testing.T) {
 	// Pin memory backend to none — this test asserts the "local-only
-	// runtime" card. Under the new default, --no-nex alone lands on the
-	// markdown wiki (not local-only), so we opt in to local-only
-	// explicitly.
-	t.Setenv("WUPHF_NO_NEX", "1")
+	// runtime" card.
 	t.Setenv("WUPHF_MEMORY_BACKEND", "none")
 	m := newChannelModel(false)
 	m.brokerConnected = true
@@ -29,7 +26,7 @@ func TestBuildOfficeIntroLinesUsesWorkspaceState(t *testing.T) {
 	if !strings.Contains(plain, "Local-only runtime") {
 		t.Fatalf("expected local-only readiness card, got %q", plain)
 	}
-	if !strings.Contains(plain, "Restart without --no-nex or select --memory-backend nex when you want external context.") {
+	if !strings.Contains(plain, "Set --memory-backend nex or --memory-backend markdown to enable organizational context.") {
 		t.Fatalf("expected switcher guidance, got %q", plain)
 	}
 }

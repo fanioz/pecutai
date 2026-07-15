@@ -32,7 +32,7 @@ func (l *Launcher) buildPrompt(slug string) string {
 // (closures + a couple of map lookups).
 func (l *Launcher) newPromptBuilder() *promptBuilder {
 	memoryBackend := config.ResolveMemoryBackend("")
-	noNex := config.ResolveNoNex() || config.ResolveAPIKey("") == ""
+	noNex := config.ResolveAPIKey("") == ""
 	return &promptBuilder{
 		isOneOnOne:  l.isOneOnOne,
 		isFocusMode: l.isFocusModeEnabled,
@@ -229,14 +229,10 @@ func (l *Launcher) claudeCommand(slug, systemPrompt string) (string, error) {
 	otelLogsEndpoint := brokerBaseURL + "/v1/logs"
 	otelHeaders := "Authorization=Bearer " + brokerToken
 	otelResource := "agent.slug=" + slug + ",wuphf.channel=office"
-	// Match the prompt builder's NoNex semantics: an unset API key
-	// implies Nex-disabled regardless of the explicit flag, because
-	// every Nex call would 401 anyway. Pre-fix the prompt was built
-	// with NoNex=true (no API key) but the env passed NoNex=false to
-	// claude, so the agent saw a "Nex tools available" prompt and
-	// then hit auth errors at runtime. Compute once and use both
-	// places to keep them in lockstep.
-	noNex := config.ResolveNoNex() || config.ResolveAPIKey("") == ""
+	// An unset API key means Nex tools won't work anyway (every call would 401),
+	// so we signal this to the agent via WUPHF_NO_NEX for consistent behavior.
+	// Compute once and use both places to keep them in lockstep.
+	noNex := config.ResolveAPIKey("") == ""
 
 	return fmt.Sprintf(
 		"%s%s%sWUPHF_AGENT_SLUG=%s WUPHF_BROKER_TOKEN=%s WUPHF_BROKER_BASE_URL=%s WUPHF_NO_NEX=%t ANTHROPIC_PROMPT_CACHING=1 CLAUDE_CODE_ENABLE_TELEMETRY=1 OTEL_METRICS_EXPORTER=none OTEL_LOGS_EXPORTER=otlp OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=http/json OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=%s OTEL_EXPORTER_OTLP_HEADERS=%s OTEL_RESOURCE_ATTRIBUTES=%s claude --model %s %s --append-system-prompt-file %s --mcp-config %s --strict-mcp-config -n %s",

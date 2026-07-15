@@ -429,11 +429,7 @@ func newChannelModelWithApp(threadsCollapsed bool, initialApp channelui.OfficeAp
 	}
 	memoryStatus := team.ResolveMemoryBackendStatus()
 	if memoryStatus.SelectedKind == config.MemoryBackendNone {
-		if config.ResolveNoNex() {
-			m.notice = "Running in vendor-only mode. Nex tools are disabled for this session."
-		} else {
-			m.notice = "Running without an external memory backend for this session."
-		}
+		m.notice = "Running without an external memory backend for this session."
 	} else if memoryStatus.SelectedKind == config.MemoryBackendNex && memoryStatus.ActiveKind == config.MemoryBackendNone && strings.TrimSpace(config.ResolveAPIKey("")) == "" {
 		m.notice = "No WUPHF API key configured. Starting setup..."
 		m.initFlow, _ = m.initFlow.Start()

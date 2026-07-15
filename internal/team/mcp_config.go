@@ -101,7 +101,7 @@ func (l *Launcher) buildMCPServerMap() (map[string]any, error) {
 		office["env"] = env
 	}
 
-	if !config.ResolveNoNex() && apiKey != "" {
+	if apiKey != "" {
 		if nexMCP, err := exec.LookPath("nex-mcp"); err == nil {
 			servers["nex"] = map[string]any{
 				"command": nexMCP,

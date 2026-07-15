@@ -58,7 +58,6 @@ type WorkspaceUIState struct {
 	NextStep        string
 	NeedsYou        *Interview
 	PrimaryTask     *Task
-	NoNex           bool
 }
 
 // ResolveWorkspaceAwaySummary returns the cached away-summary

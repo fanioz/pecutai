@@ -179,13 +179,8 @@ func ResolveMemoryBackendStatus() MemoryBackendStatus {
 	case config.MemoryBackendNone:
 		status.ActiveKind = config.MemoryBackendNone
 		status.ActiveLabel = config.MemoryBackendLabel(config.MemoryBackendNone)
-		if config.ResolveNoNex() {
-			status.Detail = "Nex is disabled for this run, so the office is operating without an external memory backend."
-			status.NextStep = "Restart without --no-nex or select --memory-backend nex when you want external context."
-		} else {
-			status.Detail = "External memory is disabled for this run."
-			status.NextStep = "Set --memory-backend nex or --memory-backend markdown to enable organizational context."
-		}
+		status.Detail = "External memory is disabled for this run."
+		status.NextStep = "Set --memory-backend nex or --memory-backend markdown to enable organizational context."
 	case config.MemoryBackendNex:
 		if strings.TrimSpace(config.ResolveAPIKey("")) == "" {
 			status.Detail = "Nex backend selected, but no WUPHF/Nex API key is configured."
