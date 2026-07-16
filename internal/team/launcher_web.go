@@ -155,7 +155,6 @@ func (l *Launcher) LaunchWeb(webPort int) error {
 	go l.notifyAgentsLoop()
 	go l.notifyTaskActionsLoop()
 	go l.notifyOfficeChangesLoop()
-	go l.pollNexNotificationsLoop()
 	go l.watchdogSchedulerLoop()
 	if l.paneBackedAgents {
 		go l.primeVisibleAgents()

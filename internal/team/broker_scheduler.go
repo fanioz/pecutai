@@ -411,18 +411,6 @@ func (s systemCronSpec) resolvedDefaultInterval() int {
 func systemCronSpecs() []systemCronSpec {
 	return []systemCronSpec{
 		{
-			Slug:            "nex-insights",
-			Label:           "Nex insights",
-			DefaultInterval: func() int { return config.ResolveInsightsPollInterval() },
-			MinFloor:        30, // LLM-touching, quota burn — keep the floor high
-		},
-		{
-			Slug:            "nex-notifications",
-			Label:           "Nex notifications",
-			DefaultInterval: func() int { return int(notificationPollInterval() / time.Minute) },
-			MinFloor:        5,
-		},
-		{
 			Slug:            "one-relay-events",
 			Label:           "One relay events",
 			DefaultInterval: func() int { return 1 },
