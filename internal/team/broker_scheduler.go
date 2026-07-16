@@ -411,6 +411,23 @@ func (s systemCronSpec) resolvedDefaultInterval() int {
 func systemCronSpecs() []systemCronSpec {
 	return []systemCronSpec{
 		{
+			Slug:            "nex-insights",
+			Label:           "Nex insights",
+			DefaultInterval: func() int { return config.ResolveInsightsPollInterval() },
+			MinFloor:        30, // LLM-touching, quota burn — keep the floor high
+		},
+		{
+			Slug:            "nex-notifications",
+			Label:           "Nex notifications",
+			// DefaultInterval previously derived from the now-removed
+			// notificationPollInterval helper (launcher_nex.go). The Nex
+			// notification poll loop itself was removed in pe-y34, so this
+			// cron's interval is no longer consumed; keep the prior default
+			// (15 min) for the configurable surface.
+			DefaultInterval: func() int { return 15 },
+			MinFloor:        5,
+		},
+		{
 			Slug:            "one-relay-events",
 			Label:           "One relay events",
 			DefaultInterval: func() int { return 1 },
