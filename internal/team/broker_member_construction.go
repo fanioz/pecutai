@@ -52,7 +52,7 @@ func applyOfficeMemberDefaults(member *officeMember) {
 		member.Expertise = inferTeamExpertise(member.Slug, member.Role)
 	}
 	if member.Personality == "" {
-		member.Personality = inferOfficePersonality(member.Slug, member.Role)
+		member.Personality = inferTeamPersonality(member.Slug, member.Role)
 	}
 }
 

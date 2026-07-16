@@ -155,7 +155,7 @@ func agentConfigFromMember(member officeMember) agent.AgentConfig {
 		cfg.Expertise = inferTeamExpertise(member.Slug, member.Role)
 	}
 	if cfg.Personality == "" {
-		cfg.Personality = inferOfficePersonality(member.Slug, member.Role)
+		cfg.Personality = inferTeamPersonality(member.Slug, member.Role)
 	}
 	return cfg
 }
