@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/nex-crm/wuphf/internal/agent"
-	"github.com/nex-crm/wuphf/internal/api"
 	"github.com/nex-crm/wuphf/internal/channel"
 )
 
