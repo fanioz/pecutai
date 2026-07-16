@@ -132,8 +132,6 @@ func TestRunHeadlessCodexTurnUsesHeadlessOfficeRuntime(t *testing.T) {
 		switch file {
 		case "codex":
 			return "/usr/bin/codex", nil
-		case "nex-mcp":
-			return "/usr/bin/nex-mcp", nil
 		default:
 			return "", exec.ErrNotFound
 		}
@@ -194,12 +192,6 @@ func TestRunHeadlessCodexTurnUsesHeadlessOfficeRuntime(t *testing.T) {
 	}
 	if !strings.Contains(joinedArgs, `mcp_servers.wuphf-office.env_vars=["WUPHF_AGENT_SLUG", "WUPHF_BROKER_TOKEN", "WUPHF_BROKER_BASE_URL", "ONE_SECRET", "ONE_IDENTITY", "ONE_IDENTITY_TYPE"]`) {
 		t.Fatalf("expected office env var forwarding, got %#v", record.Args)
-	}
-	if !strings.Contains(joinedArgs, `mcp_servers.nex.command="/usr/bin/nex-mcp"`) {
-		t.Fatalf("expected nex MCP override, got %#v", record.Args)
-	}
-	if !strings.Contains(joinedArgs, `mcp_servers.nex.env_vars=["WUPHF_API_KEY", "NEX_API_KEY"]`) {
-		t.Fatalf("expected nex env var forwarding, got %#v", record.Args)
 	}
 	// V3-N5 isolation contract: a turn without a task worktree runs in the
 	// agent's scratch dir under the runtime home — NEVER the broker
@@ -288,8 +280,6 @@ func TestRunHeadlessCodexTurnMetricsNoDataRace(t *testing.T) {
 		switch file {
 		case "codex":
 			return "/usr/bin/codex", nil
-		case "nex-mcp":
-			return "/usr/bin/nex-mcp", nil
 		default:
 			return "", exec.ErrNotFound
 		}

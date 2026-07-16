@@ -649,16 +649,6 @@ func (l *Launcher) buildCodexOfficeConfigOverrides(slug string) ([]string, error
 		fmt.Sprintf(`mcp_servers.wuphf-office.env_vars=%s`, tomlStringArray(wuphfEnvVars)),
 	}
 
-	if nexMCP, err := headlessCodexLookPath("nex-mcp"); err == nil {
-		overrides = append(overrides, fmt.Sprintf(`mcp_servers.nex.command=%s`, tomlQuote(nexMCP)))
-		if apiKey := strings.TrimSpace(config.ResolveAPIKey("")); apiKey != "" {
-			overrides = append(overrides, fmt.Sprintf(`mcp_servers.nex.env_vars=%s`, tomlStringArray([]string{
-				"WUPHF_API_KEY",
-				"NEX_API_KEY",
-			})))
-		}
-	}
-
 	return overrides, nil
 }
 
