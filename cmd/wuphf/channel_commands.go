@@ -289,10 +289,6 @@ func (m channelModel) runCommand(trimmed, threadTarget string) (tea.Model, tea.C
 			m.notice = "Managed integrations are Nex-only right now. Select the Nex memory backend to use /integrate."
 			return m, nil
 		}
-		if config.ResolveNoNex() {
-			m.notice = "Nex is disabled (--no-nex), so managed integrations are unavailable for this run."
-			return m, nil
-		}
 		if config.ResolveAPIKey("") == "" {
 			m.notice = "No WUPHF API key configured. Run /init — Ryan Howard skipped this step. Don't be Ryan."
 			m.initFlow, _ = m.initFlow.Start()

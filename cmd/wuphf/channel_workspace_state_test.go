@@ -9,10 +9,7 @@ import (
 
 func TestBuildOfficeIntroLinesUsesWorkspaceState(t *testing.T) {
 	// Pin memory backend to none — this test asserts the "local-only
-	// runtime" card. Under the new default, --no-nex alone lands on the
-	// markdown wiki (not local-only), so we opt in to local-only
-	// explicitly.
-	t.Setenv("WUPHF_NO_NEX", "1")
+	// runtime" card.
 	t.Setenv("WUPHF_MEMORY_BACKEND", "none")
 	m := newChannelModel(false)
 	m.brokerConnected = true
@@ -23,13 +20,13 @@ func TestBuildOfficeIntroLinesUsesWorkspaceState(t *testing.T) {
 	lines := m.buildOfficeIntroLines(96)
 	plain := stripANSI(joinRenderedLines(lines))
 
-	if !strings.Contains(plain, "Welcome to The WUPHF Office.") {
-		t.Fatalf("expected office welcome copy, got %q", plain)
+	if !strings.Contains(plain, "Welcome to WUPHF.") {
+		t.Fatalf("expected workspace welcome copy, got %q", plain)
 	}
 	if !strings.Contains(plain, "Local-only runtime") {
 		t.Fatalf("expected local-only readiness card, got %q", plain)
 	}
-	if !strings.Contains(plain, "Restart without --no-nex or select --memory-backend nex when you want external context.") {
+	if !strings.Contains(plain, "Set --memory-backend nex or --memory-backend markdown to enable organizational context.") {
 		t.Fatalf("expected switcher guidance, got %q", plain)
 	}
 }
@@ -44,7 +41,7 @@ func TestBuildOfficeIntroLinesShowsOfflinePreviewGuidance(t *testing.T) {
 	if !strings.Contains(plain, "Offline preview") {
 		t.Fatalf("expected offline preview messaging, got %q", plain)
 	}
-	if !strings.Contains(plain, "Launch WUPHF to attach the live office, or run /doctor to inspect runtime readiness.") {
+	if !strings.Contains(plain, "Launch WUPHF to attach the live workspace, or run /doctor to inspect runtime readiness.") {
 		t.Fatalf("expected doctor guidance, got %q", plain)
 	}
 }
@@ -60,7 +57,7 @@ func TestBuildDirectIntroLinesPreservesDirectSessionResetLanguage(t *testing.T) 
 	if !strings.Contains(plain, "Direct session reset. Agent pane reloaded in place.") {
 		t.Fatalf("expected direct-session reset copy, got %q", plain)
 	}
-	if !strings.Contains(plain, "Use /switcher to jump back to the office.") {
+	if !strings.Contains(plain, "Use /switcher to jump back to the workspace.") {
 		t.Fatalf("expected switcher guidance in direct intro, got %q", plain)
 	}
 }

@@ -50,15 +50,6 @@ func TestIsInstalled_Present(t *testing.T) {
 	}
 }
 
-func TestConnected_DisabledBeatsInstalled(t *testing.T) {
-	dir := withIsolatedPATH(t)
-	writeFakeNexCLI(t, dir, "nex-cli", "echo installed")
-	t.Setenv("WUPHF_NO_NEX", "1")
-	if Connected() {
-		t.Fatal("--no-nex must take precedence over detection")
-	}
-}
-
 func TestConnected_Happy(t *testing.T) {
 	dir := withIsolatedPATH(t)
 	writeFakeNexCLI(t, dir, "nex-cli", "echo installed")
@@ -117,16 +108,6 @@ func TestRun_ShimWithoutBinary(t *testing.T) {
 	_, err := Run(context.Background(), "setup", "user@example.com")
 	if !errors.Is(err, ErrNotInstalled) {
 		t.Fatalf("Run: expected ErrNotInstalled for a shim without its binary, got %v", err)
-	}
-}
-
-func TestRun_Disabled(t *testing.T) {
-	dir := withIsolatedPATH(t)
-	writeFakeNexCLI(t, dir, "nex-cli", "echo ok")
-	t.Setenv("WUPHF_NO_NEX", "1")
-	_, err := Run(context.Background(), "recall", "foo")
-	if !errors.Is(err, ErrDisabled) {
-		t.Fatalf("Run: expected ErrDisabled, got %v", err)
 	}
 }
 

@@ -364,7 +364,7 @@ func (w *WikiWorker) AgentFileWrite(ctx context.Context, slug, relPath, content,
 func renderAgentSoul(member officeMember, isLead bool) string {
 	persona := strings.TrimSpace(member.Personality)
 	if persona == "" {
-		persona = inferOfficePersonality(member.Slug, member.Role)
+		persona = inferTeamPersonality(member.Slug, member.Role)
 	}
 	role := strings.TrimSpace(member.Role)
 	if role == "" {
@@ -398,7 +398,7 @@ func renderAgentIdentity(member officeMember) string {
 	fmt.Fprintf(&b, "- Role: %s\n", firstNonEmpty(member.Role, member.Slug))
 	expertise := member.Expertise
 	if len(expertise) == 0 {
-		expertise = inferOfficeExpertise(member.Slug, member.Role)
+		expertise = inferTeamExpertise(member.Slug, member.Role)
 	}
 	if len(expertise) > 0 {
 		fmt.Fprintf(&b, "- Expertise: %s\n", strings.Join(expertise, ", "))

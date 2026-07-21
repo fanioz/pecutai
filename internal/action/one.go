@@ -66,9 +66,6 @@ func NewOneCLIFromEnv() *OneCLI {
 func (o *OneCLI) Name() string { return "one" }
 
 func (o *OneCLI) Configured() bool {
-	if config.ResolveNoNex() {
-		return false
-	}
 	if lookPathExists(o.Bin) {
 		return true
 	}
@@ -677,9 +674,6 @@ func oneCLIUsesFlowWorkspace(args []string) bool {
 }
 
 func (o *OneCLI) ensureConfigured() error {
-	if config.ResolveNoNex() {
-		return errors.New("nex is disabled for this session (--no-nex); Nex-managed integrations are unavailable")
-	}
 	return nil
 }
 

@@ -479,6 +479,33 @@ var (
 	titleCaser             = cases.Title(language.English)
 )
 
+// SetActionProvider sets a custom external action provider that overrides
+// the default registry-based provider selection. This is the extensibility
+// hook for forks that need to implement their own action provider integration.
+//
+// Call this during startup (before any MCP tools are invoked) to register
+// a custom provider. The provider must implement the full action.Provider
+// interface and will be used for all action capabilities (guide, connections,
+// search, knowledge, execute, workflows, and relays).
+//
+// Example:
+//
+//	provider := mycustom.NewProvider()
+//	teammcp.SetActionProvider(provider)
+//
+// To revert to the default registry-based selection, pass nil:
+//
+//	teammcp.SetActionProvider(nil)
+func SetActionProvider(provider action.Provider) {
+	externalActionProvider = provider
+}
+
+// GetActionProvider returns the currently configured external action provider,
+// or nil if using the default registry-based selection.
+func GetActionProvider() action.Provider {
+	return externalActionProvider
+}
+
 type TeamActionGuideArgs struct {
 	Topic string `json:"topic,omitempty" jsonschema:"One of: overview, actions, flows, relay, all. Defaults to all."`
 }
@@ -510,9 +537,9 @@ type TeamActionExecuteArgs struct {
 	FormData        bool           `json:"form_data,omitempty" jsonschema:"Send as multipart/form-data"`
 	FormURLEncoded  bool           `json:"form_url_encoded,omitempty" jsonschema:"Send as application/x-www-form-urlencoded"`
 	DryRun          bool           `json:"dry_run,omitempty" jsonschema:"Build the request without sending it"`
-	Channel         string         `json:"channel,omitempty" jsonschema:"Optional office channel for logging"`
+	Channel         string         `json:"channel,omitempty" jsonschema:"Optional team channel for logging"`
 	MySlug          string         `json:"my_slug,omitempty" jsonschema:"Agent slug performing the action. Defaults to WUPHF_AGENT_SLUG."`
-	Summary         string         `json:"summary,omitempty" jsonschema:"Optional short office log summary"`
+	Summary         string         `json:"summary,omitempty" jsonschema:"Optional short team log summary"`
 	// IssueID is REQUIRED for any mutating (non-dry-run, non-read-only)
 	// action. The broker rejects mutating calls without an issue_id so the
 	// agent cannot do work that has no scoping artifact. The id must come
@@ -524,9 +551,9 @@ type TeamActionExecuteArgs struct {
 type TeamActionWorkflowCreateArgs struct {
 	Key              string   `json:"key" jsonschema:"Stable workflow key like daily-digest or escalate-renewal-risk"`
 	DefinitionJSON   string   `json:"definition_json" jsonschema:"Full WUPHF workflow JSON definition as a string"`
-	Channel          string   `json:"channel,omitempty" jsonschema:"Optional office channel for logging"`
+	Channel          string   `json:"channel,omitempty" jsonschema:"Optional team channel for logging"`
 	MySlug           string   `json:"my_slug,omitempty" jsonschema:"Agent slug creating the workflow. Defaults to WUPHF_AGENT_SLUG."`
-	Summary          string   `json:"summary,omitempty" jsonschema:"Optional short office log summary"`
+	Summary          string   `json:"summary,omitempty" jsonschema:"Optional short team log summary"`
 	SkillName        string   `json:"skill_name,omitempty" jsonschema:"Optional WUPHF skill name. Defaults to the workflow key."`
 	SkillTitle       string   `json:"skill_title,omitempty" jsonschema:"Optional skill title shown in the Skills app."`
 	SkillDescription string   `json:"skill_description,omitempty" jsonschema:"Optional skill description shown in the Skills app."`
@@ -541,9 +568,9 @@ type TeamActionWorkflowExecuteArgs struct {
 	Verbose   bool           `json:"verbose,omitempty" jsonschema:"Emit verbose workflow events"`
 	Mock      bool           `json:"mock,omitempty" jsonschema:"Mock external steps where supported"`
 	AllowBash bool           `json:"allow_bash,omitempty" jsonschema:"Allow bash/code steps in the workflow"`
-	Channel   string         `json:"channel,omitempty" jsonschema:"Optional office channel for logging"`
+	Channel   string         `json:"channel,omitempty" jsonschema:"Optional team channel for logging"`
 	MySlug    string         `json:"my_slug,omitempty" jsonschema:"Agent slug executing the workflow. Defaults to WUPHF_AGENT_SLUG."`
-	Summary   string         `json:"summary,omitempty" jsonschema:"Optional short office log summary"`
+	Summary   string         `json:"summary,omitempty" jsonschema:"Optional short team log summary"`
 }
 
 type TeamActionWorkflowScheduleArgs struct {
@@ -551,9 +578,9 @@ type TeamActionWorkflowScheduleArgs struct {
 	Schedule   string         `json:"schedule" jsonschema:"Cron expression or shorthand like daily, hourly, 4h, or 0 9 * * 1-5"`
 	RunNow     bool           `json:"run_now,omitempty" jsonschema:"Also execute one immediate run after scheduling when the human asked for a manual test run now"`
 	Inputs     map[string]any `json:"inputs,omitempty" jsonschema:"Optional workflow inputs"`
-	Channel    string         `json:"channel,omitempty" jsonschema:"Optional office channel for logging"`
+	Channel    string         `json:"channel,omitempty" jsonschema:"Optional team channel for logging"`
 	MySlug     string         `json:"my_slug,omitempty" jsonschema:"Agent slug scheduling the workflow. Defaults to WUPHF_AGENT_SLUG."`
-	Summary    string         `json:"summary,omitempty" jsonschema:"Optional short office log summary"`
+	Summary    string         `json:"summary,omitempty" jsonschema:"Optional short team log summary"`
 	SkillName  string         `json:"skill_name,omitempty" jsonschema:"Optional existing or new WUPHF skill name to mirror this workflow"`
 	SkillTitle string         `json:"skill_title,omitempty" jsonschema:"Optional skill title when creating or updating the mirrored skill"`
 }
@@ -572,18 +599,18 @@ type TeamActionRelayCreateArgs struct {
 	Description   string   `json:"description,omitempty" jsonschema:"Short description of what the relay is for"`
 	EventFilters  []string `json:"event_filters,omitempty" jsonschema:"Optional list of event types to include"`
 	CreateWebhook bool     `json:"create_webhook,omitempty" jsonschema:"Whether One should create the webhook endpoint on the source platform where supported"`
-	Channel       string   `json:"channel,omitempty" jsonschema:"Optional office channel for logging"`
+	Channel       string   `json:"channel,omitempty" jsonschema:"Optional team channel for logging"`
 	MySlug        string   `json:"my_slug,omitempty" jsonschema:"Agent slug creating the relay. Defaults to WUPHF_AGENT_SLUG."`
-	Summary       string   `json:"summary,omitempty" jsonschema:"Optional short office log summary"`
+	Summary       string   `json:"summary,omitempty" jsonschema:"Optional short team log summary"`
 }
 
 type TeamActionRelayActivateArgs struct {
 	ID            string `json:"id" jsonschema:"Relay endpoint ID"`
 	ActionsJSON   string `json:"actions_json" jsonschema:"JSON array of relay forwarding actions"`
 	WebhookSecret string `json:"webhook_secret,omitempty" jsonschema:"Optional webhook secret"`
-	Channel       string `json:"channel,omitempty" jsonschema:"Optional office channel for logging"`
+	Channel       string `json:"channel,omitempty" jsonschema:"Optional team channel for logging"`
 	MySlug        string `json:"my_slug,omitempty" jsonschema:"Agent slug activating the relay. Defaults to WUPHF_AGENT_SLUG."`
-	Summary       string `json:"summary,omitempty" jsonschema:"Optional short office log summary"`
+	Summary       string `json:"summary,omitempty" jsonschema:"Optional short team log summary"`
 }
 
 type TeamActionRelayEventsArgs struct {
@@ -630,7 +657,7 @@ func registerActionTools(server *mcp.Server) {
 	), handleTeamActionWorkflowExecute)
 	mcp.AddTool(server, officeWriteTool(
 		"team_action_workflow_schedule",
-		"Schedule a saved external workflow on a WUPHF-native cadence so it shows up in Calendar and runs through the office scheduler. Set run_now when the human also asked for an immediate first run.",
+		"Schedule a saved external workflow on a WUPHF-native cadence so it shows up in Calendar and runs through the team scheduler. Set run_now when the human also asked for an immediate first run.",
 	), handleTeamActionWorkflowSchedule)
 	mcp.AddTool(server, readOnlyTool(
 		"team_action_relays",
@@ -650,7 +677,7 @@ func registerActionTools(server *mcp.Server) {
 	), handleTeamActionRelayActivate)
 	mcp.AddTool(server, readOnlyTool(
 		"team_action_relay_events",
-		"List recent One relay events so the office can inspect or poll them.",
+		"List recent One relay events so the team can inspect or poll them.",
 	), handleTeamActionRelayEvents)
 	mcp.AddTool(server, readOnlyTool(
 		"team_action_relay_event",

@@ -8,23 +8,6 @@ import (
 	"github.com/nex-crm/wuphf/internal/config"
 )
 
-func TestResolveMemoryBackendStatusNoNexFallsBackToMarkdown(t *testing.T) {
-	// --no-nex with no explicit backend pick lands the user on the markdown
-	// wiki — the default external memory that doesn't require Nex. Silent
-	// 'none' was a worse default: the user asked to skip Nex, not to lose
-	// all shared memory.
-	t.Setenv("WUPHF_NO_NEX", "1")
-	t.Setenv("WUPHF_MEMORY_BACKEND", "")
-
-	status := ResolveMemoryBackendStatus()
-	if status.SelectedKind != config.MemoryBackendMarkdown {
-		t.Fatalf("expected selected backend markdown, got %+v", status)
-	}
-	if status.ActiveKind != config.MemoryBackendMarkdown {
-		t.Fatalf("expected active backend markdown, got %+v", status)
-	}
-}
-
 func TestShouldPollNexNotificationsOnlyWhenNexIsActive(t *testing.T) {
 	t.Setenv("WUPHF_NO_NEX", "")
 	t.Setenv("WUPHF_API_KEY", "nex-test-key")

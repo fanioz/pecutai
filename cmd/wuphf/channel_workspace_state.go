@@ -30,7 +30,6 @@ func (m channelModel) currentWorkspaceUIState() channelui.WorkspaceUIState {
 		AwaySummary:     awaySummary,
 		Focus:           channelui.TrimRecoverySentence(snapshot.Recovery.Focus),
 		Memory:          team.ResolveMemoryBackendStatus(),
-		NoNex:           config.ResolveNoNex(),
 	}
 
 	for _, req := range snapshot.Requests {
@@ -69,11 +68,11 @@ func (m channelModel) buildOfficeIntroLines(contentWidth int) []channelui.Render
 	state := m.currentWorkspaceUIState()
 	mutedStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(channelui.SlackMuted))
 	lines := []channelui.RenderedLine{
-		{Text: channelui.RenderDateSeparator(contentWidth, "Office overview")},
+		{Text: channelui.RenderDateSeparator(contentWidth, "Workspace overview")},
 		{Text: ""},
 	}
-	title := channelui.SubtlePill("office", "#F8FAFC", "#1264A3") + " " + lipgloss.NewStyle().Bold(true).Render("The WUPHF Office")
-	body := "Welcome to The WUPHF Office. Live company-building coordination across channels, direct sessions, tasks, and decisions. Michael Scott would be proud — and also confused, but mostly proud."
+	title := channelui.SubtlePill("workspace", "#F8FAFC", "#1264A3") + " " + lipgloss.NewStyle().Bold(true).Render("WUPHF workspace")
+	body := "Welcome to WUPHF. Live company-building coordination across channels, direct sessions, tasks, and decisions. Michael Scott would be proud — and also confused, but mostly proud."
 	extra := []string{
 		fmt.Sprintf("%d teammates · %d running tasks · %d open requests", state.PeerCount, state.RunningTasks, state.OpenRequests),
 	}
@@ -116,8 +115,8 @@ func (m channelModel) buildDirectIntroLines(contentWidth int) []channelui.Render
 		{Text: ""},
 	}
 	title := channelui.SubtlePill("1:1", "#F8FAFC", "#334155") + " " + lipgloss.NewStyle().Bold(true).Render("Direct session with "+m.oneOnOneAgentName())
-	body := "Direct session reset. Agent pane reloaded in place. This surface is just you and the selected agent. No office channels, no colleague chatter, no Toby. The door is closed."
-	extra := []string{"Use /switcher to jump back to the office."}
+	body := "Direct session reset. Agent pane reloaded in place. This surface is just you and the selected agent. No workspace channels, no colleague chatter, no Toby. The door is closed."
+	extra := []string{"Use /switcher to jump back to the workspace."}
 	if strings.TrimSpace(state.Focus) != "" {
 		extra = append(extra, "Focus: "+state.Focus)
 	}

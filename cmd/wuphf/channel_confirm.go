@@ -11,8 +11,8 @@ import (
 )
 
 func (m channelModel) confirmationForReset() *channelui.ChannelConfirm {
-	title := "Reset Office Session"
-	detail := "This clears the live office transcript and refreshes all team panes in place."
+	title := "Reset Workspace Session"
+	detail := "This clears the live workspace transcript and refreshes all team panes in place."
 	if m.isOneOnOne() {
 		title = "Reset Direct Session"
 		detail = fmt.Sprintf("This clears the direct transcript with %s and reloads the direct pane in place.", m.oneOnOneAgentName())
@@ -38,10 +38,10 @@ func confirmationForSessionSwitch(mode, agent string) *channelui.ChannelConfirm 
 			name = channelui.DisplayName(team.DefaultOneOnOneAgent)
 		}
 		title = "Enter Direct Session"
-		detail = fmt.Sprintf("This leaves the shared office view and zooms into a direct session with %s.", name)
+		detail = fmt.Sprintf("This leaves the shared workspace view and zooms into a direct session with %s.", name)
 	} else {
-		title = "Return To Main Office"
-		detail = "This exits direct mode and restores the shared office session."
+		title = "Return To Main Workspace"
+		detail = "This exits direct mode and restores the shared workspace session."
 	}
 	return &channelui.ChannelConfirm{
 		Title:        title,

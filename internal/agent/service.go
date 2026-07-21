@@ -143,10 +143,8 @@ func NewAgentService(opts ...AgentServiceOption) *AgentService {
 	}
 	if s.toolRegistry == nil {
 		s.toolRegistry = NewToolRegistry()
-		if !config.ResolveNoNex() {
-			for _, tool := range CreateBuiltinTools(s.client) {
-				s.toolRegistry.Register(tool)
-			}
+		for _, tool := range CreateBuiltinTools(s.client) {
+			s.toolRegistry.Register(tool)
 		}
 	}
 	if s.sessionStore == nil {

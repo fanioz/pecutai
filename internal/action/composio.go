@@ -60,7 +60,7 @@ func NewComposioFromEnv() *ComposioREST {
 func (c *ComposioREST) Name() string { return "composio" }
 
 func (c *ComposioREST) Configured() bool {
-	return !config.ResolveNoNex() && strings.TrimSpace(c.APIKey) != "" && strings.TrimSpace(c.UserID) != ""
+	return strings.TrimSpace(c.APIKey) != "" && strings.TrimSpace(c.UserID) != ""
 }
 
 func (c *ComposioREST) Supports(cap Capability) bool {

@@ -31,11 +31,11 @@ export const InlineNoLabel: Story = {
   args: { variant: "inline" },
 };
 
-/** Cycling The Office gerunds inside the typing bubble, à la the Claude Code spinner. */
+/** Cycling loading gerunds inside the typing bubble, à la the Claude Code spinner. */
 export const InlineOfficePhrases: Story = {
   args: {
     variant: "inline",
-    label: "Dwight is typing…",
+    label: "Agent is typing…",
     phrases: OFFICE_LOADING_PHRASES,
   },
 };

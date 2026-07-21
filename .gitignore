@@ -9,6 +9,16 @@
 /bridge
 /wuphf-oc-probe
 
+# Gas Town runtime state — never commit (merge pollution hazard; see pe-374).
+# These are ephemeral, per-agent artifacts produced by the Gas Town workspace,
+# not project source. An over-broad `git add -A` can sweep them into a branch
+# and pollute merges — e.g. a committed .runtime/agent.lock makes the runtime
+# think a dead agent still holds the lock.
+.runtime/
+.claude/
+.logs/
+.beads/
+
 # Local artifacts
 /bench/results/
 /docs/*

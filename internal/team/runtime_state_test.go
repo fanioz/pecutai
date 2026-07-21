@@ -75,12 +75,10 @@ func TestDetectRuntimeCapabilities(t *testing.T) {
 	if office, ok := got.Registry.Entry(CapabilityKeyOfficeRuntime); !ok || office.Level != CapabilityReady {
 		t.Fatalf("expected office runtime to be ready, got %+v", office)
 	}
-	// Under --no-nex the new ResolveMemoryBackend default lands on markdown
-	// (not 'none'). Markdown needs no external dependency, so the capability
-	// lifecycle is `ready`, not `disabled`. The user explicitly asked to
-	// skip Nex; they didn't ask to lose shared memory.
+	// The default ResolveMemoryBackend lands on markdown, which needs no
+	// external dependency, so the capability lifecycle is `ready`, not `disabled`.
 	if memEntry, ok := got.Registry.Entry(CapabilityKeyMemory); !ok || memEntry.Lifecycle != CapabilityLifecycleReady {
-		t.Fatalf("expected memory backend to be ready (markdown) under --no-nex, got %+v", memEntry)
+		t.Fatalf("expected memory backend to be ready (markdown), got %+v", memEntry)
 	}
 }
 

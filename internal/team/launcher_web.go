@@ -23,7 +23,6 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/nex-crm/wuphf/internal/config"
 	"github.com/nex-crm/wuphf/internal/nex"
 	"github.com/nex-crm/wuphf/internal/runtimebin"
 	"github.com/nex-crm/wuphf/internal/setup"
@@ -156,7 +155,6 @@ func (l *Launcher) LaunchWeb(webPort int) error {
 	go l.notifyAgentsLoop()
 	go l.notifyTaskActionsLoop()
 	go l.notifyOfficeChangesLoop()
-	go l.pollNexNotificationsLoop()
 	go l.watchdogSchedulerLoop()
 	if l.paneBackedAgents {
 		go l.primeVisibleAgents()
@@ -197,10 +195,9 @@ func (l *Launcher) LaunchWeb(webPort int) error {
 // isn't already installed. Prints an explicit "skipping Nex" line when
 // stdin isn't a TTY (npx, pipes, CI, containers) — fmt.Scanln returns
 // empty in that case, which the prompt would have silently accepted as
-// "yes" and tried to install. Users can rerun `nex setup` later or set
-// WUPHF_NO_NEX=1 to suppress the offer.
+// "yes" and tried to install. Users can rerun `nex setup` later.
 func (l *Launcher) maybeOfferNex() {
-	if config.ResolveNoNex() || nex.IsInstalled() {
+	if nex.IsInstalled() {
 		return
 	}
 	if !stdinIsTTY() {
