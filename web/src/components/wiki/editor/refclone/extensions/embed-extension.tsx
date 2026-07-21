@@ -6,15 +6,15 @@ import {
   ReactNodeViewRenderer,
 } from "@tiptap/react";
 import {
-  Facebook,
   Film,
   Globe,
-  Instagram,
+  Image,
+  Link2,
+  MessageSquare,
   Music,
   Music2,
-  Twitter,
+  SquarePlay,
   Video as VideoIcon,
-  Youtube,
 } from "lucide-react";
 
 import {
@@ -47,17 +47,17 @@ function ProviderIcon({
 }) {
   switch (provider) {
     case "youtube":
-      return <Youtube className={className} />;
+      return <SquarePlay className={className} />;
     case "vimeo":
       return <Film className={className} />;
     case "loom":
       return <Film className={className} />;
     case "twitter":
-      return <Twitter className={className} />;
+      return <MessageSquare className={className} />;
     case "facebook":
-      return <Facebook className={className} />;
+      return <Link2 className={className} />;
     case "instagram":
-      return <Instagram className={className} />;
+      return <Image className={className} />;
     case "tiktok":
       return <Music2 className={className} />;
     case "spotify":
