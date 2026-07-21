@@ -218,15 +218,6 @@ func Save(cfg Config) error {
 	return os.WriteFile(path, data, 0o600)
 }
 
-// ResolveNoNex reports whether Nex-backed tools are disabled for this run.
-func ResolveNoNex() bool {
-	v := strings.TrimSpace(os.Getenv("WUPHF_NO_NEX"))
-	if v == "" {
-		return false
-	}
-	return v == "1" || strings.EqualFold(v, "true") || strings.EqualFold(v, "yes")
-}
-
 // NormalizeMemoryBackend returns a supported memory backend or the empty string.
 func NormalizeMemoryBackend(value string) string {
 	switch strings.TrimSpace(strings.ToLower(value)) {
@@ -272,9 +263,6 @@ func ResolveMemoryBackend(flagValue string) string {
 	}
 	if backend == "" {
 		return MemoryBackendMarkdown
-	}
-	if backend == MemoryBackendNex && ResolveNoNex() {
-		return MemoryBackendNone
 	}
 	return backend
 }
@@ -488,9 +476,6 @@ func ResolveClaudeModel() string {
 
 // ResolveAPIKey resolves the API key via: flag > WUPHF_API_KEY env > NEX_API_KEY env > config file.
 func ResolveAPIKey(flagValue string) string {
-	if ResolveNoNex() {
-		return ""
-	}
 	if flagValue != "" {
 		return flagValue
 	}
@@ -505,12 +490,8 @@ func ResolveAPIKey(flagValue string) string {
 }
 
 // ResolveOneSecret resolves the Nex-managed One secret.
-// One is disabled entirely when Nex is disabled for the session.
 // Resolution: WUPHF_ONE_SECRET env > ONE_SECRET env > config file.
 func ResolveOneSecret() string {
-	if ResolveNoNex() {
-		return ""
-	}
 	if v := strings.TrimSpace(os.Getenv("WUPHF_ONE_SECRET")); v != "" {
 		return v
 	}
@@ -524,9 +505,6 @@ func ResolveOneSecret() string {
 // ResolveOneIdentity resolves the identity scope WUPHF should use with One.
 // Resolution: WUPHF_ONE_IDENTITY env > ONE_IDENTITY env > config email.
 func ResolveOneIdentity() string {
-	if ResolveNoNex() {
-		return ""
-	}
 	if v := strings.TrimSpace(os.Getenv("WUPHF_ONE_IDENTITY")); v != "" {
 		return v
 	}
@@ -540,9 +518,6 @@ func ResolveOneIdentity() string {
 // ResolveOneIdentityType resolves the One identity type.
 // Resolution: WUPHF_ONE_IDENTITY_TYPE env > ONE_IDENTITY_TYPE env > "user".
 func ResolveOneIdentityType() string {
-	if ResolveNoNex() {
-		return ""
-	}
 	if v := strings.TrimSpace(os.Getenv("WUPHF_ONE_IDENTITY_TYPE")); v != "" {
 		return v
 	}
@@ -557,9 +532,6 @@ func ResolveOneIdentityType() string {
 
 // OneSetupSummary explains how integrations are handled for the current setup.
 func OneSetupSummary() string {
-	if ResolveNoNex() {
-		return "disabled with Nex (--no-nex)"
-	}
 	email := ResolveOneIdentity()
 	secret := ResolveOneSecret()
 	switch {
@@ -576,9 +548,6 @@ func OneSetupSummary() string {
 
 // OneSetupBlurb is the user-facing copy for setup and config surfaces.
 func OneSetupBlurb() string {
-	if ResolveNoNex() {
-		return "Nex is disabled for this session, so WUPHF-managed integrations are disabled too."
-	}
 	email := ResolveOneIdentity()
 	if email != "" {
 		return fmt.Sprintf("WUPHF uses One for integrations and manages it automatically with your Nex email (%s).", email)
@@ -589,9 +558,6 @@ func OneSetupBlurb() string {
 // ResolveComposioAPIKey resolves the Composio API key.
 // Resolution: WUPHF_COMPOSIO_API_KEY env > COMPOSIO_API_KEY env > config file.
 func ResolveComposioAPIKey() string {
-	if ResolveNoNex() {
-		return ""
-	}
 	if v := strings.TrimSpace(os.Getenv("WUPHF_COMPOSIO_API_KEY")); v != "" {
 		return v
 	}
@@ -711,9 +677,6 @@ func ResolveMinimaxAPIKey() string {
 // ResolveComposioUserID resolves the Composio user identity WUPHF should use.
 // Resolution: WUPHF_COMPOSIO_USER_ID env > COMPOSIO_USER_ID env > config email.
 func ResolveComposioUserID() string {
-	if ResolveNoNex() {
-		return ""
-	}
 	if v := strings.TrimSpace(os.Getenv("WUPHF_COMPOSIO_USER_ID")); v != "" {
 		return v
 	}

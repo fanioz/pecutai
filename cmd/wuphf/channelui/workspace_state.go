@@ -58,7 +58,6 @@ type WorkspaceUIState struct {
 	NextStep        string
 	NeedsYou        *Interview
 	PrimaryTask     *Task
-	NoNex           bool
 }
 
 // ResolveWorkspaceAwaySummary returns the cached away-summary
@@ -86,8 +85,8 @@ func DeriveWorkspaceReadiness(state WorkspaceUIState, doctor *DoctorReport) Work
 		return WorkspaceReadinessState{
 			Level:    WorkspaceReadinessPreview,
 			Headline: "Offline preview",
-			Detail:   "The workspace is showing manifest-backed context, not the live office runtime.",
-			NextStep: "Launch WUPHF to attach the live office, or run /doctor to inspect runtime readiness.",
+			Detail:   "The workspace is showing manifest-backed context, not the live workspace runtime.",
+			NextStep: "Launch WUPHF to attach the live workspace, or run /doctor to inspect runtime readiness.",
 		}
 	}
 	if state.Memory.SelectedKind == config.MemoryBackendNone {
@@ -136,8 +135,8 @@ func DeriveWorkspaceReadiness(state WorkspaceUIState, doctor *DoctorReport) Work
 	return WorkspaceReadinessState{
 		Level:    WorkspaceReadinessReady,
 		Headline: "Ready to work",
-		Detail:   fmt.Sprintf("The live office runtime is attached and ready for collaboration with %s memory.", state.Memory.ActiveLabel),
-		NextStep: "Use /switcher to move through the office, or /recover to regain context before replying.",
+		Detail:   fmt.Sprintf("The live workspace runtime is attached and ready for collaboration with %s memory.", state.Memory.ActiveLabel),
+		NextStep: "Use /switcher to move through the workspace, or /recover to regain context before replying.",
 	}
 }
 
@@ -310,6 +309,6 @@ func (s WorkspaceUIState) SidebarHintLine() string {
 	case strings.TrimSpace(s.Focus) != "":
 		return "Focus: " + s.Focus
 	default:
-		return "Use /switcher or /recover to move through live office context"
+		return "Use /switcher or /recover to move through live workspace context"
 	}
 }

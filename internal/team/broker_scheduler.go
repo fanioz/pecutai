@@ -419,7 +419,12 @@ func systemCronSpecs() []systemCronSpec {
 		{
 			Slug:            "nex-notifications",
 			Label:           "Nex notifications",
-			DefaultInterval: func() int { return int(notificationPollInterval() / time.Minute) },
+			// DefaultInterval previously derived from the now-removed
+			// notificationPollInterval helper (launcher_nex.go). The Nex
+			// notification poll loop itself was removed in pe-y34, so this
+			// cron's interval is no longer consumed; keep the prior default
+			// (15 min) for the configurable surface.
+			DefaultInterval: func() int { return 15 },
 			MinFloor:        5,
 		},
 		{

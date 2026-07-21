@@ -2,7 +2,6 @@ package team
 
 import (
 	"context"
-	"encoding/json"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -265,56 +264,6 @@ func TestRunHeadlessClaudeTurn_NoResumeFlag(t *testing.T) {
 }
 
 // ─── MCP manifest: no-nex mode ────────────────────────────────────────────
-
-// TestBuildMCPServerMap_NoNexExcludesNexServer verifies that when
-// WUPHF_NO_NEX=true the built server map contains no "nex" entry, even if a
-// non-empty API key is present.
-func TestBuildMCPServerMap_NoNexExcludesNexServer(t *testing.T) {
-	t.Setenv("WUPHF_NO_NEX", "true")
-	// Provide a non-empty API key so we would enter the nex branch if WUPHF_NO_NEX
-	// were not checked.
-	t.Setenv("WUPHF_API_KEY", "test-key-12345")
-
-	l := minimalLauncher(false)
-	servers, err := l.buildMCPServerMap()
-	if err != nil {
-		t.Fatalf("buildMCPServerMap: %v", err)
-	}
-	if _, ok := servers["nex"]; ok {
-		t.Fatalf("'nex' server must be absent when WUPHF_NO_NEX=true, got servers: %v", mapKeys(servers))
-	}
-	// wuphf-office must always be present regardless of no-nex mode.
-	if _, ok := servers["wuphf-office"]; !ok {
-		t.Fatalf("'wuphf-office' server must always be present, got servers: %v", mapKeys(servers))
-	}
-}
-
-// TestEnsureAgentMCPConfig_NoNexEntryInWrittenFile verifies that the per-agent
-// MCP config file written to disk contains no "nex" key when WUPHF_NO_NEX=true.
-func TestEnsureAgentMCPConfig_NoNexEntryInWrittenFile(t *testing.T) {
-	t.Setenv("WUPHF_NO_NEX", "true")
-	t.Setenv("WUPHF_API_KEY", "test-key-12345")
-
-	l := minimalLauncher(false)
-	path, err := l.ensureAgentMCPConfig("ceo")
-	if err != nil {
-		t.Fatalf("ensureAgentMCPConfig: %v", err)
-	}
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		t.Fatalf("read MCP config file: %v", err)
-	}
-	var cfg struct {
-		MCPServers map[string]any `json:"mcpServers"`
-	}
-	if err := json.Unmarshal(data, &cfg); err != nil {
-		t.Fatalf("parse MCP config: %v", err)
-	}
-	if _, hasNex := cfg.MCPServers["nex"]; hasNex {
-		t.Fatalf("'nex' server must be absent in written MCP config when WUPHF_NO_NEX=true, got servers: %v", mapKeys(cfg.MCPServers))
-	}
-}
 
 // TestBuildMCPServerMap_NexCredentialsFlowThroughOffice verifies that the office
 // MCP server now owns shared-memory access, so Nex credentials flow through the

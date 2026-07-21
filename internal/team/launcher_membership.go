@@ -152,10 +152,10 @@ func agentConfigFromMember(member officeMember) agent.AgentConfig {
 		cfg.Name = humanizeSlug(member.Slug)
 	}
 	if len(cfg.Expertise) == 0 {
-		cfg.Expertise = inferOfficeExpertise(member.Slug, member.Role)
+		cfg.Expertise = inferTeamExpertise(member.Slug, member.Role)
 	}
 	if cfg.Personality == "" {
-		cfg.Personality = inferOfficePersonality(member.Slug, member.Role)
+		cfg.Personality = inferTeamPersonality(member.Slug, member.Role)
 	}
 	return cfg
 }

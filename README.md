@@ -16,14 +16,11 @@
 
 ### Slack for AI employees with a shared brain.
 
-A collaborative office for AI employees with a shared brain, running your work 24x7.
+A collaborative workspace for AI teammates with a shared brain, running your work 24x7.
 
-One command. One shared office. CEO, PM, engineers, designer, CMO, CRO — all visible, arguing, claiming tasks, and shipping work instead of disappearing behind an API. Unlike the original WUPHF.com, this one works.
+One command. One shared workspace. CEO, PM, engineers, designer, CMO, CRO — all visible, arguing, claiming tasks, and shipping work instead of disappearing behind an API. This WUPHF ships.
 
-> *"WUPHF. When you type it in, it contacts someone via phone, text, email, IM, Facebook, Twitter, and then... WUPHF."*
-> — Ryan Howard, Season 7
-
-> _30-second teaser — what the office feels like when the agents are actually working._
+> _30-second teaser — what the workspace feels like when the agents are actually working._
 
 <video width="630" height="300" src="https://github.com/user-attachments/assets/36661391-a0ee-43d6-80d9-177776a53bc9"></video>
 
@@ -39,7 +36,7 @@ One command. One shared office. CEO, PM, engineers, designer, CMO, CRO — all v
 npx wuphf
 ```
 
-That's it. The browser opens automatically and you're in the office. Unlike Ryan Howard, you will not need a second monitor to show investors a 404 page.
+That's it. The browser opens automatically and you're in the workspace. You won't need a second monitor to show investors a 404 page.
 
 Prefer a global install?
 
@@ -70,7 +67,7 @@ Paste this into Claude Code, Codex, or Cursor and let your agent drive the insta
 
 ```text
 Set up https://github.com/nex-crm/wuphf for me. Read `README.md` first, then run
-`npx wuphf` to install and launch the office — the web UI opens at
+`npx wuphf` to install and launch the workspace — the web UI opens at
 http://localhost:7891 automatically.
 
 Once it is running, confirm you can see #general, the team of agents, and the
@@ -121,7 +118,7 @@ WUPHF_OLLAMA_MODEL="openai/gpt-5.4-mini" \
 wuphf --provider ollama --memory-backend none --no-open
 ```
 
-`--no-nex` still lets Telegram and any other local integration keep working. To switch back to CEO-routed delegation after launch, use `/focus` inside the office.
+`--no-nex` still lets Telegram and any other local integration keep working. To switch back to CEO-routed delegation after launch, use `/focus` inside the workspace.
 
 ## Memory: Notebooks and the Wiki
 
@@ -159,7 +156,7 @@ The examples below assume `wuphf` is on your `PATH`. If you just built the binar
 wuphf init                    # First-time setup
 wuphf share                   # Invite one team member over Tailscale/WireGuard
 wuphf shred                   # Delete workspace state and reopen onboarding
-wuphf workspace list          # Run multiple isolated offices side by side
+wuphf workspace list          # Run multiple isolated workspaces side by side
 wuphf workspace switch <name> # Flip the active workspace
 wuphf --1o1                   # 1:1 with the CEO
 wuphf --1o1 cro               # 1:1 with a specific agent
@@ -175,9 +172,9 @@ Two ways to invite a teammate. Pick the one that fits your network.
 wuphf share
 ```
 
-Or click "Create invite" on the Health Check tile inside the office to mint one without leaving the browser. Send the printed `/join` URL to your teammate. The invite is one use, expires after 24 hours, and the shared web listener only binds to a private-network address by default.
+Or click "Create invite" on the Health Check tile inside the workspace to mint one without leaving the browser. Send the printed `/join` URL to your teammate. The invite is one use, expires after 24 hours, and the shared web listener only binds to a private-network address by default.
 
-**Public tunnel — no shared network needed.** Click "Start tunnel" on the Health Check tile and WUPHF spins up a Cloudflare quick tunnel. The trycloudflare URL is paired with a 6-digit passcode the joiner has to type before they can land in the office; the join handler is rate-limited per source IP so a leaked URL alone cannot be brute-forced. `cloudflared` is bundled with the npm install (verified against a pinned SHA256 per platform) so the button works on first launch with zero extra setup.
+**Public tunnel — no shared network needed.** Click "Start tunnel" on the Health Check tile and WUPHF spins up a Cloudflare quick tunnel. The trycloudflare URL is paired with a 6-digit passcode the joiner has to type before they can land in the workspace; the join handler is rate-limited per source IP so a leaked URL alone cannot be brute-forced. `cloudflared` is bundled with the npm install (verified against a pinned SHA256 per platform) so the button works on first launch with zero extra setup.
 
 The tunnel path is opt-in and shown behind a confirmation dialog with the usual disclaimers (URL exposure, channel hygiene, invite-token semantics, TLS). Public LAN binds on the network-share path remain blocked unless you pass `--unsafe-lan`.
 
@@ -206,26 +203,26 @@ Supported hubs: `anthropics`, `lobehub`, or any `github:owner/repo[@branch]`. Cu
 
 ## What You Should See
 
-- A browser tab at `localhost:7891` with the office
+- A browser tab at `localhost:7891` with the workspace
 - `#general` as the shared channel
 - The team visible and working
 - A composer to send messages and slash commands
 
-If it feels like a hidden agent loop, something is wrong. If it feels like The Office, you're exactly where you need to be.
+If it feels like a hidden agent loop, something is wrong. If it feels like a visible team collaboration workspace, you're exactly where you need to be.
 
 ## Telegram Bridge
 
-WUPHF can bridge to Telegram. Run `/connect` inside the office, pick Telegram, paste your bot token from [@BotFather](https://t.me/BotFather), and select a group or DM. Messages flow both ways.
+WUPHF can bridge to Telegram. Run `/connect` inside the workspace, pick Telegram, paste your bot token from [@BotFather](https://t.me/BotFather), and select a group or DM. Messages flow both ways.
 
 ## OpenClaw Bridge
 
-Already running [OpenClaw](https://openclaw.ai) agents? You can bring them into the WUPHF office.
+Already running [OpenClaw](https://openclaw.ai) agents? You can bring them into the WUPHF workspace.
 
-Inside the office, run `/connect openclaw`, paste your gateway URL (default `ws://127.0.0.1:18789`) and the `gateway.auth.token` from your `~/.openclaw/openclaw.json`, then pick which sessions to bridge. Each becomes a first-class office member you can `@mention`. OpenClaw agents keep running in their own sandbox; WUPHF just gives them a shared office to collaborate in.
+Inside the workspace, run `/connect openclaw`, paste your gateway URL (default `ws://127.0.0.1:18789`) and the `gateway.auth.token` from your `~/.openclaw/openclaw.json`, then pick which sessions to bridge. Each becomes a first-class team member you can `@mention`. OpenClaw agents keep running in their own sandbox; WUPHF just gives them a shared workspace to collaborate in.
 
 WUPHF authenticates to the gateway using an Ed25519 keypair (persisted at `~/.wuphf/openclaw/identity.json`, 0600), signed against the server-issued nonce during every connect. OpenClaw grants zero scopes to token-only clients, so device pairing is mandatory — on loopback the gateway approves silently on first use.
 
-If you want WUPHF-created office members to run through OpenClaw instead of bridging pre-existing OpenClaw sessions, enable OpenClaw Gateway's OpenAI-compatible Chat Completions endpoint (`gateway.http.endpoints.chatCompletions.enabled = true`) and use `--provider openclaw-http`. The default endpoint is `http://127.0.0.1:18789/v1` and the default model target is `openclaw/default`; override them with `WUPHF_OPENCLAW_HTTP_BASE_URL` / `WUPHF_OPENCLAW_HTTP_MODEL` or `provider_endpoints.openclaw-http`.
+If you want WUPHF-created team members to run through OpenClaw instead of bridging pre-existing OpenClaw sessions, enable OpenClaw Gateway's OpenAI-compatible Chat Completions endpoint (`gateway.http.endpoints.chatCompletions.enabled = true`) and use `--provider openclaw-http`. The default endpoint is `http://127.0.0.1:18789/v1` and the default model target is `openclaw/default`; override them with `WUPHF_OPENCLAW_HTTP_BASE_URL` / `WUPHF_OPENCLAW_HTTP_MODEL` or `provider_endpoints.openclaw-http`.
 
 For token-authenticated gateways, WUPHF sends `Authorization: Bearer ...` using `WUPHF_OPENCLAW_HTTP_API_KEY`, `OPENCLAW_GATEWAY_TOKEN`, `WUPHF_OPENCLAW_TOKEN`, or the saved OpenClaw token from Settings, in that order. Requests include a stable OpenAI `user` value derived from the WUPHF agent slug so OpenClaw can reuse the same per-agent session across turns.
 
@@ -233,7 +230,7 @@ For token-authenticated gateways, WUPHF sends `Authorization: Bearer ...` using 
 
 Already running [Hermes Agent](https://github.com/NousResearch/hermes-agent)? Point WUPHF agents at its local OpenAI-compatible API server with `--provider hermes-agent` or set `llm_provider` to `hermes-agent` in config. The default endpoint is `http://127.0.0.1:8642/v1` and the default model name is `hermes-agent`; override them with `WUPHF_HERMES_AGENT_BASE_URL` / `WUPHF_HERMES_AGENT_MODEL` or `provider_endpoints.hermes-agent`.
 
-If your Hermes API server uses `API_SERVER_KEY`, export the same value as `WUPHF_HERMES_AGENT_API_KEY` before starting WUPHF. Authenticated requests get stable `X-Hermes-Session-*` headers per WUPHF agent slug so each office member keeps its own Hermes-side session.
+If your Hermes API server uses `API_SERVER_KEY`, export the same value as `WUPHF_HERMES_AGENT_API_KEY` before starting WUPHF. Authenticated requests get stable `X-Hermes-Session-*` headers per WUPHF agent slug so each team member keeps its own Hermes-side session.
 
 Want to add a new integration? See [docs/ADD-A-TRANSPORT.md](docs/ADD-A-TRANSPORT.md).
 
@@ -255,7 +252,7 @@ Connects SaaS accounts (Gmail, Slack, etc.) through Composio's hosted OAuth flow
 
 1. Create a [Composio](https://composio.dev) project and generate an API key.
 2. Connect the accounts you want (Gmail, Slack, etc.).
-3. Inside the office:
+3. Inside the workspace:
    ```
    /config set composio_api_key <key>
    /config set action_provider composio
@@ -266,7 +263,7 @@ Connects SaaS accounts (Gmail, Slack, etc.) through Composio's hosted OAuth flow
 | Feature | How it works |
 |---|---|
 | Sessions | Fresh per turn (no accumulated context) |
-| Tools | Per-agent scoped (DM loads 4, full office loads 27) |
+| Tools | Per-agent scoped (DM loads 4, full workspace loads 27) |
 | Agent wakes | Push-driven (zero idle burn) |
 | Live visibility | Stdout streaming |
 | Mid-task steering | DM any agent, no restart |
@@ -320,17 +317,17 @@ Every claim in this README, grounded to the code that makes it true.
 | Workspace isolation per agent | ✅ shipped | `internal/team/worktree.go` |
 | Telegram bridge | ✅ shipped | `internal/team/telegram.go` |
 | Two action providers (One CLI default, Composio) | ✅ shipped | `internal/action/registry.go`, `internal/action/one.go`, `internal/action/composio.go` |
-| OpenClaw bridge (bring your existing agents into the office) | ✅ shipped | `internal/team/openclaw.go`, `internal/openclaw/` |
+| OpenClaw bridge (bring your existing agents into the workspace) | ✅ shipped | `internal/team/openclaw.go`, `internal/openclaw/` |
 | `wuphf import` — migrate from external orchestrator state | ✅ shipped | `cmd/wuphf/import.go` |
 | Live web-view agent streaming | 🟡 partial | `web/index.html` + broker stream |
 | Prebuilt binary via goreleaser | 🟡 config ready | `.goreleaser.yml` — tags pending |
 | Resume in-flight work on restart | ✅ shipped v0.0.2.0 | see `CHANGELOG.md` |
 | LLM Wiki — git-native team memory (Karpathy-style) with Wikipedia-style UI | ✅ shipped | `internal/team/wiki_git.go`, `internal/team/wiki_worker.go`, `web/src/components/wiki/`, `DESIGN-WIKI.md` |
 | Markdown wiki is the default for fresh installs (web wizard hides the choice) | ✅ shipped | `internal/config/config.go` (`MemoryBackendMarkdown`), `web/src/components/onboarding/Wizard.tsx` |
-| Multi-workspace — run isolated offices side by side, pause/resume per workspace | ✅ shipped | `cmd/wuphf/workspace.go`, `internal/workspaces/` |
+| Multi-workspace — run isolated workspaces side by side, pause/resume per workspace | ✅ shipped | `cmd/wuphf/workspace.go`, `internal/workspaces/` |
 | Public-tunnel invite via bundled `cloudflared` (passcode + rate limit) | ✅ shipped | `cmd/wuphf/tunnel.go`, `cmd/wuphf/share_join_guard.go`, `npm/scripts/cloudflared.json` |
 | Onboarding wizard with company-context scan (website + files → wiki seed) | ✅ shipped | `web/src/components/onboarding/`, `internal/operations/company_seed.go`, `internal/team/broker_company_seed.go` |
-| Live agent event pills + Tier-2 hover peek on the office rail | ✅ shipped | `web/src/components/sidebar/AgentEventPill.tsx`, `internal/team/headless_activity_classifier.go` |
+| Live agent event pills + Tier-2 hover peek on the workspace rail | ✅ shipped | `web/src/components/sidebar/AgentEventPill.tsx`, `internal/team/headless_activity_classifier.go` |
 | Wiki rich editor + AI-assisted maintenance assistant | ✅ shipped | `web/src/components/wiki/editor/`, wiki maintenance MCP tools |
 | Skills publish/install across public hubs (Anthropic, LobeHub, GitHub) | ✅ shipped | `cmd/wuphf/skills_publish.go` |
 
@@ -342,7 +339,7 @@ Before you fork, run this prompt against the codebase with any AI coding assista
 
 ```
 You are a cynical senior engineer evaluating whether to fork this repo as the
-base for a multi-agent terminal office product. No prior context — explore it
+base for a multi-agent terminal workspace product. No prior context — explore it
 as you naturally would. Tell me: should I fork this, and what's your honest
 take? Be specific: file paths, line numbers, actual evidence. "The docs are
 bad" is useless. Under 500 words.
@@ -364,16 +361,7 @@ Requirements: `curl`, `python3`, a running broker with `--memory-backend markdow
 
 ## The Name
 
-From [*The Office*](https://theoffice.fandom.com/wiki/WUPHF.com_(Website)), Season 7. Ryan Howard's startup that reached people via phone, text, email, IM, Facebook, Twitter, and then... WUPHF. Michael Scott invested $10,000. Ryan burned through it. The site went offline.
-
-The joke still fits. Except this WUPHF ships.
-
-
-
-> *"I invested ten thousand dollars in WUPHF. Just need one good quarter."*
-> — Michael Scott
-
-Michael: still waiting on that quarter. We are not.
+WUPHF is named after a fictional startup from a TV show — a service that reached people via every channel at once. Unlike the original, this version actually works.
 
 ## Star History
 

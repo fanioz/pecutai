@@ -5,7 +5,6 @@ import (
 
 	"github.com/nex-crm/wuphf/internal/agent"
 	"github.com/nex-crm/wuphf/internal/api"
-	"github.com/nex-crm/wuphf/internal/config"
 )
 
 // askRequest is the payload for the /ask endpoint.
@@ -25,11 +24,6 @@ func CreateNexAskStreamFn(apiClient *api.Client) agent.StreamFn {
 		ch := make(chan agent.StreamChunk, 64)
 		go func() {
 			defer close(ch)
-
-			if config.ResolveNoNex() {
-				ch <- agent.StreamChunk{Type: "error", Content: "Nex integration is disabled for this session (--no-nex)."}
-				return
-			}
 
 			if !apiClient.IsAuthenticated() {
 				var echo string

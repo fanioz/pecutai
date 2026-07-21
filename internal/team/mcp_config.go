@@ -12,7 +12,6 @@ package team
 import (
 	"encoding/json"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -40,7 +39,7 @@ func agentMCPServers(slug string) []string {
 	if codingAgentSlugs[slug] {
 		return []string{"wuphf-office"}
 	}
-	return []string{"wuphf-office", "nex"}
+	return []string{"wuphf-office"}
 }
 
 // buildMCPServerMap constructs the full set of MCP server entries.
@@ -99,18 +98,6 @@ func (l *Launcher) buildMCPServerMap() (map[string]any, error) {
 			env[key] = value
 		}
 		office["env"] = env
-	}
-
-	if !config.ResolveNoNex() && apiKey != "" {
-		if nexMCP, err := exec.LookPath("nex-mcp"); err == nil {
-			servers["nex"] = map[string]any{
-				"command": nexMCP,
-				"env": map[string]string{
-					"WUPHF_API_KEY": apiKey,
-					"NEX_API_KEY":   apiKey,
-				},
-			}
-		}
 	}
 
 	return servers, nil

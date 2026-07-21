@@ -54,11 +54,6 @@ func cmdQuit(ctx *SlashContext, args string) error {
 }
 
 func cmdInit(ctx *SlashContext, args string) error {
-	if config.ResolveNoNex() {
-		ctx.AddMessage("system", "Nex integration is disabled for this session (--no-nex). Start WUPHF without --no-nex to run setup.")
-		return nil
-	}
-
 	cfg, _ := config.Load()
 	if cfg.APIKey == "" {
 		cfg.APIKey = config.ResolveAPIKey("")
@@ -209,11 +204,7 @@ func cmdInsights(ctx *SlashContext, args string) error {
 
 func requireAuth(ctx *SlashContext) bool {
 	if ctx.APIClient == nil || !ctx.APIClient.IsAuthenticated() {
-		if config.ResolveNoNex() {
-			ctx.AddMessage("system", "Nex integration is disabled for this session (--no-nex).")
-		} else {
-			ctx.AddMessage("system", "Not authenticated. Run /init to set up.")
-		}
+		ctx.AddMessage("system", "Not authenticated. Run /init to set up.")
 		return false
 	}
 	return true
