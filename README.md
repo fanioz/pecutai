@@ -30,7 +30,7 @@ One command. One shared workspace. CEO, PM, engineers, designer, CMO, CRO — al
 
 ## Get Started
 
-**Prerequisites:** one agent CLI — [Claude Code](https://docs.anthropic.com/en/docs/claude-code) by default, or [Codex CLI](https://github.com/openai/codex) when you pass `--provider codex`. [tmux](https://github.com/tmux/tmux/wiki/Installing) is required for `--legacy-tui` mode (the web UI runs agents headlessly by default; tmux-backed dispatch remains as an internal fallback).
+**Prerequisites:** one agent CLI — [Claude Code](https://docs.anthropic.com/en/docs/claude-code) by default, [Codex CLI](https://github.com/openai/codex) when you pass `--provider codex`, or [Google Antigravity](https://github.com/google/antigravity) via `--provider agy`. [tmux](https://github.com/tmux/tmux/wiki/Installing) is required for `--legacy-tui` mode (the web UI runs agents headlessly by default; tmux-backed dispatch remains as an internal fallback).
 
 ```bash
 npx wuphf
@@ -91,7 +91,7 @@ if I say yes. If I am not logged in, just open https://wuphf.team.
 | `--no-open` | Don't auto-open the browser |
 | `--pack <name>` | Pick an agent pack (`starter`, `founding-team`, `coding-team`, `lead-gen-agency`, `revops`) |
 | `--opus-ceo` | Upgrade CEO from Sonnet to Opus |
-| `--provider <name>` | LLM provider override (`claude-code`, `codex`, `opencode`, `ollama`, `hermes-agent`, `openclaw-http`) |
+| `--provider <name>` | LLM provider override (`claude-code`, `codex`, `opencode`, `ollama`, `hermes-agent`, `openclaw-http`, `agy`) |
 | `--collab` | Start in collaborative mode — all agents see all messages (this is the default) |
 | `--unsafe` | Bypass agent permission checks (local dev only) |
 | `--web-port <n>` | Change the web UI port (default 7891) |
@@ -113,6 +113,14 @@ proxies, use `--provider ollama` and set `WUPHF_OLLAMA_BASE_URL` or
 WUPHF_OLLAMA_BASE_URL="http://127.0.0.1:20128/v1" \
 WUPHF_OLLAMA_MODEL="openai/gpt-5.4-mini" \
 wuphf --provider ollama --memory-backend none --no-open
+```
+
+### Google Antigravity (AGY)
+
+`--provider agy` shells out to the `agy` CLI binary using its non-interactive `--print` mode. It inherits whatever OAuth credentials or active project context exists in your shell environment. If a custom model is desired, set `WUPHF_AGY_MODEL` (or `AGY_MODEL`) or configure the default model for AGY:
+
+```bash
+WUPHF_AGY_MODEL="gemini-2.5-pro" wuphf --provider agy
 ```
 
 To switch back to CEO-routed delegation after launch, use `/focus` inside the workspace.

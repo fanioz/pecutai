@@ -202,7 +202,7 @@ func TestStreamFnResolver_PerAgentKindOverridesInstallWide(t *testing.T) {
 // shipped providers so external callers (resolver, oneshot, future capability
 // checks) can rely on Lookup("claude-code") and Lookup("codex").
 func TestRegistry_BuiltinsRegistered(t *testing.T) {
-	for _, kind := range []string{provider.KindClaudeCode, provider.KindCodex} {
+	for _, kind := range []string{provider.KindClaudeCode, provider.KindCodex, provider.KindAgy} {
 		if e := provider.Lookup(kind); e == nil {
 			t.Errorf("builtin Kind %q not registered — init() missing or out of order", kind)
 		}

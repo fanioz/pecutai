@@ -20,6 +20,7 @@ func TestValidateKind(t *testing.T) {
 		{"openclaw", "openclaw", false},
 		{"openclaw_http", "openclaw-http", false},
 		{"hermes_agent", "hermes-agent", false},
+		{"agy", "agy", false},
 		{"unknown", "gemini", true},
 		{"typo", "claud-code", true},
 		{"uppercase_rejected", "Codex", true},
@@ -118,7 +119,7 @@ func TestIsGatewayKind(t *testing.T) {
 			t.Errorf("IsGatewayKind(%q) = false, want true", k)
 		}
 	}
-	llms := []string{"", KindClaudeCode, KindCodex, KindOpencode, KindMLXLM, KindOllama, KindExo}
+	llms := []string{"", KindClaudeCode, KindCodex, KindOpencode, KindMLXLM, KindOllama, KindExo, KindAgy}
 	for _, k := range llms {
 		if IsGatewayKind(k) {
 			t.Errorf("IsGatewayKind(%q) = true, want false", k)

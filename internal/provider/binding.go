@@ -19,6 +19,7 @@ const (
 	KindMLXLM  = "mlx-lm"
 	KindOllama = "ollama"
 	KindExo    = "exo"
+	KindAgy    = "agy"
 )
 
 // ProviderBinding is the per-agent runtime selection persisted on an office
@@ -48,11 +49,11 @@ func ValidateKind(s string) error {
 	switch s {
 	case "",
 		KindClaudeCode, KindCodex, KindOpencode, KindOpenclaw, KindOpenclawHTTP, KindHermesAgent,
-		KindMLXLM, KindOllama, KindExo:
+		KindMLXLM, KindOllama, KindExo, KindAgy:
 		return nil
 	default:
-		return fmt.Errorf("unknown provider kind %q (valid: %s, %s, %s, %s, %s, %s, %s, %s, %s, or empty)",
-			s, KindClaudeCode, KindCodex, KindOpencode, KindOpenclaw, KindOpenclawHTTP, KindHermesAgent, KindMLXLM, KindOllama, KindExo)
+		return fmt.Errorf("unknown provider kind %q (valid: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, or empty)",
+			s, KindClaudeCode, KindCodex, KindOpencode, KindOpenclaw, KindOpenclawHTTP, KindHermesAgent, KindMLXLM, KindOllama, KindExo, KindAgy)
 	}
 }
 

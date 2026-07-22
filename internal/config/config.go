@@ -308,6 +308,7 @@ var (
 		"claude-code": {},
 		"codex":       {},
 		"opencode":    {},
+		"agy":         {},
 	}
 )
 
@@ -456,6 +457,18 @@ func ResolveOpencodeModel() string {
 		return v
 	}
 	if v := strings.TrimSpace(os.Getenv("OPENCODE_MODEL")); v != "" {
+		return v
+	}
+	return ""
+}
+
+// ResolveAgyModel returns the effective AGY model for the current run.
+// Resolution: WUPHF_AGY_MODEL env > AGY_MODEL env > empty (AGY picks its configured default).
+func ResolveAgyModel() string {
+	if v := strings.TrimSpace(os.Getenv("WUPHF_AGY_MODEL")); v != "" {
+		return v
+	}
+	if v := strings.TrimSpace(os.Getenv("AGY_MODEL")); v != "" {
 		return v
 	}
 	return ""

@@ -478,6 +478,30 @@ func TestResolveOpencodeModelFallsBackToOpencodeEnv(t *testing.T) {
 	}
 }
 
+func TestResolveLLMProviderAcceptsAgy(t *testing.T) {
+	withTempConfig(t, func(_ string) {
+		t.Setenv("WUPHF_LLM_PROVIDER", "agy")
+		if got := ResolveLLMProvider(""); got != "agy" {
+			t.Fatalf("expected agy env override, got %q", got)
+		}
+	})
+}
+
+func TestResolveAgyModelEnvOverride(t *testing.T) {
+	t.Setenv("WUPHF_AGY_MODEL", "gemini-2.5-pro")
+	if got := ResolveAgyModel(); got != "gemini-2.5-pro" {
+		t.Fatalf("expected WUPHF_AGY_MODEL override, got %q", got)
+	}
+}
+
+func TestResolveAgyModelFallsBackToAgyEnv(t *testing.T) {
+	t.Setenv("WUPHF_AGY_MODEL", "")
+	t.Setenv("AGY_MODEL", "gemini-2.0-flash")
+	if got := ResolveAgyModel(); got != "gemini-2.0-flash" {
+		t.Fatalf("expected AGY_MODEL fallback, got %q", got)
+	}
+}
+
 func TestResolveCodexModelUsesEnvOverride(t *testing.T) {
 	withTempConfig(t, func(_ string) {
 		t.Setenv("WUPHF_CODEX_MODEL", "gpt-5.4")
