@@ -1,6 +1,7 @@
 "use strict";
 
-const { describe, test, expect, afterEach, beforeEach } = require("bun:test");
+const { describe, test, afterEach, beforeEach } = require("node:test");
+const assert = require("node:assert");
 const fs = require("node:fs");
 const path = require("node:path");
 const os = require("node:os");
@@ -39,8 +40,8 @@ describe("ensureCacheDir", () => {
 
     await ensureCacheDir();
 
-    expect(fs.statSync(path.join(home, ".wuphf", "cache")).isDirectory()).toBe(true);
-    expect(cacheDir()).toBe(path.join(home, ".wuphf", "cache"));
+    assert.strictEqual(fs.statSync(path.join(home, ".wuphf", "cache")).isDirectory(), true);
+    assert.strictEqual(cacheDir(), path.join(home, ".wuphf", "cache"));
   });
 
   test("marks the cache directory as excluded from backups on macOS", async () => {
@@ -54,7 +55,7 @@ describe("ensureCacheDir", () => {
 
     await ensureCacheDir();
 
-    expect(calls).toContain(path.join(home, ".wuphf", "cache"));
+    assert.ok(calls.includes(path.join(home, ".wuphf", "cache")));
   });
 
   test("does not call the backup exclusion runner outside macOS", async () => {
@@ -68,6 +69,6 @@ describe("ensureCacheDir", () => {
 
     await ensureCacheDir();
 
-    expect(calls).toEqual([]);
+    assert.deepStrictEqual(calls, []);
   });
 });

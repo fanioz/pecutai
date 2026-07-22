@@ -160,10 +160,8 @@ func missingWebAssetsHandler() http.Handler {
     <h1>WUPHF web UI assets are missing</h1>
     <p>This source build did not include <code>web/dist/index.html</code>, and the embedded bundle is empty.</p>
     <p>Build the frontend bundle before rebuilding the Go binary:</p>
-    <pre><code>cd web
-bun install
-bun run build
-cd ..
+    <pre><code>pnpm install
+pnpm --filter wuphf-web build
 go build -o wuphf ./cmd/wuphf
 ./wuphf</code></pre>
   </main>

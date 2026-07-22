@@ -14,4 +14,4 @@ This registry lists all tracks of work.
 | Track ID | Track Name | Status | Path |
 | :--- | :--- | :--- | :--- |
 | `001-verify-scheduler` | Verify and enhance Go scheduler cron evaluations | IN_PROGRESS | [tracks/001-verify-scheduler/index.md](tracks/001-verify-scheduler/index.md) |
-| `002-migrate-pnpm` | Migrate Project from Bun to pnpm | new | [tracks/002-migrate-pnpm/index.md](tracks/002-migrate-pnpm/index.md) |
+| `002-migrate-pnpm` | Migrate Project from Bun to pnpm | COMPLETED | [tracks/002-migrate-pnpm/index.md](tracks/002-migrate-pnpm/index.md) |

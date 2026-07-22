@@ -3,14 +3,12 @@
 ## Office Build
 
 ```bash
-cd web
-bun install
-bun run build
-cd ..
+pnpm install
+pnpm --filter wuphf-web build
 go build -o wuphf ./cmd/wuphf
 ```
 
-Release and npm binaries already include the web UI assets. Source builds need Bun once to generate `web/dist/`; otherwise the Go binary will show the missing-assets setup page instead of serving raw Vite source files. The local office/team MCP tools now run from the main Go binary through the hidden `wuphf mcp-team` subcommand.
+Release and npm binaries already include the web UI assets. Source builds need pnpm once to generate `web/dist/`; otherwise the Go binary will show the missing-assets setup page instead of serving raw Vite source files. The local office/team MCP tools now run from the main Go binary through the hidden `wuphf mcp-team` subcommand.
 
 ## First-time setup
 
@@ -20,11 +18,11 @@ Run the bootstrap script once after cloning:
 ./scripts/bootstrap.sh
 ```
 
-It installs Bun deps at the repo root (secretlint, commitlint) and in `web/` (frontend deps), registers the git hooks via `lefthook install`, and prints install hints for `vhs` and `golangci-lint` if either is missing. Re-run it any time you switch branches that changed `package.json` / `web/package.json`.
+It installs workspace deps via pnpm at the repo root (secretlint, commitlint) and in `web/` (frontend deps), registers the git hooks via `lefthook install`, and prints install hints for `vhs` and `golangci-lint` if either is missing. Re-run it any time you switch branches that changed `package.json` / `web/package.json`.
 
 ## Git hooks
 
-Hooks run via [lefthook](https://github.com/evilmartians/lefthook) (`lefthook.yml`). Prerequisites: `./scripts/bootstrap.sh` has been run so `bun`, `lefthook`, `golangci-lint`, and optionally `vhs` are on PATH.
+Hooks run via [lefthook](https://github.com/evilmartians/lefthook) (`lefthook.yml`). Prerequisites: `./scripts/bootstrap.sh` has been run so `pnpm`, `lefthook`, `golangci-lint`, and optionally `vhs` are on PATH.
 
 **commit-msg**
 

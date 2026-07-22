@@ -237,7 +237,7 @@ check_nfkc_table_artifacts_consistent() {
   json_version=$(grep -oE '"unicodeVersion": *"[^"]+"' testdata/nfkc-table.json 2>/dev/null \
     | grep -oE '"[^"]+"$' || true)
   if [ -z "$ts_version" ] || [ "$ts_version" != "$json_version" ]; then
-    fail "nfkc-table.generated.ts (${ts_version:-missing}) and nfkc-table.json (${json_version:-missing}) disagree on the pinned Unicode version — regenerate both: bun run scripts/generate-nfkc-table.ts"
+    fail "nfkc-table.generated.ts (${ts_version:-missing}) and nfkc-table.json (${json_version:-missing}) disagree on the pinned Unicode version — regenerate both: pnpm exec tsx scripts/generate-nfkc-table.ts"
     return 1
   fi
   pass "nfkc-table.generated.ts and nfkc-table.json agree on the pinned Unicode version (${ts_version})"

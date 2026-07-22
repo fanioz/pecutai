@@ -44,15 +44,13 @@ Prefer a global install?
 npm install -g wuphf && wuphf
 ```
 
-Building from source (requires Go and Bun):
+Building from source (requires Go and Node/pnpm):
 
 ```bash
 git clone https://github.com/nex-crm/wuphf.git
 cd wuphf
-cd web
-bun install
-bun run build
-cd ..
+pnpm install
+pnpm --filter wuphf-web build
 go build -o wuphf ./cmd/wuphf
 ./wuphf
 ```

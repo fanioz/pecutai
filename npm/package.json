@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
-    "test": "bun test"
+    "test": "node --test scripts/*.test.js"
   },
   "engines": {
     "node": ">=18"

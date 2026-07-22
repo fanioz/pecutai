@@ -31,7 +31,7 @@ root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 out_dir="${root_dir}/out"
 
 if [ ! -d "${out_dir}/main" ]; then
-  echo "FAIL: ${out_dir}/main does not exist. Run \`bun run build\` first." >&2
+  echo "FAIL: ${out_dir}/main does not exist. Run \`pnpm build\` first." >&2
   exit 1
 fi
 

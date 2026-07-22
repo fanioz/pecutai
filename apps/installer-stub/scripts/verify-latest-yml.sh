@@ -226,7 +226,7 @@ if [[ -n "${tag}" ]]; then
   fi
   version="${version%-rewrite}"
 else
-  version="$(cd "${app_dir}" && bun -e 'process.stdout.write(require("./package.json").version)')"
+  version="$(cd "${app_dir}" && node -e 'process.stdout.write(require("./package.json").version)')"
   tag="v${version}"
 fi
 
@@ -265,7 +265,7 @@ manifest_field() {
   local field="$2"
 
   cd "${app_dir}" &&
-    WUPHF_MANIFEST_FILE="${file}" WUPHF_MANIFEST_FIELD="${field}" bun -e '
+    WUPHF_MANIFEST_FILE="${file}" WUPHF_MANIFEST_FIELD="${field}" node -e '
       const fs = require("node:fs");
       const yaml = require("js-yaml");
       const manifest = yaml.load(fs.readFileSync(process.env.WUPHF_MANIFEST_FILE, "utf8"));
@@ -280,7 +280,7 @@ manifest_file_entries() {
   local file="$1"
 
   cd "${app_dir}" &&
-    WUPHF_MANIFEST_FILE="${file}" bun -e '
+    WUPHF_MANIFEST_FILE="${file}" node -e '
       const fs = require("node:fs");
       const yaml = require("js-yaml");
       const manifestPath = process.env.WUPHF_MANIFEST_FILE;
@@ -319,7 +319,7 @@ sha512_base64() {
   fi
 
   cd "${app_dir}" &&
-    bun -e '
+    node -e '
       const crypto = require("node:crypto");
       const fs = require("node:fs");
       process.stdout.write(

@@ -39,7 +39,7 @@ echo "[run-local] using ports broker=${broker_port} web=${web_port}"
 
 if [ ! -f web/dist/index.html ]; then
   echo "[run-local] building web/dist"
-  (cd web && bun install --frozen-lockfile && bun run build)
+  pnpm install --frozen-lockfile && pnpm --filter wuphf-web build
 fi
 
 # Always rebuild on local-llm phase — we're iterating on the broker's
@@ -62,19 +62,19 @@ fi
 
 if [ ! -d web/e2e/node_modules ]; then
   echo "[run-local] installing e2e deps"
-  (cd web/e2e && bun install --frozen-lockfile >/dev/null)
+  pnpm install --frozen-lockfile >/dev/null
 fi
 
 # Playwright caches chromium in ~/.cache/ms-playwright (Linux) or
 # ~/Library/Caches/ms-playwright (macOS). If either has any chromium-*
-# directory, skip the install — `bunx playwright install` is itself a
+# directory, skip the install — `pnpm exec playwright install` is itself a
 # multi-second no-op when the browser is cached, but we'd rather not pay
 # even that on every run. compgen -G returns 0 iff the glob matches
 # anything (bash builtin, no subprocess; shellcheck-clean).
 if ! compgen -G "$HOME/.cache/ms-playwright/chromium-*" >/dev/null \
    && ! compgen -G "$HOME/Library/Caches/ms-playwright/chromium-*" >/dev/null; then
   echo "[run-local] installing playwright chromium"
-  (cd web/e2e && bunx playwright install chromium >/dev/null)
+  (cd web/e2e && pnpm exec playwright install chromium >/dev/null)
 fi
 
 # Sandbox: every wuphf state file lands under this throwaway dir, so a
@@ -148,7 +148,7 @@ run_wizard_phase() {
   start_wuphf "wizard"
   # Wizard-phase specs: anything that needs the unseeded onboarding flow.
   echo "[run-local] running wizard-phase specs"
-  (cd web/e2e && WUPHF_E2E_BASE_URL="http://localhost:${web_port}" bunx playwright test tests/wizard.spec.ts tests/wizard-error-states.spec.ts tests/local-llm-onboarding.spec.ts)
+  (cd web/e2e && WUPHF_E2E_BASE_URL="http://localhost:${web_port}" pnpm exec playwright test tests/wizard.spec.ts tests/wizard-error-states.spec.ts tests/local-llm-onboarding.spec.ts)
   stop_wuphf
 }
 
@@ -161,7 +161,7 @@ EOF
   # Shell-phase specs: post-onboarding UI surfaces (smoke, settings,
   # /connect telegram wizard).
   echo "[run-local] running shell-phase specs"
-  (cd web/e2e && WUPHF_E2E_BASE_URL="http://localhost:${web_port}" bunx playwright test tests/smoke.spec.ts tests/app-routes.spec.ts tests/route-matrix.spec.ts tests/route-regressions.spec.ts tests/sidebar-scroll.spec.ts tests/reviews-scroll.spec.ts tests/local-llm-settings.spec.ts tests/nex-connect.spec.ts tests/telegram-connect.spec.ts)
+  (cd web/e2e && WUPHF_E2E_BASE_URL="http://localhost:${web_port}" pnpm exec playwright test tests/smoke.spec.ts tests/app-routes.spec.ts tests/route-matrix.spec.ts tests/route-regressions.spec.ts tests/sidebar-scroll.spec.ts tests/reviews-scroll.spec.ts tests/local-llm-settings.spec.ts tests/nex-connect.spec.ts tests/telegram-connect.spec.ts)
   stop_wuphf
 }
 
@@ -248,7 +248,7 @@ EOF
   # tripping the outer `set -e` and losing log capture below.
   set +e
   (cd web/e2e && WUPHF_E2E_BASE_URL="http://localhost:${web_port}" \
-     bunx playwright test tests/local-llm-chat.spec.ts)
+     pnpm exec playwright test tests/local-llm-chat.spec.ts)
   local rc=$?
   set -e
   # Persist logs to a stable location so post-run debugging works
@@ -349,7 +349,7 @@ EOF
     set +e
     (cd web/e2e && DIALECT_NAME="$name" \
        WUPHF_E2E_BASE_URL="http://localhost:${web_port}" \
-       bunx playwright test tests/local-llm-dialects.spec.ts)
+       pnpm exec playwright test tests/local-llm-dialects.spec.ts)
     local sub_rc=$?
     set -e
     [ "$sub_rc" -ne 0 ] && rc=$sub_rc

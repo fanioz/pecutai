@@ -84,7 +84,7 @@ trap cleanup EXIT
 if ! curl -sf -m 2 "$base_url/" >/dev/null 2>&1; then
   echo "[publish] starting vite dev (existing server not detected at $base_url)" >&2
   vite_log="$(mktemp)"
-  bun run --cwd "$repo_root/web" dev > "$vite_log" 2>&1 &
+  pnpm --filter wuphf-web dev > "$vite_log" 2>&1 &
   vite_pid="$!"
   for _ in $(seq 1 30); do
     if curl -sf -m 2 "$base_url/" >/dev/null 2>&1; then
@@ -100,7 +100,7 @@ if ! curl -sf -m 2 "$base_url/" >/dev/null 2>&1; then
 fi
 
 # 2. Run the spec. node resolves @playwright/test from web/e2e/node_modules
-# (installed by `bun install` over there).
+# (installed by `pnpm install` over there).
 echo "[publish] capturing screenshots for $feature → $out_dir" >&2
 (
   cd "$repo_root/web/e2e"

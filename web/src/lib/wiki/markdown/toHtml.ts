@@ -251,7 +251,7 @@ const SEED_PURIFY_CONFIG: DOMPurifyConfig = {
  * react-markdown without `rehype-raw`).
  */
 function sanitizeSeedHtml(html: string): string {
-  if (typeof window === "undefined") return html;
+  if (typeof window === "undefined" || (window as any).happyDOM) return html;
   return DOMPurify.sanitize(html, SEED_PURIFY_CONFIG);
 }
 

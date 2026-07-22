@@ -3,7 +3,8 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { expect, test } = require("bun:test");
+const test = require("node:test");
+const assert = require("node:assert");
 const yaml = require("js-yaml");
 
 const appRoot = path.resolve(__dirname, "..");
@@ -39,12 +40,12 @@ test("refreshes sha512 and size for every latest-mac.yml files[] artifact", () =
       },
     );
 
-    expect(result.status).toBe(0);
+    assert.strictEqual(result.status, 0);
 
     const manifest = yaml.load(fs.readFileSync(path.join(distDir, "latest-mac.yml"), "utf8"));
-    expect(manifest.sha512).toBe(sha512Base64(zipBytes));
-    expect(manifest.size).toBe(zipBytes.byteLength);
-    expect(manifest.files).toEqual([
+    assert.strictEqual(manifest.sha512, sha512Base64(zipBytes));
+    assert.strictEqual(manifest.size, zipBytes.byteLength);
+    assert.deepStrictEqual(manifest.files, [
       {
         url: zipName,
         sha512: sha512Base64(zipBytes),
@@ -83,9 +84,9 @@ test("fails when a latest-mac.yml files[] artifact is missing", () => {
       },
     );
 
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain(
-      `latest-mac.yml files[] entry points at missing artifact: ${dmgName}`,
+    assert.strictEqual(result.status, 1);
+    assert.ok(
+      result.stderr.includes(`latest-mac.yml files[] entry points at missing artifact: ${dmgName}`),
     );
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });

@@ -15,27 +15,28 @@
     "tar": "7.5.15"
   },
   "scripts": {
-    "broker:test": "bun run --cwd packages/broker test",
-    "broker:typecheck": "bun run --cwd packages/broker typecheck",
-    "broker:check": "bun run --cwd packages/broker check",
-    "broker:check:invariants": "bun run --cwd packages/broker check:invariants",
-    "desktop:dev": "bun run --cwd apps/desktop dev",
-    "desktop:build": "bun run --cwd apps/desktop build",
-    "desktop:test": "bun run --cwd apps/desktop test",
-    "desktop:typecheck": "bun run --cwd apps/desktop typecheck",
-    "desktop:check:ipc-allowlist": "bun run --cwd apps/desktop check:ipc-allowlist",
-    "desktop:check:invariants": "bun run --cwd apps/desktop check:invariants",
-    "installer:build:dry-run": "bun run --cwd apps/installer-stub build:dry-run",
-    "installer:build:local": "bun run --cwd apps/installer-stub build:current",
-    "installer:check:secrets": "bun run --cwd apps/installer-stub check:secrets",
-    "installer:lint": "bun run --cwd apps/installer-stub lint"
+    "broker:test": "pnpm --filter @wuphf/broker test",
+    "broker:typecheck": "pnpm --filter @wuphf/broker typecheck",
+    "broker:check": "pnpm --filter @wuphf/broker check",
+    "broker:check:invariants": "pnpm --filter @wuphf/broker check:invariants",
+    "desktop:dev": "pnpm --filter @wuphf/desktop dev",
+    "desktop:build": "pnpm --filter @wuphf/desktop build",
+    "desktop:test": "pnpm --filter @wuphf/desktop test",
+    "desktop:typecheck": "pnpm --filter @wuphf/desktop typecheck",
+    "desktop:check:ipc-allowlist": "pnpm --filter @wuphf/desktop check:ipc-allowlist",
+    "desktop:check:invariants": "pnpm --filter @wuphf/desktop check:invariants",
+    "installer:build:dry-run": "pnpm --filter @wuphf/installer-stub build:dry-run",
+    "installer:build:local": "pnpm --filter @wuphf/installer-stub build:current",
+    "installer:check:secrets": "pnpm --filter @wuphf/installer-stub check:secrets",
+    "installer:lint": "pnpm --filter @wuphf/installer-stub lint"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.0",
     "@commitlint/config-conventional": "21.2.0",
     "@secretlint/secretlint-rule-pattern": "13.0.2",
     "@secretlint/secretlint-rule-preset-recommend": "13.0.2",
-    "secretlint": "13.0.2"
+    "secretlint": "13.0.2",
+    "tsx": "^4.23.1"
   },
   "version": "0.0.0"
 }

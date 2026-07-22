@@ -21,10 +21,10 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test --config e2e/playwright.config.ts",
-    "electron:install": "bun scripts/install-electron.mjs",
+    "electron:install": "node scripts/install-electron.mjs",
     "build": "electron-vite build",
-    "dev": "bun run electron:install && electron-vite dev",
-    "preview": "bun run electron:install && electron-vite preview",
+    "dev": "pnpm run electron:install && electron-vite dev",
+    "preview": "pnpm run electron:install && electron-vite preview",
     "check:ipc-allowlist": "bash scripts/check-ipc-allowlist.sh",
     "check:invariants": "bash scripts/check-invariants.sh",
     "check:build-externals": "bash scripts/check-build-externals.sh"

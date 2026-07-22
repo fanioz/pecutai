@@ -71,7 +71,7 @@ mkdir -p "$WUPHF_HOME"
 
 if [[ "$SKIP_FE" != "1" ]]; then
   log "rebuilding web/dist (vite + tsc)..."
-  (cd web && bun run build) >/tmp/wuphf-mvp-build.log 2>&1 || {
+  pnpm --filter wuphf-web build >/tmp/wuphf-mvp-build.log 2>&1 || {
     log "FE build failed. tail:"
     tail -30 /tmp/wuphf-mvp-build.log
     exit 1

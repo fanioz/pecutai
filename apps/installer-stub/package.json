@@ -26,7 +26,7 @@
     "build:dry-run": "node scripts/run-dry-run.js",
     "check:secrets": "bash scripts/detect-signing-secrets.sh",
     "check:invariants": "bash scripts/check-invariants.sh",
-    "test": "bash scripts/check-invariants-self-test.sh && WUPHF_VERIFY_LATEST_YML_RUN_SELF_TEST=1 WUPHF_VERIFY_LATEST_YML_SELF_TEST_ONLY=1 bash scripts/verify-latest-yml.sh && bun test scripts/refresh-latest-yml.test.js && node scripts/normalize-package-version.test.js && node scripts/run-builder.test.js && node scripts/check-packaged-runtime-deps.test.mjs",
+    "test": "bash scripts/check-invariants-self-test.sh && WUPHF_VERIFY_LATEST_YML_RUN_SELF_TEST=1 WUPHF_VERIFY_LATEST_YML_SELF_TEST_ONLY=1 bash scripts/verify-latest-yml.sh && node scripts/refresh-latest-yml.test.js && node scripts/normalize-package-version.test.js && node scripts/run-builder.test.js && node scripts/check-packaged-runtime-deps.test.mjs",
     "verify:latest-yml": "bash scripts/verify-latest-yml.sh"
   },
   "dependencies": {
@@ -36,6 +36,7 @@
     "@biomejs/biome": "2.5.1",
     "@electron/asar": "4.2.0",
     "@types/node": "26.0.1",
+    "app-builder-bin": "^4.2.0",
     "electron": "42.5.1",
     "electron-builder": "26.15.3",
     "js-yaml": "5.2.0"

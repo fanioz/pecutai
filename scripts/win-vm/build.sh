@@ -14,11 +14,11 @@ cd "$(dirname "$0")/../.."
 # matches the source tree on every cross-compile. A previous version of this
 # script gated on web/dist/index.html existing — that masked stale assets
 # from older builds and silently shipped them to the smoke VM. Skip with
-# WUPHF_SKIP_WEB=1 only when you've just run `bun run build` and want to
+# WUPHF_SKIP_WEB=1 only when you've just run `pnpm --filter wuphf-web build` and want to
 # avoid the second invocation cost during a tight Go-only iteration loop.
 if [[ "${WUPHF_SKIP_WEB:-0}" != "1" ]]; then
   echo "building web UI bundle..."
-  ( cd web && bun install && bun run build )
+  pnpm install --frozen-lockfile && pnpm --filter wuphf-web build
 fi
 
 VERSION="${WUPHF_VERSION:-dev-$(git rev-parse --short HEAD 2>/dev/null || echo unknown)}"

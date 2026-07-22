@@ -72,7 +72,7 @@ done < <(rg -n --pcre2 "${cert_path_regex}" "${scan_targets[@]}" || true)
 # PR, which is intentional friction.
 dependency_check_output="$(
   cd "${repo_root}" &&
-    bun -e '
+    node -e '
       const pkg = require("./apps/installer-stub/package.json");
 
       // The single source of truth for which runtime dependencies are
@@ -181,7 +181,7 @@ dependency_check_output="$(
 # R3 codex (api lens) flagged this as the empty-allowlist bypass.
 require_check_output="$(
   cd "${repo_root}" &&
-    bun -e '
+    node -e '
       const fs = require("fs");
       const pkg = require("./apps/installer-stub/package.json");
       const main = fs.readFileSync("./apps/installer-stub/src/main.js", "utf8");

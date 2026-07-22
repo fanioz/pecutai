@@ -5,7 +5,7 @@
 # (secretlint, commitlint rules) and in web/ (frontend deps), registers
 # lefthook git hooks, and prints install hints for optional tools.
 #
-# Required on PATH: bun, go, git, lefthook.
+# Required on PATH: pnpm, go, git, lefthook.
 # Optional (warn if missing): vhs, golangci-lint.
 
 set -euo pipefail
@@ -27,10 +27,10 @@ fail()  { printf "%serror:%s %s\n" "$red"    "$reset" "$*" >&2; exit 1; }
 ok()    { printf "%sok:%s %s\n"    "$green"  "$reset" "$*"; }
 
 # ---- required tools ----
-for tool in bun go git lefthook; do
+for tool in pnpm go git lefthook; do
   if ! command -v "$tool" >/dev/null 2>&1; then
     case "$tool" in
-      bun)      hint="curl -fsSL https://bun.sh/install | bash" ;;
+      pnpm)     hint="npm install -g pnpm" ;;
       go)       hint="https://go.dev/doc/install (or: brew install go)" ;;
       git)      hint="brew install git  # or your OS package manager" ;;
       lefthook) hint="brew install lefthook  # or: go install github.com/evilmartians/lefthook@latest" ;;
@@ -39,20 +39,16 @@ for tool in bun go git lefthook; do
   fi
 done
 
-# ---- bun install at repo root (secretlint, commitlint) ----
-info "bun install (repo root)"
-bun install
+# ---- pnpm install at repo root ----
+info "pnpm install (repo root)"
+WUPHF_SKIP_POSTINSTALL=1 pnpm install
 
-# ---- bun install in web/ (frontend deps) ----
-info "bun install (web/)"
-(cd web && bun install)
-
-# ---- bun run build in web/ (so cmd/wuphf can embed web/dist) ----
+# ---- build in web/ (so cmd/wuphf can embed web/dist) ----
 # Without this, a fresh clone + `go build ./cmd/wuphf` + `./wuphf` lands on
 # the "WUPHF web UI assets are missing" fallback page. Fail loudly on build
 # error rather than silently producing a broken binary.
-info "bun run build (web/)"
-(cd web && bun run build) || fail "web build failed — run 'cd web && bun run build' to see the error"
+info "pnpm --filter wuphf-web build"
+pnpm --filter wuphf-web build || fail "web build failed — run 'pnpm --filter wuphf-web build' to see the error"
 
 # ---- lefthook: install git hooks into .git/hooks ----
 info "lefthook install"

@@ -105,20 +105,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # ratchet:oven-sh/setup-bun@v2.2.0
+      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
         with:
-          bun-version: "1.3.13"
+          version: 11.9.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
+        with:
+          node-version: 22
+          cache: pnpm
       - name: Install workspace deps
-        # bun.lock lives at the repo root and covers every workspace package;
-        # `bun install --frozen-lockfile` from here resolves packages/protocol
+        # pnpm-lock.yaml lives at the repo root and covers every workspace package;
+        # `pnpm install --frozen-lockfile` from here resolves packages/protocol
         # too. Doing the install per-package would split the lockfile.
-        run: bun install --frozen-lockfile
+        run: WUPHF_SKIP_POSTINSTALL=1 pnpm install --frozen-lockfile
       - name: Typecheck
         working-directory: packages/protocol
-        run: bun run typecheck
+        run: pnpm typecheck
       - name: Biome (lint + format check)
         working-directory: packages/protocol
-        run: bun run check
+        run: pnpm check
       - name: Vitest (unit + property tests)
         # Routed through the canonical wrapper so this matches what local
         # contributors run — see scripts/test-protocol.sh.
@@ -128,7 +132,7 @@ jobs:
         # in vitest.config.ts; lowering them is forbidden. NEW PRs must keep
         # measured coverage at or above the declared floor.
         working-directory: packages/protocol
-        run: bun run test:coverage
+        run: pnpm test:coverage
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # ratchet:actions/upload-artifact@v7
         if: always()
         with:
@@ -141,7 +145,7 @@ jobs:
         # with a fixed seed so a flake is deterministically reproducible.
         # Cheap enough to run on every PR.
         working-directory: packages/protocol
-        run: bun run test:shuffle
+        run: pnpm test:shuffle
       - name: Protocol invariant checks
         # Custom protocol-grade invariants Biome cannot express:
         # instanceof allowlist, single hashing entry point, no process.env
@@ -154,7 +158,7 @@ jobs:
         # invariants; the demo catches regressions in how the modules
         # COMPOSE — naming drift, missing exports, accidental API breaks
         # at the index.ts boundary. Cheap (<1s).
-        run: bun run packages/protocol/scripts/demo.ts
+        run: pnpm exec tsx packages/protocol/scripts/demo.ts
       - name: Frozen NFKC table drift check
         # The moat normalises NFKC against frozen, version-pinned tables
         # (src/nfkc-table.generated.ts + testdata/nfkc-table.json), derived
@@ -166,7 +170,7 @@ jobs:
         # downgrade to a content-only check if the runner's ICU is bumped.
         working-directory: packages/protocol
         run: |
-          bun run scripts/generate-nfkc-table.ts --require-runtime-match
+          pnpm exec tsx scripts/generate-nfkc-table.ts --require-runtime-match
           git -C "$GITHUB_WORKSPACE" diff --exit-code -- \
             packages/protocol/src/nfkc-table.generated.ts \
             packages/protocol/testdata/nfkc-table.json
@@ -199,16 +203,17 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # ratchet:oven-sh/setup-bun@v2.2.0
+      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
         with:
-          bun-version: "1.3.13"
+          version: 11.9.0
       # Broker tests run under Vitest, which spawns workers on the system Node
       # binary (not bun). The broker storage layer uses `node:sqlite` (stable
       # in Node 22.13+, experimental from 22.5+), so we explicitly pin a Node
-      # that ships it — setup-bun's bundled Node is older and lacks the module.
+      # that ships it.
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
         with:
           node-version: "22.x"
+          cache: pnpm
       - name: Detect broker changes
         id: broker-changes
         env:
@@ -216,9 +221,9 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -z "${BASE_SHA}" || "${BASE_SHA}" =~ ^0+$ ]]; then
-            changed="$(git ls-files packages/broker packages/protocol package.json bun.lock)"
+            changed="$(git ls-files packages/broker packages/protocol package.json pnpm-lock.yaml)"
           else
-            changed="$(git diff --name-only "${BASE_SHA}"...HEAD -- packages/broker packages/protocol package.json bun.lock || true)"
+            changed="$(git diff --name-only "${BASE_SHA}"...HEAD -- packages/broker packages/protocol package.json pnpm-lock.yaml || true)"
           fi
 
           if [[ -n "${changed}" ]]; then
@@ -228,36 +233,36 @@ jobs:
           fi
       - name: Skip broker job when broker inputs are unchanged
         if: ${{ steps.broker-changes.outputs.changed != 'true' }}
-        run: echo "No packages/broker, packages/protocol, root package.json, or bun.lock changes detected."
+        run: echo "No packages/broker, packages/protocol, root package.json, or pnpm-lock.yaml changes detected."
       - name: Install workspace deps
         if: ${{ steps.broker-changes.outputs.changed == 'true' }}
-        run: bun install --frozen-lockfile
+        run: WUPHF_SKIP_POSTINSTALL=1 pnpm install --frozen-lockfile
       - name: Typecheck
         if: ${{ steps.broker-changes.outputs.changed == 'true' }}
         working-directory: packages/broker
-        run: bun run typecheck
+        run: pnpm typecheck
       - name: Biome (lint + format check)
         if: ${{ steps.broker-changes.outputs.changed == 'true' }}
         working-directory: packages/broker
-        run: bun run check
+        run: pnpm check
       - name: Vitest
         if: ${{ steps.broker-changes.outputs.changed == 'true' }}
         working-directory: packages/broker
-        run: bun run test
+        run: pnpm test
       - name: Thread replay-check drift detector
         if: ${{ steps.broker-changes.outputs.changed == 'true' }}
         working-directory: packages/broker
-        run: bun run ci:thread-replay-check
+        run: pnpm ci:thread-replay-check
       - name: Vitest coverage gate
         if: ${{ steps.broker-changes.outputs.changed == 'true' }}
         working-directory: packages/broker
-        run: bun run test:coverage
+        run: pnpm test:coverage
       - name: Broker invariant checks
         # No non-loopback bind constants, no electron imports, all
         # @wuphf/protocol imports go through the package root, etc.
         if: ${{ steps.broker-changes.outputs.changed == 'true' }}
         working-directory: packages/broker
-        run: bun run check:invariants
+        run: pnpm check:invariants
 
   llm-router:
     # @wuphf/llm-router is the cost chokepoint for provider calls. It
@@ -268,14 +273,15 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # ratchet:oven-sh/setup-bun@v2.2.0
+      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
         with:
-          bun-version: "1.3.13"
+          version: 11.9.0
       # llm-router imports broker types; transitively touches `node:sqlite`.
       # See broker job for the runtime explanation.
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
         with:
           node-version: "22.x"
+          cache: pnpm
       - name: Detect llm-router changes
         id: llm-router-changes
         env:
@@ -283,9 +289,9 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -z "${BASE_SHA}" || "${BASE_SHA}" =~ ^0+$ ]]; then
-            changed="$(git ls-files packages/llm-router packages/broker/src/cost-ledger packages/protocol/src/cost.ts packages/protocol/src/receipt-types.ts package.json bun.lock)"
+            changed="$(git ls-files packages/llm-router packages/broker/src/cost-ledger packages/protocol/src/cost.ts packages/protocol/src/receipt-types.ts package.json pnpm-lock.yaml)"
           else
-            changed="$(git diff --name-only "${BASE_SHA}"...HEAD -- packages/llm-router packages/broker/src/cost-ledger packages/protocol/src/cost.ts packages/protocol/src/receipt-types.ts package.json bun.lock || true)"
+            changed="$(git diff --name-only "${BASE_SHA}"...HEAD -- packages/llm-router packages/broker/src/cost-ledger packages/protocol/src/cost.ts packages/protocol/src/receipt-types.ts package.json pnpm-lock.yaml || true)"
           fi
 
           if [[ -n "${changed}" ]]; then
@@ -295,22 +301,22 @@ jobs:
           fi
       - name: Skip llm-router job when llm-router inputs are unchanged
         if: ${{ steps.llm-router-changes.outputs.changed != 'true' }}
-        run: echo "No packages/llm-router, cost-ledger, cost protocol, root package.json, or bun.lock changes detected."
+        run: echo "No packages/llm-router, cost-ledger, cost protocol, root package.json, or pnpm-lock.yaml changes detected."
       - name: Install workspace deps
         if: ${{ steps.llm-router-changes.outputs.changed == 'true' }}
-        run: bun install --frozen-lockfile
+        run: WUPHF_SKIP_POSTINSTALL=1 pnpm install --frozen-lockfile
       - name: Typecheck
         if: ${{ steps.llm-router-changes.outputs.changed == 'true' }}
         working-directory: packages/llm-router
-        run: bun run typecheck
+        run: pnpm typecheck
       - name: Biome (lint + format check)
         if: ${{ steps.llm-router-changes.outputs.changed == 'true' }}
         working-directory: packages/llm-router
-        run: bun run check
+        run: pnpm check
       - name: Vitest
         if: ${{ steps.llm-router-changes.outputs.changed == 'true' }}
         working-directory: packages/llm-router
-        run: bun run test
+        run: pnpm test
 
   desktop:
     runs-on: ubuntu-latest
@@ -318,17 +324,15 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # ratchet:oven-sh/setup-bun@v2.2.0
+      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
         with:
-          # desktop job needs bun 1.3+ for `bun audit --audit-level` to honor the
-          # threshold flag correctly (1.2.16 fails on moderate even when level=high).
-          # Rest of repo can bump in a follow-up.
-          bun-version: "1.3.13"
+          version: 11.9.0
       # Desktop tests import @wuphf/broker, which uses `node:sqlite`. Vitest
       # spawns workers on system Node; pin a Node that ships the module.
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
         with:
           node-version: "22.x"
+          cache: pnpm
       - name: Detect desktop changes
         id: desktop-changes
         env:
@@ -336,9 +340,9 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -z "${BASE_SHA}" || "${BASE_SHA}" =~ ^0+$ ]]; then
-            changed="$(git ls-files apps/desktop package.json bun.lock)"
+            changed="$(git ls-files apps/desktop package.json pnpm-lock.yaml)"
           else
-            changed="$(git diff --name-only "${BASE_SHA}"...HEAD -- apps/desktop package.json bun.lock || true)"
+            changed="$(git diff --name-only "${BASE_SHA}"...HEAD -- apps/desktop package.json pnpm-lock.yaml || true)"
           fi
 
           if [[ -n "${changed}" ]]; then
@@ -348,26 +352,26 @@ jobs:
           fi
       - name: Skip desktop job when desktop inputs are unchanged
         if: ${{ steps.desktop-changes.outputs.changed != 'true' }}
-        run: echo "No apps/desktop, root package.json, or bun.lock changes detected."
+        run: echo "No apps/desktop, root package.json, or pnpm-lock.yaml changes detected."
       - name: Install workspace deps
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
-        run: bun install --frozen-lockfile
+        run: WUPHF_SKIP_POSTINSTALL=1 pnpm install --frozen-lockfile
       - name: Typecheck
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
         working-directory: apps/desktop
-        run: bun run typecheck
+        run: pnpm typecheck
       - name: Lint
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
         working-directory: apps/desktop
-        run: bun run lint
+        run: pnpm lint
       - name: Test
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
         working-directory: apps/desktop
-        run: bun run test
+        run: pnpm test
       - name: Coverage
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
         working-directory: apps/desktop
-        run: bun run test:coverage
+        run: pnpm test:coverage
       - name: Vulnerability audit
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
         # Scope to apps/desktop's dependency closure only. Auditing from the
@@ -375,19 +379,19 @@ jobs:
         # electron-builder's transitive tar, etc.) which are tracked under
         # apps/installer-stub's own gates and dependabot group, not desktop's.
         working-directory: apps/desktop
-        run: bun audit --audit-level high
+        run: pnpm audit --audit-level high
       - name: IPC allowlist
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
         working-directory: apps/desktop
-        run: bun run check:ipc-allowlist
+        run: pnpm check:ipc-allowlist
       - name: Structural invariants
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
         working-directory: apps/desktop
-        run: bun run check:invariants
+        run: pnpm check:invariants
       - name: Build
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
         working-directory: apps/desktop
-        run: bun run build
+        run: pnpm build
       - name: Build-output externalization invariants
         # Audits `out/{main,preload}/**.js` for two regressions a green
         # build + green tests cannot catch:
@@ -400,7 +404,7 @@ jobs:
         #    stdlib builtin import.
         if: ${{ steps.desktop-changes.outputs.changed == 'true' }}
         working-directory: apps/desktop
-        run: bun run check:build-externals
+        run: pnpm check:build-externals
 
   web:
     # Skipped on docs-only PRs (see the `changes` job). `web` produces the
@@ -421,21 +425,25 @@ jobs:
       # and can read any GITHUB_TOKEN the workflow exposes. A @v2 re-tag
       # would execute with CI privileges. Same SHA is reused in the web-e2e
       # job below — keep them in sync.
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # ratchet:oven-sh/setup-bun@v2.2.0
+      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
         with:
-          bun-version: "1.3.13"
-      - name: Install and typecheck
+          version: 11.9.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install workspace deps
+        run: WUPHF_SKIP_POSTINSTALL=1 pnpm install --frozen-lockfile
+      - name: Typecheck
         id: web-typecheck
         working-directory: web
-        run: |
-          bun install --frozen-lockfile
-          bun run typecheck
+        run: pnpm typecheck
       - name: Run coverage
         id: web-coverage
         working-directory: web
         if: ${{ steps.web-typecheck.outcome == 'success' }}
         continue-on-error: true
-        run: bun run test:coverage
+        run: pnpm test:coverage
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # ratchet:actions/upload-artifact@v7
         if: always()
         with:
@@ -444,9 +452,8 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
       - name: Build web dist
-        working-directory: web
         if: ${{ always() && steps.web-typecheck.outcome == 'success' }}
-        run: bun run build
+        run: pnpm --filter wuphf-web build
       - name: Bundle-size budget
         if: ${{ always() && steps.web-typecheck.outcome == 'success' }}
         # Forward-only ratchet against accidental bundle bloat. Warn at
@@ -920,31 +927,34 @@ jobs:
       # Pin to full SHA: third-party action, runs on every PR. A @v2 re-tag
       # would exec with CI privileges — see the awalsh128 pin above for the
       # same pattern.
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # ratchet:oven-sh/setup-bun@v2.2.0
+      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
         with:
-          bun-version: "1.3.13"
+          version: 11.9.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
+        with:
+          node-version: 22
+          cache: pnpm
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # ratchet:actions/download-artifact@v8
         with:
           name: web-dist
           path: web/dist
       - name: Build wuphf
         run: go build -o wuphf ./cmd/wuphf
-      - name: Install e2e deps
-        working-directory: web/e2e
-        run: bun install --frozen-lockfile
+      - name: Install workspace deps
+        run: WUPHF_SKIP_POSTINSTALL=1 pnpm install --frozen-lockfile
       - name: Cache Playwright browsers
         id: cache-playwright
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # ratchet:actions/cache@v5.0.5
         with:
           path: ~/.cache/ms-playwright
-          # Key on the resolved @playwright/test version via bun.lock so a
+          # Key on the resolved @playwright/test version via pnpm-lock.yaml so a
           # bump invalidates.
-          key: playwright-${{ runner.os }}-${{ hashFiles('web/e2e/bun.lock') }}
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Install Playwright chromium
         working-directory: web/e2e
         # --with-deps installs the OS-level shared libs chromium needs on
         # ubuntu-latest even when the cached browser binary is restored.
-        run: bunx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
       - name: Install claude CLI stub
         # wuphf's PreflightWeb hard-requires `claude` on PATH (see
         # internal/team/launcher.go — PreflightWeb). These smoke tests don't
@@ -1164,12 +1174,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # ratchet:oven-sh/setup-bun@v2.2.0
+      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
         with:
-          bun-version: "1.3.13"
+          version: 11.9.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install workspace deps
+        run: WUPHF_SKIP_POSTINSTALL=1 pnpm install --frozen-lockfile
       - name: Run npm wrapper tests
-        working-directory: npm
-        run: bun test
+        run: pnpm --filter wuphf test
 
   # Real Windows runner smoke. Catches behavioral regressions that compile
   # cleanly but exit silently on first launch — the class of bug the

@@ -22,7 +22,7 @@ cd "$pkg_root" || exit 2
 
 if [ "$#" -eq 0 ]; then
   echo "=== vitest @wuphf/protocol full suite ==="
-  exec bun run test
+  exec pnpm test
 fi
 
 args=()
@@ -37,4 +37,4 @@ for arg in "$@"; do
   esac
 done
 
-exec bunx vitest run "${args[@]}"
+exec pnpm exec vitest run "${args[@]}"

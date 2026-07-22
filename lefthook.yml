@@ -163,32 +163,32 @@ pre-push:
       glob: "web/**/*.{ts,tsx,js,jsx,css,json,html}"
       run: |
         cd web
-        bun run typecheck
-        bun run test
+        pnpm typecheck
+        pnpm test
     desktop-typecheck:
       files: bash scripts/changed-files-since-base.sh
-      glob: "{apps/desktop/**/*.{ts,json},apps/desktop/scripts/**/*.{sh,mjs},package.json,bun.lock}"
+      glob: "{apps/desktop/**/*.{ts,json},apps/desktop/scripts/**/*.{sh,mjs},package.json,pnpm-workspace.yaml}"
       run: |
         cd apps/desktop
-        bun run typecheck
+        pnpm typecheck
     desktop-test:
       files: bash scripts/changed-files-since-base.sh
-      glob: "{apps/desktop/**/*.{ts,json},apps/desktop/scripts/**/*.{sh,mjs},package.json,bun.lock}"
+      glob: "{apps/desktop/**/*.{ts,json},apps/desktop/scripts/**/*.{sh,mjs},package.json,pnpm-workspace.yaml}"
       run: |
         cd apps/desktop
-        bun run test
+        pnpm test
     desktop-check-ipc-allowlist:
       files: bash scripts/changed-files-since-base.sh
-      glob: "{apps/desktop/**/*.{ts,json},apps/desktop/scripts/**/*.{sh,mjs},package.json,bun.lock}"
+      glob: "{apps/desktop/**/*.{ts,json},apps/desktop/scripts/**/*.{sh,mjs},package.json,pnpm-workspace.yaml}"
       run: |
         cd apps/desktop
-        bun run check:ipc-allowlist
+        pnpm check:ipc-allowlist
     desktop-check-invariants:
       files: bash scripts/changed-files-since-base.sh
-      glob: "{apps/desktop/**/*.{ts,json},apps/desktop/scripts/**/*.{sh,mjs},package.json,bun.lock}"
+      glob: "{apps/desktop/**/*.{ts,json},apps/desktop/scripts/**/*.{sh,mjs},package.json,pnpm-workspace.yaml}"
       run: |
         cd apps/desktop
-        bun run check:invariants
+        pnpm check:invariants
     smoke:
       # internal/team's former test-isolation bugs (shared ~/.wuphf/wiki,
       # worktrees registered against the invoking repo, cross-test state
@@ -231,7 +231,7 @@ pre-push:
       # Cheap (<1s) so it runs on every protocol change.
       files: bash scripts/changed-files-since-base.sh
       glob: "packages/protocol/**/*.{ts,json}"
-      run: bun run packages/protocol/scripts/demo.ts
+      run: pnpm exec tsx packages/protocol/scripts/demo.ts
     protocol-wire-contract:
       # Independent Go reference verifier of the audit-chain wire bytes.
       # Catches a class of bug Vitest cannot: TS writer + external reader
@@ -256,19 +256,19 @@ pre-push:
       glob: "packages/broker/**/*.{ts,json}"
       run: |
         cd packages/broker
-        bun run typecheck
+        pnpm typecheck
     broker-test:
       files: bash scripts/changed-files-since-base.sh
       glob: "packages/broker/**/*.{ts,json}"
       run: |
         cd packages/broker
-        bun run test
+        pnpm test
     llm-router-test:
       files: bash scripts/changed-files-since-base.sh
       glob: "packages/llm-router/**/*.{ts,json}"
       run: |
         cd packages/llm-router
-        bunx vitest run
+        pnpm exec vitest run
     broker-invariants:
       # Custom invariant checks for broker-grade rules Biome cannot express:
       # bind host is loopback only, bearer comparison goes through

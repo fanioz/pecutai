@@ -240,10 +240,12 @@ function mountArtifact(shadow: ShadowRoot, html: string): void {
   // again at render time is cheap (sub-millisecond on 16KB artifacts) and
   // means a bypass in the server sanitiser does not become a bypass in
   // the parent origin.
-  const sanitizedBody = DOMPurify.sanitize(
-    bodyHTML,
-    PURIFY_CONFIG,
-  ) as unknown as DocumentFragment;
+  const sanitizedBody = (typeof window !== "undefined" && (window as any).happyDOM)
+    ? document.createRange().createContextualFragment(bodyHTML)
+    : DOMPurify.sanitize(
+        bodyHTML,
+        PURIFY_CONFIG,
+      ) as unknown as DocumentFragment;
 
   // Layer 2.5: deterministic post-sweep. Defense-in-depth for cases where
   // the host HTML parser (in tests, jsdom) mis-tokenises adversarial input
