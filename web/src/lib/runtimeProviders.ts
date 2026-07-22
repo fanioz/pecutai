@@ -36,6 +36,13 @@ export const RUNTIME_PROVIDER_OPTIONS: readonly RuntimeProviderOption[] = [
     binary: "opencode",
   },
   {
+    id: "agy",
+    label: "AGY",
+    desc: "Google Antigravity CLI",
+    kind: "cli",
+    binary: "agy",
+  },
+  {
     id: "mlx-lm",
     label: "MLX-LM",
     desc: "Apple Silicon local OpenAI-compatible runtime",

@@ -19,6 +19,7 @@ export const PROVIDER_LABELS: Record<LLMRuntimeKind, string> = {
   "mlx-lm": "MLX-LM",
   ollama: "Ollama",
   exo: "Exo",
+  agy: "AGY",
 };
 
 // Fallback runtime-kind list when /config has not reported llm_provider_kinds.
@@ -29,6 +30,7 @@ export const DEFAULT_LLM_KINDS: LLMRuntimeKind[] = [
   "mlx-lm",
   "ollama",
   "exo",
+  "agy",
 ];
 
 // bindingFromMember normalises the wire's `provider?: ProviderBinding | string`

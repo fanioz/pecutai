@@ -73,6 +73,12 @@ const CLOUD_MODELS: Record<
     "claude-opus-4-7",
     "gpt-5",
   ],
+  agy: [
+    "gemini-2.0-flash",
+    "gemini-2.5-pro",
+    "gemini-2.5-flash",
+    "gemini-1.5-pro",
+  ],
 };
 
 // Empty model entry maps to "use the runtime's default" (broker leaves

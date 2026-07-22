@@ -59,6 +59,7 @@ const PROVIDER_LABELS: Record<LLMRuntimeKind, string> = {
   "mlx-lm": "MLX-LM",
   ollama: "Ollama",
   exo: "Exo",
+  agy: "AGY",
 };
 
 function slugify(name: string): string {
@@ -200,6 +201,7 @@ export function AgentWizard({ open, onClose, onCreated }: AgentWizardProps) {
     "mlx-lm",
     "ollama",
     "exo",
+    "agy",
   ]) as LLMRuntimeKind[];
 
   async function handleGenerate() {

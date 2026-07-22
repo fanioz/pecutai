@@ -44,6 +44,7 @@ const PROVIDER_LABELS: Record<LLMRuntimeKind, string> = {
   "mlx-lm": "MLX-LM",
   ollama: "Ollama",
   exo: "Exo",
+  agy: "AGY",
 };
 
 const GATEWAY_LABELS: Record<string, string> = {
@@ -472,6 +473,7 @@ function RuntimeSection({
     "mlx-lm",
     "ollama",
     "exo",
+    "agy",
   ]) as LLMRuntimeKind[];
   const globalDefault = configQuery.data?.llm_provider ?? "claude-code";
 

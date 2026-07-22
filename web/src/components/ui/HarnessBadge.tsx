@@ -64,6 +64,19 @@ const GLYPHS: Record<HarnessKind, GlyphDef> = {
       />
     ),
   },
+  agy: {
+    bg: "#0F9D58", // Google Green
+    viewBox: "0 0 24 24",
+    body: (
+      <path
+        d="M12 4l-6 15M12 4l6 15M7.5 14h9"
+        stroke="#FFFFFF"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
   // OpenClaw lobster — exact copy of the project's favicon.svg served from
   // their gateway at /favicon.svg. White badge background lets the native
   // red gradient + dark eyes read clearly even at 12px.

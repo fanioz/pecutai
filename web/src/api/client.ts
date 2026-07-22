@@ -1208,7 +1208,8 @@ export type LLMRuntimeKind =
   | "codex"
   | "opencode"
   | "mlx-lm"
-  | "exo";
+  | "exo"
+  | "agy";
 
 // GatewayKind names a runtime that is reached through an integration gateway
 // rather than dispatched directly. Gateway-bound agents are imported via the
