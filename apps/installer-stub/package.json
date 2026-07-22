@@ -35,8 +35,8 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
     "@electron/asar": "4.2.0",
-    "@types/node": "26.0.0",
-    "electron": "42.4.1",
+    "@types/node": "26.0.1",
+    "electron": "42.5.1",
     "electron-builder": "26.15.3",
     "js-yaml": "5.2.0"
   },
