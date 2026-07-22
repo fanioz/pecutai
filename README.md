@@ -87,7 +87,6 @@ if I say yes. If I am not logged in, just open https://wuphf.team.
 | Flag | What it does |
 |------|-------------|
 | `--memory-backend <name>` | Override the built-in markdown wiki (`nex`, `none`) — legacy installs only |
-| `--no-nex` | Skip the Nex backend (no context graph, no Nex-managed integrations) |
 | `--legacy-tui` | Use the legacy tmux TUI instead of the web UI |
 | `--no-open` | Don't auto-open the browser |
 | `--pack <name>` | Pick an agent pack (`starter`, `founding-team`, `coding-team`, `lead-gen-agency`, `revops`) |
@@ -116,7 +115,7 @@ WUPHF_OLLAMA_MODEL="openai/gpt-5.4-mini" \
 wuphf --provider ollama --memory-backend none --no-open
 ```
 
-`--no-nex` still lets Telegram and any other local integration keep working. To switch back to CEO-routed delegation after launch, use `/focus` inside the workspace.
+To switch back to CEO-routed delegation after launch, use `/focus` inside the workspace.
 
 ## Memory: Notebooks and the Wiki
 
