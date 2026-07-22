@@ -64,7 +64,7 @@ export function RoutinesApp() {
     return jobs.filter(isCadenceSchedulerJob);
   }, [scheduler.data]);
 
-  // System routines (broker-managed crons like nex-insights) are
+  // System routines (broker-managed crons like one-relay-events) are
   // infrastructure plumbing most users don't care about. Hide them by
   // default; surface a checkbox to opt in.
   const routines = useMemo<SchedulerJob[]>(() => {

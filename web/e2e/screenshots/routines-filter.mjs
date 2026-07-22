@@ -71,8 +71,8 @@ const RECURRING = [
 // the bug).
 const SYSTEM = [
   {
-    slug: "nex-insights",
-    label: "Nex insights",
+    slug: "one-relay-events",
+    label: "One relay events",
     kind: "cron",
     interval_minutes: 30,
     enabled: true,

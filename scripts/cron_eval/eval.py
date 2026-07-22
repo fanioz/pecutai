@@ -51,8 +51,6 @@ from typing import Any
 # Source-of-truth mirror of internal/team/broker.go::systemCronSpecs(). Keep in
 # sync; CI surfaces a divergence as a self-registration failure.
 SYSTEM_CRONS: dict[str, dict[str, Any]] = {
-    "nex-insights": {"min_floor": 30, "read_only": False},
-    "nex-notifications": {"min_floor": 5, "read_only": False},
     "one-relay-events": {"min_floor": 1, "read_only": True},
     "request_follow_up": {"min_floor": 5, "read_only": False},
     "review-expiry": {"min_floor": 5, "read_only": False},

@@ -189,8 +189,8 @@ func TestBrokerActionsAndSchedulerEndpoints(t *testing.T) {
 	b.appendActionLocked("request_created", "office", "general", "ceo", "Asked for approval", "request-1")
 	b.mu.Unlock()
 	if err := b.SetSchedulerJob(schedulerJob{
-		Slug:            "nex-insights",
-		Label:           "Nex insights",
+		Slug:            "task_recheck",
+		Label:           "Task recheck",
 		IntervalMinutes: 15,
 		Status:          "sleeping",
 		NextRun:         "2026-03-24T10:15:00Z",

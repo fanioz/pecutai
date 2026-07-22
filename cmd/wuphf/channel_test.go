@@ -1998,11 +1998,11 @@ func TestCalendarViewRendersSchedulerAndActions(t *testing.T) {
 	m.height = 30
 	m.activeApp = channelui.OfficeAppCalendar
 	m.actions = []channelui.Action{{ID: "action-1", Kind: "task_created", Actor: "ceo", Summary: "Opened a follow-up task", CreatedAt: "2026-03-24T10:00:00Z"}}
-	m.scheduler = []channelui.SchedulerJob{{Slug: "nex-insights", Label: "Nex insights", IntervalMinutes: 15, NextRun: "2026-03-24T10:15:00Z", Status: "sleeping"}}
+	m.scheduler = []channelui.SchedulerJob{{Slug: "task_recheck", Label: "Task recheck", IntervalMinutes: 15, NextRun: "2026-03-24T10:15:00Z", Status: "sleeping"}}
 	m.members = []channelui.Member{{Slug: "ceo", Name: "CEO"}}
 
 	view := stripANSI(m.View())
-	if !strings.Contains(view, "Calendar") || !strings.Contains(view, "Nex insights") || !strings.Contains(view, "Opened a follow-up task") {
+	if !strings.Contains(view, "Calendar") || !strings.Contains(view, "Task recheck") || !strings.Contains(view, "Opened a follow-up task") {
 		t.Fatalf("expected calendar view without recent actions, got %q", view)
 	}
 }

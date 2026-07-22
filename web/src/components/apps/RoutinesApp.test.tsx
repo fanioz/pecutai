@@ -13,8 +13,8 @@ const { MOCK_JOBS, MOCK_RUNS } = vi.hoisted(() => {
   return {
     MOCK_JOBS: [
       {
-        slug: "nex-insights",
-        label: "Nex insights pull",
+        slug: "one-relay-events",
+        label: "One relay events",
         kind: "cron",
         interval_minutes: 30,
         enabled: true,
@@ -51,14 +51,14 @@ const { MOCK_JOBS, MOCK_RUNS } = vi.hoisted(() => {
     ] as SchedulerJob[],
     MOCK_RUNS: [
       {
-        slug: "nex-insights",
+        slug: "one-relay-events",
         started_at: new Date(now - 60 * 60_000).toISOString(),
         finished_at: new Date(now - 60 * 60_000 + 3_400).toISOString(),
         status: "ok",
         triggered_by: "scheduler",
       },
       {
-        slug: "nex-insights",
+        slug: "one-relay-events",
         started_at: new Date(now - 90 * 60_000).toISOString(),
         finished_at: new Date(now - 90 * 60_000 + 4_100).toISOString(),
         status: "failed",
@@ -79,7 +79,7 @@ vi.mock("../../api/client", async () => {
     getSchedulerRuns: vi.fn().mockResolvedValue(MOCK_RUNS),
     runSchedulerJob: vi.fn().mockResolvedValue({
       triggered: true,
-      slug: "nex-insights",
+      slug: "one-relay-events",
       at: new Date().toISOString(),
     }),
     patchSchedulerJob: vi.fn().mockResolvedValue({ job: {} }),
@@ -159,9 +159,9 @@ describe("RoutinesApp", () => {
     expect(
       screen.getByTestId("routine-row-workflow:weekly-digest"),
     ).toBeInTheDocument();
-    // System routine (nex-insights) is hidden behind the opt-in toggle.
+    // System routine (one-relay-events) is hidden behind the opt-in toggle.
     expect(
-      screen.queryByTestId("routine-row-nex-insights"),
+      screen.queryByTestId("routine-row-one-relay-events"),
     ).not.toBeInTheDocument();
     // One-shot follow-up watchdog jobs are internal plumbing, not routines —
     // they must never render here, even though they ship interval_minutes: 0.
@@ -180,7 +180,7 @@ describe("RoutinesApp", () => {
     // System routine becomes visible…
     await waitFor(() =>
       expect(
-        screen.getByTestId("routine-row-nex-insights"),
+        screen.getByTestId("routine-row-one-relay-events"),
       ).toBeInTheDocument(),
     );
     // …but the one-shot follow-up is filtered out entirely: it is neither
@@ -199,7 +199,7 @@ describe("RoutinesApp", () => {
     fireEvent.click(checkbox);
     await waitFor(() =>
       expect(
-        screen.getByTestId("routine-row-nex-insights"),
+        screen.getByTestId("routine-row-one-relay-events"),
       ).toBeInTheDocument(),
     );
   });
@@ -218,7 +218,7 @@ describe("RoutinesApp", () => {
     );
     await waitFor(() => {
       expect(
-        screen.getAllByTestId("routine-chip-nex-insights").length,
+        screen.getAllByTestId("routine-chip-one-relay-events").length,
       ).toBeGreaterThan(0);
     });
   });
