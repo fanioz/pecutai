@@ -34,7 +34,7 @@
     "@wuphf/agent-runners": "workspace:*",
     "@wuphf/credentials": "workspace:*",
     "@wuphf/protocol": "workspace:*",
-    "ws": "8.21.0"
+    "ws": "8.21.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
