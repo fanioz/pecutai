@@ -63,7 +63,7 @@ func TestMissingWebAssetsHandlerExplainsSourceBuild(t *testing.T) {
 	body := rec.Body.String()
 	for _, want := range []string{
 		"web/dist/index.html",
-		"bun run build",
+		"pnpm --filter wuphf-web build",
 		"go build -o wuphf ./cmd/wuphf",
 	} {
 		if !strings.Contains(body, want) {

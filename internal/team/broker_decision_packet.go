@@ -227,6 +227,20 @@ func (b *Broker) ensureDecisionPacketStateLocked() *decisionPacketState {
 	return b.decisionPackets
 }
 
+// stopDecisionPacketTimersLocked cancels all running flush timers.
+// Caller holds b.mu.
+func (b *Broker) stopDecisionPacketTimersLocked() {
+	if b == nil || b.decisionPackets == nil {
+		return
+	}
+	for id, timer := range b.decisionPackets.runningTimers {
+		if timer != nil {
+			timer.Stop()
+		}
+		delete(b.decisionPackets.runningTimers, id)
+	}
+}
+
 // SetDecisionPacketStore swaps the persistence backend on a broker. Used
 // by tests to inject a mock store that simulates disk-full / corrupt
 // JSON. Production code never calls this.

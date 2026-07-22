@@ -142,6 +142,7 @@ func newOfficeEvalFixture(dir string) (*officeEvalFixture, error) {
 		cleanup: func() {
 			cancel()
 			<-worker.Done()
+			b.Stop()
 		},
 	}, nil
 }

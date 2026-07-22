@@ -54,6 +54,7 @@ SYSTEM_CRONS: dict[str, dict[str, Any]] = {
     "one-relay-events": {"min_floor": 1, "read_only": True},
     "request_follow_up": {"min_floor": 5, "read_only": False},
     "review-expiry": {"min_floor": 5, "read_only": False},
+    "wiki-archive-sweep": {"min_floor": 60, "read_only": False},
     "task_follow_up": {"min_floor": 5, "read_only": False},
     "task_recheck": {"min_floor": 5, "read_only": False},
     "task_reminder": {"min_floor": 5, "read_only": False},
@@ -188,9 +189,9 @@ def scenario_self_registration(
 
 def scenario_patch_happy_path(broker: str, token: str) -> ScenarioResult:
     """Scenario 2: PATCH a configurable cron with a valid override and
-    confirm GET reflects it. Uses nex-notifications (floor=5) at 30 min.
+    confirm GET reflects it. Uses request_follow_up (floor=5) at 30 min.
     """
-    target_slug = "nex-notifications"
+    target_slug = "request_follow_up"
     want_override = 30
     code, body = patch_scheduler(
         broker, token, target_slug, {"interval_override": want_override}
@@ -428,12 +429,12 @@ def scenario_disabled_skips_run(
     window. Best-effort: snapshot last_run_at + run-loop log line count
     before disable, wait one tick interval, then assert neither moved.
 
-    We disable nex-notifications (floor 5, real cron) and watch for ~12s.
+    We disable request_follow_up (floor 5, real cron) and watch for ~12s.
     The cron's run-loop is keyed on IntervalOverride, so a freshly-disabled
     cron with no override is still "due" by clock — the harness asserts it
     DOESN'T fire while disabled.
     """
-    target_slug = "nex-notifications"
+    target_slug = "request_follow_up"
     # Disable + force a tiny override so the run loop would WANT to fire
     # often if it weren't disabled. The 5-min floor still applies, so we
     # set interval_override=5 first (within floor) THEN disable.

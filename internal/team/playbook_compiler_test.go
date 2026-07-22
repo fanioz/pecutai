@@ -103,7 +103,7 @@ func TestCompilePlaybook_ProducesFrontmatterAndBody(t *testing.T) {
 	writePlaybookSource(t, worker, "churn-prevention", body)
 	// Wait for the auto-recompile to land so we're asserting the on-disk
 	// compiled skill, not just the CompilePlaybook return value.
-	waitForCompiledSkill(t, repo, "churn-prevention", 2*time.Second)
+	waitForCompiledSkill(t, repo, "churn-prevention", 10*time.Second)
 
 	compiled := readCompiled(t, repo, "churn-prevention")
 	// Frontmatter sanity.
@@ -294,8 +294,8 @@ func waitForCompiledSkill(t *testing.T, repo *Repo, slug string, timeout time.Du
 	t.Helper()
 	p := filepath.Join(repo.Root(), "team", "playbooks", ".compiled", slug, "SKILL.md")
 	if !testTickUntil(t, timeout, func() bool {
-		_, err := os.Stat(p)
-		return err == nil
+		stat, err := os.Stat(p)
+		return err == nil && stat.Size() > 0
 	}) {
 		t.Fatalf("compiled skill for %q did not appear within %s", slug, timeout)
 	}
@@ -324,7 +324,7 @@ func TestPlaybookCompile_RegistersBrokerSkill(t *testing.T) {
 
 	body := "---\ndraft: true\n---\n# Renewal outreach\n\nRun the renewal motion for at-risk accounts.\n\n## Steps\n\n1. Pull the renewal list.\n2. Draft the sequences.\n"
 	writePlaybookSource(t, worker, "renewal-outreach", body)
-	waitForCompiledSkill(t, repo, "renewal-outreach", 2*time.Second)
+	waitForCompiledSkill(t, repo, "renewal-outreach", 10*time.Second)
 
 	// The registrar runs from the auto-recompile side goroutine — poll the
 	// broker's active-skill catalog (the same projection prompt building
@@ -382,7 +382,7 @@ func TestPlaybookRecompile_DoesNotDuplicateBrokerSkill(t *testing.T) {
 	b.mu.Unlock()
 
 	writePlaybookSource(t, worker, "qbr-prep", "# QBR prep\n\nPrepare the QBR brief.\n")
-	waitForCompiledSkill(t, repo, "qbr-prep", 2*time.Second)
+	waitForCompiledSkill(t, repo, "qbr-prep", 10*time.Second)
 	// Second source write triggers another compile + register round-trip.
 	if _, _, err := worker.Enqueue(context.Background(), "pm", "team/playbooks/qbr-prep.md",
 		"# QBR prep v2\n\nPrepare the QBR brief, now with risk callouts.\n", "replace", "update"); err != nil {

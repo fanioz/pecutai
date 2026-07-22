@@ -777,6 +777,7 @@ func (b *Broker) Stop() {
 	// own Stop drains pending timers + commit goroutines under the
 	// pending WaitGroup, so this is the only correct order.
 	b.mu.Lock()
+	b.stopDecisionPacketTimersLocked()
 	obsidianWatcher := b.obsidianWatcher
 	b.mu.Unlock()
 	if obsidianWatcher != nil {

@@ -778,6 +778,7 @@ func (w *WikiWorker) EnqueuePlaybookCompile(ctx context.Context, slug, authorSlu
 	// pressure (macOS: empty buffer returned between WriteFile and
 	// ReadFile), which then failed as "content is required".
 	req := wikiWriteRequest{
+		Context:           ctx,
 		Slug:              ArchivistAuthor,
 		Path:              relSkill,
 		Content:           string(skillBytes),

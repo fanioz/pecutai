@@ -18,8 +18,8 @@ func TestConfirmationForResetTeamMode(t *testing.T) {
 	if got.Action != channelui.ChannelConfirmActionResetTeam {
 		t.Errorf("expected action=reset_team, got %q", got.Action)
 	}
-	if !strings.Contains(strings.ToLower(got.Title), "office") {
-		t.Errorf("expected office in title for team mode, got %q", got.Title)
+	if !strings.Contains(strings.ToLower(got.Title), "workspace") {
+		t.Errorf("expected workspace in title for team mode, got %q", got.Title)
 	}
 }
 
@@ -64,8 +64,8 @@ func TestConfirmationForSessionSwitchToOneOnOne(t *testing.T) {
 
 func TestConfirmationForSessionSwitchToOffice(t *testing.T) {
 	got := confirmationForSessionSwitch("office", "")
-	if !strings.Contains(strings.ToLower(got.Title), "office") {
-		t.Errorf("expected 'office' in title, got %q", got.Title)
+	if !strings.Contains(strings.ToLower(got.Title), "workspace") {
+		t.Errorf("expected 'workspace' in title, got %q", got.Title)
 	}
 }
 
