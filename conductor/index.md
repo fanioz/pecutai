@@ -11,7 +11,4 @@ Welcome to the Conductor environment for **WUPHF**. This index tracks the projec
 ## Tracks Registry
 This registry lists all tracks of work.
 
----
-## [x] Support AGY beside Claude
-Path: [tracks/003-support-agy/](tracks/003-support-agy/)
----
+No active tracks.
