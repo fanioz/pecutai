@@ -11,6 +11,4 @@ Welcome to the Conductor environment for **WUPHF**. This index tracks the projec
 ## Tracks Registry
 This registry lists all tracks of work.
 
-| Track ID | Track Name | Status | Path |
-| :--- | :--- | :--- | :--- |
-| `002-migrate-pnpm` | Migrate Project from Bun to pnpm | COMPLETED | [tracks/002-migrate-pnpm/index.md](tracks/002-migrate-pnpm/index.md) |
+No active tracks.
