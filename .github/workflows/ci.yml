@@ -871,22 +871,13 @@ jobs:
         run: echo "${{ env.TTYD_SHA256 }}  /tmp/ttyd.x86_64" | sha256sum -c -
       - name: Install ttyd
         run: sudo install /tmp/ttyd.x86_64 /usr/local/bin/ttyd
-      - name: Install ffmpeg
-        # Pin to full SHA: third-party action runs `sudo apt-get`, so a re-tag
-        # of @v1 would execute with elevated privileges on the runner.
-        uses: awalsh128/cache-apt-pkgs-action@acb598e5ddbc6f68a970c5da0688d2f3a9f04d05 # ratchet:awalsh128/cache-apt-pkgs-action@v1.6.0
-        with:
-          # libblas3 is a transitive runtime dep of ffmpeg on ubuntu-latest.
-          # Listing it explicitly guarantees it lands in the apt cache payload
-          # alongside ffmpeg, so warm restores do not surface
-          # `ffmpeg: error while loading shared libraries: libblas.so.3`.
-          packages: ffmpeg libblas3
-          # NOTE: `version` is a cache-bust token, NOT an ffmpeg version pin.
-          # Bump it to force a fresh apt-get install (e.g., for a security
-          # advisory, or when the dependency list above changes). `packages`
-          # has no version constraint, so warm runs reuse whatever .debs the
-          # cold run captured.
-          version: "2"
+      - name: Install ffmpeg and libblas
+        # libblas.so.3 is a transitive runtime dep of ffmpeg on
+        # ubuntu-latest. The cache-apt-pkgs-action may not reliably
+        # provide it on newer runners, so we ensure it is present.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libblas3
       - name: Build wuphf
         run: go build -o wuphf ./cmd/wuphf
       - name: Run VHS regression checks
