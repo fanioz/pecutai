@@ -116,8 +116,8 @@ func (p *CustomExampleProvider) ExecuteAction(ctx context.Context, req ExecuteRe
 	return ExecuteResult{
 		DryRun: req.DryRun,
 		Request: ExecuteEnvelope{
-			Method: "POST",
-			URL:    fmt.Sprintf("https://api.example.com/actions/%s", req.ActionID),
+			Method:  "POST",
+			URL:     fmt.Sprintf("https://api.example.com/actions/%s", req.ActionID),
 			Headers: req.Headers,
 			Data:    req.Data,
 		},
@@ -154,7 +154,7 @@ func (p *CustomExampleProvider) ListWorkflowRuns(ctx context.Context, key string
 // ListRelays returns registered relay endpoints.
 func (p *CustomExampleProvider) ListRelays(ctx context.Context, opts ListRelaysOptions) (RelayListResult, error) {
 	return RelayListResult{
-		Total: 0,
+		Total:     0,
 		Endpoints: []Relay{},
 	}, nil
 }
@@ -194,7 +194,7 @@ func (p *CustomExampleProvider) ListRelayEvents(ctx context.Context, opts RelayE
 // GetRelayEvent fetches a single relay event.
 func (p *CustomExampleProvider) GetRelayEvent(ctx context.Context, id string) (RelayEventDetail, error) {
 	return RelayEventDetail{
-		ID: id,
+		ID:      id,
 		Payload: json.RawMessage(fmt.Sprintf(`{"event_id": %q, "message": "example payload"}`, id)),
 	}, nil
 }

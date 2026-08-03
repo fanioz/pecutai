@@ -79,7 +79,7 @@ jobs:
       # Pin to full SHA: third-party action, runs with write access to
       # contents (release upload). Same SHA is reused across all web-facing
       # workflows — keep them in sync.
-      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa
         with:
           version: 11.9.0
 

@@ -28,21 +28,21 @@ type initReadinessCheck struct {
 type InitPhase string
 
 const (
-	InitIdle             InitPhase = "idle"
-	InitAPIKey           InitPhase = "api_key"
-	InitProviderChoice   InitPhase = "provider_choice" // kept for backward compat, skipped in flow
-	InitOneAPIKey        InitPhase = "one_api_key"     // kept for backward compat, skipped in flow
-	InitMemoryChoice     InitPhase = "memory_choice"
-	InitNexRegister      InitPhase = "nex_register"
-	InitBlueprintChoice  InitPhase = "blueprint_choice"
-	InitPackChoice       InitPhase = "pack_choice" // legacy alias
-	InitCompanyURL       InitPhase = "company_url"
-	InitCompanyFiles     InitPhase = "company_files"
-	InitOwnerName        InitPhase = "owner_name"
-	InitOwnerRole        InitPhase = "owner_role"
-	InitCompanyScan      InitPhase = "company_scan"
-	InitCompanyDone      InitPhase = "company_done"
-	InitDone             InitPhase = "done"
+	InitIdle            InitPhase = "idle"
+	InitAPIKey          InitPhase = "api_key"
+	InitProviderChoice  InitPhase = "provider_choice" // kept for backward compat, skipped in flow
+	InitOneAPIKey       InitPhase = "one_api_key"     // kept for backward compat, skipped in flow
+	InitMemoryChoice    InitPhase = "memory_choice"
+	InitNexRegister     InitPhase = "nex_register"
+	InitBlueprintChoice InitPhase = "blueprint_choice"
+	InitPackChoice      InitPhase = "pack_choice" // legacy alias
+	InitCompanyURL      InitPhase = "company_url"
+	InitCompanyFiles    InitPhase = "company_files"
+	InitOwnerName       InitPhase = "owner_name"
+	InitOwnerRole       InitPhase = "owner_role"
+	InitCompanyScan     InitPhase = "company_scan"
+	InitCompanyDone     InitPhase = "company_done"
+	InitDone            InitPhase = "done"
 )
 
 // companyScanDoneMsg is emitted when the company context scan completes.
