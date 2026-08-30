@@ -105,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
-      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
           version: 11.9.0
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
@@ -203,7 +203,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
           version: 11.9.0
       # Broker tests run under Vitest, which spawns workers on the system Node
@@ -273,7 +273,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
           version: 11.9.0
       # llm-router imports broker types; transitively touches `node:sqlite`.
@@ -324,7 +324,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
           version: 11.9.0
       # Desktop tests import @wuphf/broker, which uses `node:sqlite`. Vitest
@@ -425,7 +425,7 @@ jobs:
       # and can read any GITHUB_TOKEN the workflow exposes. A @v2 re-tag
       # would execute with CI privileges. Same SHA is reused in the web-e2e
       # job below — keep them in sync.
-      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
           version: 11.9.0
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
@@ -927,7 +927,7 @@ jobs:
       # Pin to full SHA: third-party action, runs on every PR. A @v2 re-tag
       # would exec with CI privileges — see the awalsh128 pin above for the
       # same pattern.
-      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
           version: 11.9.0
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
@@ -1174,7 +1174,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
-      - uses: pnpm/action-setup@fe190927da375cc0941557d962b86db179234e3a # ratchet:pnpm/action-setup@v4
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
           version: 11.9.0
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
