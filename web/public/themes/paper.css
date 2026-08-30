@@ -1,0 +1,188 @@
+/* ═══════════════════════════════════════════════════════════════
+   WUPHF Theme: Paper
+   Light variant — warm parchment / sepia.
+   Structural rules live in nex.css (scoped with [data-theme^="nex"])
+   and are inherited here. This file overrides the semantic token
+   layer and hard-coded light-surface contrast fixes.
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url("./nex.css");
+
+html[data-theme="paper"] {
+  /* ── Overlays — dark-tinted scrim on light, not white-tinted ── */
+  --overlay-soft: rgba(62, 39, 16, 0.04);
+  --overlay: rgba(62, 39, 16, 0.08);
+  --overlay-strong: rgba(62, 39, 16, 0.16);
+  --scrim: rgba(0, 0, 0, 0.5);
+  --overlay-white-soft: rgba(244, 236, 216, 0.08);
+  --overlay-white: rgba(244, 236, 216, 0.16);
+  --overlay-white-strong: rgba(244, 236, 216, 0.45);
+
+  /* ── Warm palette — parchment backgrounds, sepia text ── */
+  --bg: #f4ecd8;
+  --bg-warm: #efe6cf;
+  --bg-subtle: #f7f0e0;
+  --bg-card: #f9f2e5;
+
+  --text: #3e2710;
+  --text-secondary: #5c3d1a;
+  /* #8c6d4a failed WCAG AA (4.05:1) on --bg; bumped to 5.04:1. */
+  --text-tertiary: #7d5e3c;
+  --text-disabled: #6e4f2a;
+
+  --accent: #b5651d;
+  --accent-warm: #8c4a15;
+  --accent-bg: rgba(181, 101, 29, 0.1);
+  --accent-bg-strong: rgba(181, 101, 29, 0.35);
+
+  --border: #d9c8a8;
+  --border-light: #e6d9bc;
+  --border-dark: #c4b393;
+  --border-strong: #a68b6e;
+
+  --green: #2d9a5e;
+  --green-dark: #1f6b3a;
+  --green-bg: #e9fbef;
+
+  --red: #d1261a;
+  --red-dark: #8c1727;
+  --red-bg: #ffeeeb;
+
+  --yellow: #ce6b09;
+  --yellow-dark: #994200;
+  --yellow-bg: #fbf5dc;
+
+  --blue: #069de4;
+  --blue-bg: #e5feff;
+
+  /* Body gradient stops — warm parchment fade */
+  --bg-gradient-top: #f7f0e0;
+  --bg-gradient-bottom: #efe6cf;
+
+  /* ── Sidebar — warm parchment with terracotta chrome ── */
+  --nex-sidebar: #5c3d1a;
+  --nex-sidebar-hover: rgba(255, 255, 255, 0.08);
+  --nex-sidebar-active: #b5651d;
+  --nex-sidebar-text: rgba(244, 236, 216, 0.86);
+  --nex-sidebar-text-active: #ffffff;
+  --nex-presence: #2d9a5e;
+
+  /* ── Tertiary / purple aliases redirected to terracotta ── */
+  --purple: #b5651d;
+  --purple-bg: var(--accent-bg);
+  --sidebar-fade-color: #5c3d1a;
+
+  /* ── Entity graph palette — warm tones for paper surface ── */
+  --graph-people-fill: #f5e6d3;
+  --graph-people-stroke: #8c4a15;
+  --graph-companies-fill: #dbeafe;
+  --graph-companies-stroke: #2563eb;
+  --graph-customers-fill: #dcfce7;
+  --graph-customers-stroke: #059669;
+  --graph-other-fill: #f3f4f6;
+  --graph-other-stroke: #6b7280;
+}
+
+/* ── Paper atmosphere on body — slow vertical fade from warm parchment
+   to cream so the surface reads as aged paper rather than a flat panel.
+   The gradient is fixed so it does not tile when the chat scrolls. ── */
+html[data-theme="paper"] body {
+  background-color: var(--bg);
+  background-image: linear-gradient(
+    180deg,
+    var(--bg-gradient-top) 0%,
+    var(--bg-gradient-bottom) 100%
+  );
+  background-attachment: fixed;
+}
+
+/* ── Notebook surface — base tokens assume cream-paper light mode.
+      Re-map to a warm parchment palette so the wiki notebook reads. ── */
+html[data-theme="paper"] .notebook-surface {
+  --nb-paper: #f4ecd8;
+  --nb-paper-dark: #efe6cf;
+  --nb-rule: rgba(181, 101, 29, 0.08);
+  --nb-surface: #f9f2e5;
+  --nb-text: #3e2710;
+  --nb-text-muted: #5c3d1a;
+  --nb-text-tertiary: #7d5e3c;
+  --nb-border: #d9c8a8;
+  --nb-border-light: #e6d9bc;
+  --nb-ink-blue: #88a4c2;
+  --nb-stamp-red: #d6443c;
+  --nb-amber: #b5651d;
+  --nb-amber-bg: rgba(181, 101, 29, 0.1);
+  --nb-amber-hover: #8c4a15;
+  --nb-green-approve: #2d9a5e;
+  --nb-green-bg: rgba(45, 154, 94, 0.1);
+}
+
+/* Notebook status pills — re-tint for parchment surface */
+html[data-theme="paper"] .notebook-surface .nb-shelf-item .nb-status-draft {
+  color: var(--text-secondary);
+}
+html[data-theme="paper"] .notebook-surface .nb-shelf-item .nb-status-review {
+  color: #b5651d;
+}
+html[data-theme="paper"]
+  .notebook-surface
+  .nb-shelf-item
+  .nb-status-changes {
+  color: #d1261a;
+}
+
+/* Notebook shelf cards */
+html[data-theme="paper"] .notebook-surface .nb-shelf-card {
+  background: var(--nb-paper-dark);
+  outline-color: rgba(181, 101, 29, 0.12);
+  color: var(--nb-text);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+html[data-theme="paper"] .notebook-surface .nb-shelf-card:hover {
+  background: #efe6cf;
+  outline-color: rgba(181, 101, 29, 0.24);
+}
+html[data-theme="paper"]
+  .notebook-surface
+  .nb-shelf-card
+  .nb-shelf-card-meta {
+  color: var(--nb-text-tertiary);
+}
+
+/* Notebook review cards — warm terracotta tint on parchment */
+html[data-theme="paper"] .notebook-surface .nb-review-card {
+  background: rgba(181, 101, 29, 0.08);
+  outline-color: rgba(181, 101, 29, 0.12);
+  color: var(--nb-text);
+}
+html[data-theme="paper"] .notebook-surface .nb-review-card:hover {
+  background: rgba(181, 101, 29, 0.14);
+  outline-color: rgba(181, 101, 29, 0.3);
+}
+
+/* Scrollbar thumb hover — base uses rgba(0,0,0,0.4) which is fine on light */
+html[data-theme="paper"] .notebook-surface::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(62, 39, 16, 0.25);
+}
+
+/* ── Wiki link + terracotta accents (Tiptap editor chrome) ── */
+html[data-theme="paper"] {
+  --wk-wikilink: var(--accent);
+  --wk-amber: var(--accent);
+  --wk-amber-bg: rgba(181, 101, 29, 0.1);
+  --wk-amber-banner: rgba(181, 101, 29, 0.14);
+
+  --wk-diff-add-bg: #e9fbef;
+  --wk-diff-add-ink: #1f6b3a;
+  --wk-diff-remove-bg: #ffeeeb;
+  --wk-diff-remove-ink: #8c1727;
+}
+
+/* "NEW" / type pill — re-tint to warm terracotta that reads on parchment */
+html[data-theme="paper"] .wk-section-new {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid rgba(181, 101, 29, 0.35);
+}

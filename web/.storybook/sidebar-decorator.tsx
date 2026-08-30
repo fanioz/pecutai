@@ -51,7 +51,7 @@ function StoryShell() {
 // Attach once at module load. The live app's main.tsx also calls
 // rootRoute.update — but main.tsx never runs in Storybook, so this is
 // the only assignment that matters here.
-rootRoute.update({ component: StoryShell });
+(rootRoute as any).update({ component: StoryShell });
 
 const DEFAULT_MEMBERS: OfficeMember[] = [
   {

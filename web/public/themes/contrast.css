@@ -1,0 +1,255 @@
+/* ═══════════════════════════════════════════════════════════════
+   WUPHF Theme: High Contrast
+   Max contrast — black/white + sharp yellow, WCAG AAA.
+   Structural rules live in nex.css (scoped with [data-theme^="nex"])
+   and are inherited here. This file overrides the semantic token
+   layer and hard-coded contrast fixes.
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url("./nex.css");
+
+html[data-theme="contrast"] {
+  /* ── Overlays — solid flat values, no subtle tints ── */
+  --overlay-soft: rgba(0, 0, 0, 0.08);
+  --overlay: rgba(0, 0, 0, 0.16);
+  --overlay-strong: rgba(0, 0, 0, 0.32);
+  --scrim: rgba(0, 0, 0, 0.72);
+  --overlay-white-soft: rgba(255, 255, 255, 0.08);
+  --overlay-white: rgba(255, 255, 255, 0.16);
+  --overlay-white-strong: rgba(255, 255, 255, 0.32);
+
+  /* ── Max contrast palette — pure black/white ── */
+  --bg: #ffffff;
+  --bg-warm: #f7f7f7;
+  --bg-subtle: #f0f0f0;
+  --bg-card: #ffffff;
+
+  --text: #000000;
+  --text-secondary: #1a1a1a;
+  --text-tertiary: #333333;
+  /* #666666 failed AAA (5.74:1) on --bg; bumped to 9.74:1. */
+  --text-disabled: #444444;
+
+  --accent: #ffd400;
+  --accent-warm: #ccaa00;
+  --accent-bg: rgba(255, 212, 0, 0.15);
+  --accent-bg-strong: rgba(255, 212, 0, 0.35);
+
+  --border: #000000;
+  --border-light: #333333;
+  --border-dark: #000000;
+  --border-strong: #000000;
+
+  --green: #006400;
+  --green-dark: #003300;
+  --green-bg: #e9fbef;
+
+  --red: #8b0000;
+  --red-dark: #4b0000;
+  --red-bg: #ffeeeb;
+
+  --yellow: #806600;
+  --yellow-dark: #4d3300;
+  --yellow-bg: #fbf5dc;
+
+  --blue: #004466;
+  --blue-bg: #e5feff;
+
+  /* Body gradient stops — flat / near-flat to preserve contrast */
+  --bg-gradient-top: #ffffff;
+  --bg-gradient-bottom: #f7f7f7;
+
+  /* ── Sidebar — pure black with sharp yellow chrome ── */
+  --nex-sidebar: #000000;
+  --nex-sidebar-hover: rgba(255, 212, 0, 0.12);
+  --nex-sidebar-active: #ffd400;
+  --nex-sidebar-text: rgba(255, 255, 255, 0.95);
+  --nex-sidebar-text-active: #000000;
+  --nex-presence: #00aa00;
+
+  /* ── Tertiary / purple aliases redirected to sharp yellow ── */
+  --purple: #ffd400;
+  --purple-bg: var(--accent-bg);
+  --sidebar-fade-color: #000000;
+
+  /* ── Entity graph palette — high contrast for accessibility ── */
+  --graph-people-fill: #ffff00;
+  --graph-people-stroke: #000000;
+  --graph-companies-fill: #00ffff;
+  --graph-companies-stroke: #000000;
+  --graph-customers-fill: #00ff00;
+  --graph-customers-stroke: #000000;
+  --graph-other-fill: #ffffff;
+  --graph-other-stroke: #000000;
+}
+
+/* ── Contrast body — flat or near-flat background so contrast perception
+   is not degraded by gradients. ── */
+html[data-theme="contrast"] body {
+  background-color: var(--bg);
+  background-image: linear-gradient(
+    180deg,
+    var(--bg-gradient-top) 0%,
+    var(--bg-gradient-bottom) 100%
+  );
+  background-attachment: fixed;
+}
+
+/* ── Override hard-coded message text color (not a CSS variable in nex.css) ── */
+html[data-theme="contrast"] .message-text {
+  color: #000000;
+}
+
+/* ── Composer inner — pure white with hard black border ── */
+html[data-theme="contrast"] .composer-inner {
+  background: #ffffff;
+  border-color: #000000;
+}
+
+/* ── Sidebar bottom matches pure black ── */
+html[data-theme="contrast"] .sidebar-bottom {
+  background: #000000;
+}
+
+/* ── Sidebar sticky header ── */
+html[data-theme="contrast"] .sidebar-header {
+  background: #000000;
+}
+
+/* ── Message hover — flat white ── */
+html[data-theme="contrast"] .message:hover {
+  background: #f7f7f7;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+    High Contrast fixes
+    The base stylesheets target light surfaces. Anywhere a rule
+    hardcodes a light bg + dark text (or vice versa) needs an
+    override here so the contrast theme stays readable.
+    ═══════════════════════════════════════════════════════════════ */
+
+/* ── @mention + json-syntax — keep accent yellow away from body text;
+      use black ink for syntax values and reserve yellow for emphasis. ── */
+html[data-theme="contrast"] {
+  --mention-bg: rgba(255, 212, 0, 0.2);
+  --mention-fg: #000000;
+  --syntax-number: #000000;
+  --syntax-bool: #000000;
+}
+
+/* ── Task status badges — high contrast fills ── */
+html[data-theme="contrast"] .task-detail-status-badge.status-done {
+  background: #e9fbef;
+  color: #006400;
+  border-color: #006400;
+}
+html[data-theme="contrast"] .task-detail-status-badge.status-blocked {
+  background: #ffeeeb;
+  color: #8b0000;
+  border-color: #8b0000;
+}
+
+/* ── Insight badges — solid contrast fills ── */
+html[data-theme="contrast"] .insight-badge-low {
+  color: #000000;
+  background: #ffffff;
+  border: 1px solid #000000;
+}
+
+/* ── Notebook surface — pure white with black ink ── */
+html[data-theme="contrast"] .notebook-surface {
+  --nb-paper: #ffffff;
+  --nb-paper-dark: #f7f7f7;
+  --nb-rule: #000000;
+  --nb-surface: #ffffff;
+  --nb-text: #000000;
+  --nb-text-muted: #444444;
+  --nb-text-tertiary: #666666;
+  --nb-border: #000000;
+  --nb-border-light: #333333;
+  --nb-ink-blue: #000000;
+  --nb-stamp-red: #8b0000;
+  --nb-amber: #806600;
+  --nb-amber-bg: rgba(255, 212, 0, 0.2);
+  --nb-amber-hover: #4d3300;
+  --nb-green-approve: #006400;
+  --nb-green-bg: #e9fbef;
+
+  background-image: none !important;
+  background-color: var(--nb-paper);
+}
+
+/* Notebook status pills — high contrast on white */
+html[data-theme="contrast"] .notebook-surface .nb-shelf-item .nb-status-draft {
+  color: #444444;
+}
+html[data-theme="contrast"] .notebook-surface .nb-shelf-item .nb-status-review {
+  color: #806600;
+}
+html[data-theme="contrast"]
+  .notebook-surface
+  .nb-shelf-item
+  .nb-status-changes {
+  color: #8b0000;
+}
+
+/* Notebook shelf cards — solid black borders on white */
+html[data-theme="contrast"] .notebook-surface .nb-shelf-card {
+  background: var(--nb-paper-dark);
+  outline-color: #000000;
+  color: var(--nb-text);
+  box-shadow: none;
+}
+html[data-theme="contrast"] .notebook-surface .nb-shelf-card:hover {
+  background: #f0f0f0;
+  outline-color: #000000;
+}
+html[data-theme="contrast"]
+  .notebook-surface
+  .nb-shelf-card
+  .nb-shelf-card-meta {
+  color: var(--nb-text-tertiary);
+}
+
+/* Notebook review cards — yellow accent border on white */
+html[data-theme="contrast"] .notebook-surface .nb-review-card {
+  background: #ffffff;
+  outline: 2px solid #ffd400;
+  color: var(--nb-text);
+}
+html[data-theme="contrast"] .notebook-surface .nb-review-card:hover {
+  background: #ffffcc;
+  outline-color: #ffd400;
+}
+
+/* Scrollbar thumb hover — solid black on white track */
+html[data-theme="contrast"] .notebook-surface::-webkit-scrollbar-thumb:hover {
+  background-color: #000000;
+}
+
+/* ── Wiki link + yellow accents (Tiptap editor chrome) ── */
+html[data-theme="contrast"] {
+  --wk-wikilink: #000000;
+  --wk-amber: #ffd400;
+  --wk-amber-bg: rgba(255, 212, 0, 0.2);
+  --wk-amber-banner: rgba(255, 212, 0, 0.25);
+
+  --wk-diff-add-bg: #e9fbef;
+  --wk-diff-add-ink: #006400;
+  --wk-diff-remove-bg: #ffeeeb;
+  --wk-diff-remove-ink: #8b0000;
+}
+
+/* "NEW" / type pill — yellow accent on white */
+html[data-theme="contrast"] .wk-section-new {
+  background: rgba(255, 212, 0, 0.2);
+  color: #000000;
+  border: 2px solid #ffd400;
+}
+
+/* ── Sidebar agent task / activity — high contrast yellow on black ── */
+html[data-theme="contrast"] .sidebar .sidebar-agent-task,
+html[data-theme="contrast"] .sidebar .sidebar-agent-activity {
+  color: #ffd400;
+  opacity: 1;
+}
