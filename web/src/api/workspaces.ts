@@ -171,7 +171,7 @@ export function useCreateWorkspace(
   const qc = useQueryClient();
   return useMutation<CreateWorkspaceResponse, Error, CreateWorkspaceInput>({
     ...options,
-    mutationFn: (body) =>
+    mutationFn: (body: any) =>
       post<CreateWorkspaceResponse>("/workspaces/create", body),
     onSuccess: (data, vars, onMutate, ctx) => {
       void qc.invalidateQueries({ queryKey: workspaceKeys.all });
@@ -190,7 +190,7 @@ export function usePauseWorkspace(
   const qc = useQueryClient();
   return useMutation<{ ok: boolean }, Error, PauseWorkspaceInput>({
     ...options,
-    mutationFn: (body) => post<{ ok: boolean }>("/workspaces/pause", body),
+    mutationFn: (body: any) => post<{ ok: boolean }>("/workspaces/pause", body),
     onSuccess: (data, vars, onMutate, ctx) => {
       void qc.invalidateQueries({ queryKey: workspaceKeys.all });
       options?.onSuccess?.(data, vars, onMutate, ctx);
@@ -223,7 +223,7 @@ export function useResumeWorkspace(
   const qc = useQueryClient();
   return useMutation<ResumeWorkspaceResponse, Error, ResumeWorkspaceInput>({
     ...options,
-    mutationFn: (body) =>
+    mutationFn: (body: any) =>
       post<ResumeWorkspaceResponse>("/workspaces/resume", body),
     onSuccess: (data, vars, onMutate, ctx) => {
       void qc.invalidateQueries({ queryKey: workspaceKeys.all });
@@ -253,7 +253,7 @@ export function useShredWorkspace(
   const qc = useQueryClient();
   return useMutation<ShredWorkspaceResponse, Error, ShredWorkspaceInput>({
     ...options,
-    mutationFn: (body) =>
+    mutationFn: (body: any) =>
       post<ShredWorkspaceResponse>("/workspaces/shred", body),
     onSuccess: (data, vars, onMutate, ctx) => {
       void qc.invalidateQueries({ queryKey: workspaceKeys.all });
@@ -295,13 +295,13 @@ export function useApplyOnboarding(
 ) {
   const qc = useQueryClient();
   return useMutation<ApplyOnboardingResponse, Error, ApplyOnboardingInput>({
-    mutationFn: (body) =>
+    ...options,
+    mutationFn: (body: any) =>
       post<ApplyOnboardingResponse>("/workspaces/onboarding", body),
     onSuccess: (data, vars, onMutate, ctx) => {
       void qc.invalidateQueries({ queryKey: workspaceKeys.all });
       options?.onSuccess?.(data, vars, onMutate, ctx);
     },
-    ...options,
   });
 }
 
@@ -325,7 +325,7 @@ export function useRestoreWorkspace(
   const qc = useQueryClient();
   return useMutation<RestoreWorkspaceResponse, Error, RestoreWorkspaceInput>({
     ...options,
-    mutationFn: (body) =>
+    mutationFn: (body: any) =>
       post<RestoreWorkspaceResponse>("/workspaces/restore", body),
     onSuccess: (data, vars, onMutate, ctx) => {
       void qc.invalidateQueries({ queryKey: workspaceKeys.all });

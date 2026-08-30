@@ -107,7 +107,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
-          version: 11.9.0
+          version: 11.20.0
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
         with:
           node-version: 22
@@ -205,7 +205,7 @@ jobs:
           fetch-depth: 0
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
-          version: 11.9.0
+          version: 11.20.0
       # Broker tests run under Vitest, which spawns workers on the system Node
       # binary (not bun). The broker storage layer uses `node:sqlite` (stable
       # in Node 22.13+, experimental from 22.5+), so we explicitly pin a Node
@@ -275,7 +275,7 @@ jobs:
           fetch-depth: 0
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
-          version: 11.9.0
+          version: 11.20.0
       # llm-router imports broker types; transitively touches `node:sqlite`.
       # See broker job for the runtime explanation.
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
@@ -326,7 +326,7 @@ jobs:
           fetch-depth: 0
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
-          version: 11.9.0
+          version: 11.20.0
       # Desktop tests import @wuphf/broker, which uses `node:sqlite`. Vitest
       # spawns workers on system Node; pin a Node that ships the module.
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
@@ -427,7 +427,7 @@ jobs:
       # job below — keep them in sync.
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
-          version: 11.9.0
+          version: 11.20.0
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
         with:
           node-version: 22
@@ -437,10 +437,16 @@ jobs:
       - name: Typecheck
         id: web-typecheck
         working-directory: web
+        env:
+          # pnpm 11.20 verify-deps-before-run memicu implicit install di subdir
+          # web yang false-positive OUTDATED_LOCKFILE di CI; matikan untuk step ini.
+          npm_config_verify_deps_before_run: "false"
         run: pnpm typecheck
       - name: Run coverage
         id: web-coverage
         working-directory: web
+        env:
+          npm_config_verify_deps_before_run: "false"
         if: ${{ steps.web-typecheck.outcome == 'success' }}
         continue-on-error: true
         run: pnpm test:coverage
@@ -871,22 +877,13 @@ jobs:
         run: echo "${{ env.TTYD_SHA256 }}  /tmp/ttyd.x86_64" | sha256sum -c -
       - name: Install ttyd
         run: sudo install /tmp/ttyd.x86_64 /usr/local/bin/ttyd
-      - name: Install ffmpeg
-        # Pin to full SHA: third-party action runs `sudo apt-get`, so a re-tag
-        # of @v1 would execute with elevated privileges on the runner.
-        uses: awalsh128/cache-apt-pkgs-action@acb598e5ddbc6f68a970c5da0688d2f3a9f04d05 # ratchet:awalsh128/cache-apt-pkgs-action@v1.6.0
-        with:
-          # libblas3 is a transitive runtime dep of ffmpeg on ubuntu-latest.
-          # Listing it explicitly guarantees it lands in the apt cache payload
-          # alongside ffmpeg, so warm restores do not surface
-          # `ffmpeg: error while loading shared libraries: libblas.so.3`.
-          packages: ffmpeg libblas3
-          # NOTE: `version` is a cache-bust token, NOT an ffmpeg version pin.
-          # Bump it to force a fresh apt-get install (e.g., for a security
-          # advisory, or when the dependency list above changes). `packages`
-          # has no version constraint, so warm runs reuse whatever .debs the
-          # cold run captured.
-          version: "2"
+      - name: Install ffmpeg and libblas
+        # libblas.so.3 is a transitive runtime dep of ffmpeg on
+        # ubuntu-latest. The cache-apt-pkgs-action may not reliably
+        # provide it on newer runners, so we ensure it is present.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libblas3
       - name: Build wuphf
         run: go build -o wuphf ./cmd/wuphf
       - name: Run VHS regression checks
@@ -929,7 +926,7 @@ jobs:
       # same pattern.
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
-          version: 11.9.0
+          version: 11.20.0
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
         with:
           node-version: 22
@@ -1176,7 +1173,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # ratchet:pnpm/action-setup@v4
         with:
-          version: 11.9.0
+          version: 11.20.0
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # ratchet:actions/setup-node@v6.4.0
         with:
           node-version: 22

@@ -1,0 +1,264 @@
+/* ═══════════════════════════════════════════════════════════════
+   WUPHF Theme: Phosphor
+   Dark variant — terminal green / CRT afterglow.
+   Structural rules live in nex.css (scoped with [data-theme^="nex"])
+   and are inherited here. This file overrides the semantic token
+   layer and hard-coded dark-surface contrast fixes.
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url("./nex.css");
+
+html[data-theme="phosphor"] {
+  /* ── Overlays flipped for dark surface ── */
+  --overlay-soft: rgba(255, 255, 255, 0.04);
+  --overlay: rgba(255, 255, 255, 0.08);
+  --overlay-strong: rgba(255, 255, 255, 0.16);
+  --scrim: rgba(0, 0, 0, 0.7);
+  --overlay-white-soft: rgba(255, 255, 255, 0.06);
+  --overlay-white: rgba(255, 255, 255, 0.12);
+  --overlay-white-strong: rgba(255, 255, 255, 0.32);
+
+  /* ── Phosphor palette — near-black with faint green ── */
+  --bg: #0d120d;
+  --bg-warm: #12161a;
+  --bg-subtle: #0a0e0a;
+  --bg-card: #101410;
+
+  --text: #39ff14;
+  --text-secondary: #26b810;
+  /* #1f8a0a failed WCAG AA (4.23:1) on --bg; bumped to 5.08:1. */
+  --text-tertiary: #25990c;
+  /* #0f3a0c failed WCAG AA (1.47:1) on --bg; bumped to 3.12:1. */
+  --text-disabled: #1a7210;
+
+  --accent: #39ff14;
+  --accent-warm: #26b810;
+  --accent-bg: rgba(57, 255, 20, 0.1);
+  --accent-bg-strong: rgba(57, 255, 20, 0.35);
+
+  --border: #1a1f1a;
+  --border-light: #141914;
+  --border-dark: #222a22;
+  --border-strong: #354035;
+
+  --green: #2fd97a;
+  --green-dark: #1f8a4a;
+  --green-bg: rgba(47, 217, 122, 0.1);
+
+  --red: #ff7e6e;
+  --red-dark: #d1261a;
+  --red-bg: rgba(255, 126, 110, 0.1);
+
+  --yellow: #ffb647;
+  --yellow-dark: #ce6b09;
+  --yellow-bg: rgba(255, 182, 71, 0.1);
+
+  --blue: #39ff14;
+  --blue-bg: var(--accent-bg);
+
+  /* Body gradient stops */
+  --bg-gradient-top: #0f1210;
+  --bg-gradient-bottom: #0a0d0a;
+
+  /* ── Sidebar — deep noir with phosphor chrome ── */
+  --nex-sidebar: #0b0f0b;
+  --nex-sidebar-hover: rgba(57, 255, 20, 0.12);
+  --nex-sidebar-active: #39ff14;
+  --nex-sidebar-text: rgba(57, 255, 20, 0.78);
+  --nex-sidebar-text-active: #ffffff;
+  --nex-presence: #2fd97a;
+
+  /* ── Tertiary / purple aliases redirected to phosphor green ── */
+  --purple: #39ff14;
+  --purple-bg: var(--accent-bg);
+  --sidebar-fade-color: #0b0f0b;
+
+  /* ── Entity graph palette ── */
+  --graph-people-fill: rgba(57, 255, 20, 0.14);
+  --graph-people-stroke: #26b810;
+  --graph-companies-fill: rgba(136, 164, 194, 0.16);
+  --graph-companies-stroke: #88a4c2;
+  --graph-customers-fill: rgba(47, 217, 122, 0.15);
+  --graph-customers-stroke: #2fd97a;
+  --graph-other-fill: rgba(38, 184, 16, 0.06);
+  --graph-other-stroke: var(--text-tertiary);
+}
+
+/* ── Phosphor atmosphere on body — slow vertical fade from deep noir
+   to ink so the surface reads as a lit terminal rather than a flat panel.
+   The gradient is fixed so it does not tile when the chat scrolls. ── */
+html[data-theme="phosphor"] body {
+  background-color: var(--bg);
+  background-image: linear-gradient(
+    180deg,
+    var(--bg-gradient-top) 0%,
+    var(--bg-gradient-bottom) 100%
+  );
+  background-attachment: fixed;
+}
+
+/* ── Override hard-coded message text color (not a CSS variable in nex.css) ── */
+html[data-theme="phosphor"] .message-text {
+  color: #26b810;
+}
+
+/* ── Composer inner — match the dark card tone ── */
+html[data-theme="phosphor"] .composer-inner {
+  background: var(--bg-warm);
+  border-color: var(--border-dark);
+}
+
+/* ── Sidebar bottom matches deep noir ── */
+html[data-theme="phosphor"] .sidebar-bottom {
+  background: #0b0f0b;
+}
+
+/* ── Sidebar sticky header ── */
+html[data-theme="phosphor"] .sidebar-header {
+  background: #0b0f0b;
+}
+
+/* ── Message hover on dark bg ── */
+html[data-theme="phosphor"] .message:hover {
+  background: #12161a;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+    Phosphor contrast fixes
+    The base stylesheets target light surfaces. Anywhere a rule
+    hardcodes a light bg + dark text (or vice versa) needs an
+    override here so the phosphor theme stays readable.
+    ═══════════════════════════════════════════════════════════════ */
+
+/* ── @mention + json-syntax accents track the phosphor green, not purple. ── */
+html[data-theme="phosphor"] {
+  --mention-bg: rgba(57, 255, 20, 0.14);
+  --mention-fg: #26b810;
+  --syntax-number: #26b810;
+  --syntax-bool: #f0a8c8;
+}
+
+/* ── Task status badges — light pastel chips don't survive on dark surface ── */
+html[data-theme="phosphor"] .task-detail-status-badge.status-done {
+  background: rgba(47, 217, 122, 0.14);
+  color: #2fd97a;
+  border-color: rgba(47, 217, 122, 0.3);
+}
+html[data-theme="phosphor"] .task-detail-status-badge.status-blocked {
+  background: rgba(57, 255, 20, 0.14);
+  color: #26b810;
+  border-color: rgba(57, 255, 20, 0.3);
+}
+
+/* ── Insight badges — bright green on bright accent washes out; tint the bg
+      darker so the green-on-color stays legible ── */
+html[data-theme="phosphor"] .insight-badge-low {
+  color: var(--text);
+  background: var(--bg-warm);
+}
+
+/* ── Notebook surface — base tokens assume cream-paper light mode.
+      Re-map to a dark phosphor palette so the wiki notebook reads. ── */
+html[data-theme="phosphor"] .notebook-surface {
+  --nb-paper: #101410;
+  --nb-paper-dark: #0c100c;
+  --nb-rule: rgba(57, 255, 20, 0.03);
+  --nb-surface: #12161a;
+  --nb-text: #26b810;
+  --nb-text-muted: #1a7210;
+  --nb-text-tertiary: #145c0c;
+  --nb-border: #1a1f1a;
+  --nb-border-light: #141914;
+  --nb-ink-blue: #88a4c2;
+  --nb-stamp-red: #d6443c;
+  --nb-amber: #ffb647;
+  --nb-amber-bg: rgba(255, 182, 71, 0.1);
+  --nb-amber-hover: #f0a541;
+  --nb-green-approve: #2fd97a;
+  --nb-green-bg: rgba(47, 217, 122, 0.1);
+
+  background-image: none !important;
+  background-color: var(--nb-paper);
+}
+
+/* Notebook status pills — were hardcoded dark grays/ambers/burgundies that
+   only contrasted against cream paper. Re-tint for the dark surface. */
+html[data-theme="phosphor"] .notebook-surface .nb-shelf-item .nb-status-draft {
+  color: var(--text-secondary);
+}
+html[data-theme="phosphor"] .notebook-surface .nb-shelf-item .nb-status-review {
+  color: #ffb647;
+}
+html[data-theme="phosphor"]
+  .notebook-surface
+  .nb-shelf-item
+  .nb-status-changes {
+  color: #ff7e6e;
+}
+
+/* Notebook shelf cards — hardcoded white background flips to dark card. */
+html[data-theme="phosphor"] .notebook-surface .nb-shelf-card {
+  background: var(--nb-paper-dark);
+  outline-color: rgba(57, 255, 20, 0.08);
+  color: var(--nb-text);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+html[data-theme="phosphor"] .notebook-surface .nb-shelf-card:hover {
+  background: #1a1f1a;
+  outline-color: rgba(57, 255, 20, 0.18);
+}
+html[data-theme="phosphor"]
+  .notebook-surface
+  .nb-shelf-card
+  .nb-shelf-card-meta {
+  color: var(--nb-text-tertiary);
+}
+
+/* Notebook review cards — were bright yellow sticky-notes (#eef679 / #f5fb95).
+   On dark surface the yellow burns; switch to dark green chip. */
+html[data-theme="phosphor"] .notebook-surface .nb-review-card {
+  background: rgba(57, 255, 20, 0.1);
+  outline-color: rgba(57, 255, 20, 0.1);
+  color: var(--nb-text);
+}
+html[data-theme="phosphor"] .notebook-surface .nb-review-card:hover {
+  background: rgba(57, 255, 20, 0.18);
+  outline-color: rgba(57, 255, 20, 0.4);
+}
+
+/* Scrollbar thumb hover — base uses rgba(0,0,0,0.4) which disappears on dark */
+html[data-theme="phosphor"] .notebook-surface::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(57, 255, 20, 0.25);
+}
+
+/* ── Wiki link + phosphor accents (Tiptap editor chrome) ── */
+html[data-theme="phosphor"] {
+  --wk-wikilink: var(--accent);
+  --wk-amber: var(--accent);
+  --wk-amber-bg: rgba(57, 255, 20, 0.22);
+  --wk-amber-banner: rgba(57, 255, 20, 0.22);
+
+  --wk-diff-add-bg: rgba(47, 217, 122, 0.16);
+  --wk-diff-add-ink: #2fd97a;
+  --wk-diff-remove-bg: rgba(255, 126, 110, 0.16);
+  --wk-diff-remove-ink: #ff7e6e;
+}
+
+/* "NEW" / type pill — the base rule's --accent-bg (#ffebfc, near-white)
+   would flash bright on the dark surface. Re-tint to a green wash with
+   a bright green ink: #26b810 on the composited ~#141914 surface clears
+   well past 4.5:1. */
+html[data-theme="phosphor"] .wk-section-new {
+  background: rgba(57, 255, 20, 0.2);
+  color: var(--accent);
+}
+
+/* ── Sidebar agent task / activity — was barely visible on noir at 42% cream opacity.
+      Bump to a clean readable green so the user can actually see it. ── */
+html[data-theme="phosphor"] .sidebar .sidebar-agent-task,
+html[data-theme="phosphor"] .sidebar .sidebar-agent-activity {
+  color: #26b810;
+  opacity: 1;
+}

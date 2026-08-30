@@ -49,6 +49,27 @@ export const THEMES = [
     swatch: { primary: "#0a0a0a", accent: "#d4af37", surface: "#161616" },
     cssPath: "/themes/noir-gold.css",
   },
+  {
+    id: "phosphor",
+    name: "Phosphor",
+    desc: "Terminal green. CRT afterglow.",
+    swatch: { primary: "#0b0f0b", accent: "#39ff14", surface: "#0d120d" },
+    cssPath: "/themes/phosphor.css",
+  },
+  {
+    id: "paper",
+    name: "Paper",
+    desc: "Warm paper. Easy on the eyes.",
+    swatch: { primary: "#f4ecd8", accent: "#b5651d", surface: "#efe6cf" },
+    cssPath: "/themes/paper.css",
+  },
+  {
+    id: "contrast",
+    name: "High Contrast",
+    desc: "Max contrast. WCAG AAA.",
+    swatch: { primary: "#000000", accent: "#ffd400", surface: "#ffffff" },
+    cssPath: "/themes/contrast.css",
+  },
 ] as const satisfies readonly ThemeDef[];
 
 export type Theme = (typeof THEMES)[number]["id"];
