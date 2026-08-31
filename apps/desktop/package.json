@@ -9,7 +9,7 @@
     "vite": "Keeps desktop Vitest's Vite dependency on the same major as the desktop build toolchain."
   },
   "overrides": {
-    "vite": "8.1.1"
+    "vite": "8.2.1"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.main.json && tsc --noEmit -p tsconfig.preload.json && tsc --noEmit -p tsconfig.renderer.json && tsc --noEmit -p tsconfig.e2e.json",
@@ -49,19 +49,19 @@
     "@tanstack/react-query-devtools": "^5.100.10",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@types/node": "26.0.1",
+    "@types/node": "26.2.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^6.0.1",
-    "@vitest/coverage-v8": "4.1.9",
-    "electron": "42.5.1",
+    "@vitest/coverage-v8": "4.1.10",
+    "electron": "43.3.0",
     "electron-vite": "6.0.0-beta.1",
     "happy-dom": "^20.9.0",
     "postcss": "^8.5.10",
     "tailwindcss": "^4.2.4",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "6.0.3",
-    "vite": "8.1.1",
-    "vitest": "4.1.9"
+    "typescript": "7.0.2",
+    "vite": "8.2.1",
+    "vitest": "4.1.10"
   }
 }
