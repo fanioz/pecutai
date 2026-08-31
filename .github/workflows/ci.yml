@@ -436,20 +436,12 @@ jobs:
         run: WUPHF_SKIP_POSTINSTALL=1 pnpm install --frozen-lockfile
       - name: Typecheck
         id: web-typecheck
-        working-directory: web
-        env:
-          # pnpm 11.20 verify-deps-before-run memicu implicit install di subdir
-          # web yang false-positive OUTDATED_LOCKFILE di CI; matikan untuk step ini.
-          npm_config_verify_deps_before_run: "false"
-        run: pnpm typecheck
+        run: pnpm --filter wuphf-web run typecheck
       - name: Run coverage
         id: web-coverage
-        working-directory: web
-        env:
-          npm_config_verify_deps_before_run: "false"
         if: ${{ steps.web-typecheck.outcome == 'success' }}
         continue-on-error: true
-        run: pnpm test:coverage
+        run: pnpm --filter wuphf-web run test:coverage
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # ratchet:actions/upload-artifact@v7
         if: always()
         with:
