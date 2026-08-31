@@ -37,7 +37,7 @@
     "@electron/asar": "4.2.0",
     "@types/node": "26.2.0",
     "app-builder-bin": "^4.2.0",
-    "electron": "42.5.1",
+    "electron": "43.3.0",
     "electron-builder": "26.15.3",
     "js-yaml": "5.2.3"
   },
