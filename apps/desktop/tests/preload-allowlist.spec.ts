@@ -79,35 +79,37 @@ describe("preload allowlist", () => {
     expect(api[verb]).toEqual(expect.any(Function));
   });
 
-  it.each(
-    createPreloadVerbCases(),
-  )("$verb behavior uses the matching IPC channel", async (testCase) => {
-    const api = await loadPreloadApi();
-    electronMock.invoke.mockResolvedValueOnce(testCase.response);
+  it.each(createPreloadVerbCases())(
+    "$verb behavior uses the matching IPC channel",
+    async (testCase) => {
+      const api = await loadPreloadApi();
+      electronMock.invoke.mockResolvedValueOnce(testCase.response);
 
-    await expect(testCase.invoke(api)).resolves.toEqual(testCase.response);
+      await expect(testCase.invoke(api)).resolves.toEqual(testCase.response);
 
-    expect(electronMock.invoke).toHaveBeenCalledWith(testCase.channel, testCase.request);
-  });
+      expect(electronMock.invoke).toHaveBeenCalledWith(testCase.channel, testCase.request);
+    },
+  );
 
-  it.each(
-    createPreloadVerbCases(),
-  )("$verb security does not request app data", async (testCase) => {
-    const api = await loadPreloadApi();
-    await testCase.invoke(api);
+  it.each(createPreloadVerbCases())(
+    "$verb security does not request app data",
+    async (testCase) => {
+      const api = await loadPreloadApi();
+      await testCase.invoke(api);
 
-    const invokeCall = electronMock.invoke.mock.calls[0];
-    if (invokeCall === undefined) {
-      throw new Error("Expected preload verb to call ipcRenderer.invoke");
-    }
+      const invokeCall = electronMock.invoke.mock.calls[0];
+      if (invokeCall === undefined) {
+        throw new Error("Expected preload verb to call ipcRenderer.invoke");
+      }
 
-    const serialized = JSON.stringify(invokeCall) ?? "";
-    for (const marker of APP_DATA_MARKERS) {
-      expect(serialized.includes(marker), `${testCase.verb} must not request ${marker}`).toBe(
-        false,
-      );
-    }
-  });
+      const serialized = JSON.stringify(invokeCall) ?? "";
+      for (const marker of APP_DATA_MARKERS) {
+        expect(serialized.includes(marker), `${testCase.verb} must not request ${marker}`).toBe(
+          false,
+        );
+      }
+    },
+  );
 
   it("wires every allowlisted channel through ipcRenderer.invoke", async () => {
     const api = await loadPreloadApi();
