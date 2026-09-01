@@ -57,7 +57,7 @@
     "electron": "43.3.0",
     "electron-vite": "6.0.0-beta.1",
     "happy-dom": "^20.9.0",
-    "postcss": "^8.5.10",
+    "postcss": "^8.5.26",
     "tailwindcss": "^4.2.4",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "7.0.2",
