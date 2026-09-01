@@ -280,9 +280,12 @@ describe("rich artifact API", () => {
     vi.spyOn(client, "get").mockRejectedValue(new Error("network down"));
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-    await expect(fetchWikiVisualArtifact("team/drafts/x.md")).rejects.toThrow(
-      "network down",
+    const err = await fetchWikiVisualArtifact("team/drafts/x.md").then(
+      () => null,
+      (e) => e,
     );
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/network down/i);
     expect(warnSpy).toHaveBeenCalledWith(
       "Failed to fetch wiki visual artifact",
       expect.any(Error),

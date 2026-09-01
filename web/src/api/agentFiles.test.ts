@@ -84,13 +84,16 @@ describe("agentFiles client", () => {
 
   it("rethrows a non-conflict error", async () => {
     postMock.mockRejectedValue(new Error("human session required"));
-    await expect(
-      writeAgentFile({
-        path: "agents/ceo/SOUL.md",
-        content: "x",
-        commitMessage: "x",
-        expectedSha: "",
-      }),
-    ).rejects.toThrow("human session required");
+    const err = await writeAgentFile({
+      path: "agents/ceo/SOUL.md",
+      content: "x",
+      commitMessage: "x",
+      expectedSha: "",
+    }).then(
+      () => null,
+      (e) => e,
+    );
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/human session required/i);
   });
 });
