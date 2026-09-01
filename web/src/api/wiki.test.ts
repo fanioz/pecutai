@@ -32,7 +32,12 @@ describe("wiki api client", () => {
 
   it("fetchArticle rethrows the last backend error", async () => {
     vi.spyOn(client, "get").mockRejectedValue(new Error("boom"));
-    await expect(api.fetchArticle("people/customer-x")).rejects.toThrow("boom");
+    const err = await api.fetchArticle("people/customer-x").then(
+      () => null,
+      (e) => e,
+    );
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/boom/);
   });
 
   it("fetchArticle resolves a bare slug by trying the standard group dirs", async () => {
@@ -126,7 +131,12 @@ describe("wiki api client", () => {
 
   it("fetchCatalogStrict surfaces request errors", async () => {
     vi.spyOn(client, "get").mockRejectedValue(new Error("boom"));
-    await expect(api.fetchCatalogStrict()).rejects.toThrow("boom");
+    const err = await api.fetchCatalogStrict().then(
+      () => null,
+      (e) => e,
+    );
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/boom/);
   });
 
   it("fetchHistory returns empty commits on error", async () => {
@@ -247,14 +257,17 @@ describe("wiki api client", () => {
     vi.spyOn(client, "post").mockRejectedValue(
       new Error("500 Internal Server Error"),
     );
-    await expect(
-      api.writeHumanArticle({
-        path: "team/people/x.md",
-        content: "x",
-        commitMessage: "human: nope",
-        expectedSha: "abc",
-      }),
-    ).rejects.toThrow(/500/);
+    const err = await api.writeHumanArticle({
+      path: "team/people/x.md",
+      content: "x",
+      commitMessage: "human: nope",
+      expectedSha: "abc",
+    }).then(
+      () => null,
+      (e) => e,
+    );
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/500/);
   });
 
   it("subscribeEditLog returns an unsubscribe function even when SSE is unavailable", () => {

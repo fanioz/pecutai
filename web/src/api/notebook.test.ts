@@ -240,8 +240,11 @@ describe("notebook API - live backend mode", () => {
       new Error("review backend is not active"),
     );
 
-    await expect(promoteEntry("planner", "reliable-handoffs")).rejects.toThrow(
-      "review backend is not active",
+    const err = await promoteEntry("planner", "reliable-handoffs").then(
+      () => null,
+      (e) => e,
     );
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/review backend is not active/i);
   });
 });

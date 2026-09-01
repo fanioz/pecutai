@@ -31,12 +31,15 @@ describe("connectBroker", () => {
         }),
     );
 
-    const pending = expect(
-      connectBroker("http://localhost:7890"),
-    ).rejects.toThrow(/timed out connecting to broker/i);
+    const pending = connectBroker("http://localhost:7890").then(
+      () => null,
+      (err) => err,
+    );
     await vi.advanceTimersByTimeAsync(8000);
 
-    await pending;
+    const err = await pending;
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/timed out connecting to broker/i);
   });
 
   it("sends the bootstrap bearer on same-origin api calls", async () => {
@@ -131,9 +134,12 @@ describe("get timeout", () => {
       },
     );
 
-    await expect(get("/notebook/catalog")).rejects.toThrow(
-      /broker not responding/i,
+    const err = await get("/notebook/catalog").then(
+      () => null,
+      (e) => e,
     );
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/broker not responding/i);
   });
 
   it("passes the timeout signal to fetch", async () => {
