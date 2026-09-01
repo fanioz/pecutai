@@ -2,7 +2,7 @@
   "name": "@wuphf/llm-router",
   "version": "0.0.0",
   "private": true,
-  "description": "WUPHF v1 AI gateway — single in-process cost chokepoint enforcing per-office daily cap, per-agent wake cap, identical-payload dedupe, and circuit breaker. Every provider call writes a cost_event before returning. Branch-7 slice.",
+  "description": "WUPHF v1 AI gateway \u2014 single in-process cost chokepoint enforcing per-office daily cap, per-agent wake cap, identical-payload dedupe, and circuit breaker. Every provider call writes a cost_event before returning. Branch-7 slice.",
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
@@ -49,11 +49,11 @@
     "@biomejs/biome": "2.5.1",
     "@types/better-sqlite3": "7.6.13",
     "@types/node": "^26.0.1",
-    "@vitest/coverage-v8": "4.1.9",
+    "@vitest/coverage-v8": "^4.1.11",
     "ollama": "0.6.3",
     "openai": "6.45.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
+    "vitest": "^4.1.11"
   }
 }
