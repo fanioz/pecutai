@@ -2,7 +2,7 @@
   "name": "@wuphf/protocol",
   "version": "0.0.0",
   "private": true,
-  "description": "WUPHF v1 protocol — branded types, receipt schema, IPC envelopes, audit events. No I/O. No runtime deps on other @wuphf packages.",
+  "description": "WUPHF v1 protocol \u2014 branded types, receipt schema, IPC envelopes, audit events. No I/O. No runtime deps on other @wuphf packages.",
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
@@ -27,9 +27,9 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
     "@types/node": "^26.0.1",
-    "@vitest/coverage-v8": "2.1.9",
+    "@vitest/coverage-v8": "^4.1.11",
     "fast-check": "^4.7.0",
     "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
+    "vitest": "^4.1.11"
   }
 }

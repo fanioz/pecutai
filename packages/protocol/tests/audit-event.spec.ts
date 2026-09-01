@@ -166,6 +166,9 @@ describe("audit-event chain verification", () => {
     }
   });
 
+  // Perf-boundary test: the 25k chain runs ~5.4s under vitest 4 (was <5s
+  // under vitest 2), which crosses the 5s default. The contract under test
+  // is bounded-memory batching, not a wall-clock SLA — give it room.
   it("verifies a 25,000-record chain in bounded incremental batches", () => {
     const chain = chainOfLength(25_000);
     const allAtOnce = verifyChain(chain);
@@ -188,7 +191,7 @@ describe("audit-event chain verification", () => {
       expect(state.expectedPrev).toBe(allAtOnce.lastEventHash);
       expect(state.lastSeen).toBe(allAtOnce.lastSeqNo);
     }
-  });
+  }, 20_000);
 
   it("resumes across three batches from only the previous successful verifier state", () => {
     const chain = chainOfLength(9);
