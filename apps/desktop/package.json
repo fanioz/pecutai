@@ -56,7 +56,7 @@
     "@vitest/coverage-v8": "4.1.10",
     "electron": "43.3.0",
     "electron-vite": "6.0.0-beta.1",
-    "happy-dom": "^20.9.0",
+    "happy-dom": "^20.11.2",
     "postcss": "^8.5.10",
     "tailwindcss": "^4.2.4",
     "tailwindcss-animate": "^1.0.7",
