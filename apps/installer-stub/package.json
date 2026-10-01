@@ -35,7 +35,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.7",
     "@electron/asar": "4.2.0",
-    "@types/node": "26.2.0",
+    "@types/node": "26.5.1",
     "app-builder-bin": "^4.2.0",
     "electron": "43.3.0",
     "electron-builder": "26.15.3",
